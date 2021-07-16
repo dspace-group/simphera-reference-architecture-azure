@@ -102,33 +102,3 @@ variable kubernetesVersion {
   description = "The version of the AKS cluster."
   default     = "1.20.7"
 }
-
-variable postgresqlAdminLogin {
-  type        = string
-  description = "Login name of the account for the PostgreSQL Server"
-  sensitive = true
-}
-
-variable postgresqlAdminPassword {
-  type        = string
-  description = "Password of the account for the PostgreSQL Server"
-  sensitive   = true
-}
-
-variable postgresqlVersion {
-  type        = string
-  description = "PostgreSQL Server version to deploy"
-  default     = "11"
-}
-
-variable postgresqlSkuName {
-  type        = string
-  description = "PostgreSQL SKU Name"
-  default     = "GP_Gen5_2"
-}
-
-variable postgresqlStorage {
-  type        = number
-  description = "PostgreSQL Storage in MB, must be divisble by 1024"
-  default     = 640000
-}
