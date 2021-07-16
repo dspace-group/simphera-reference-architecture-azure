@@ -1,0 +1,4 @@
+.terraform*
+terraform.tfstate
+test.tfvars
+state-backend-test.tf

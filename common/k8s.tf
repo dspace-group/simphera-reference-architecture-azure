@@ -1,0 +1,137 @@
+resource "azurerm_resource_group" "aks" {
+  provider  = azurerm.cluster-provider-subscription
+  name      = "${var.infrastructurename}-aks"
+  location  = "${var.location}"
+  tags      = var.tags
+}
+
+resource "azurerm_subnet" "default-node-pool-subnet" {
+  provider             = azurerm.cluster-provider-subscription
+  name                 = "default-node-pool-subnet"
+  resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
+  virtual_network_name = azurerm_virtual_network.simphera-vnet.name
+  address_prefixes     = ["10.0.0.0/19"]
+}
+
+resource "azurerm_subnet" "execution-nodes-subnet" {
+  provider             = azurerm.cluster-provider-subscription
+  name                 = "execution-nodes-subnet"
+  resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
+  virtual_network_name = azurerm_virtual_network.simphera-vnet.name
+  address_prefixes     = ["10.0.32.0/19"]
+}
+
+resource "azurerm_kubernetes_cluster" "aks" {
+  provider            = azurerm.cluster-provider-subscription
+  name                = "${var.infrastructurename}-aks"
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
+  node_resource_group = "${var.infrastructurename}-aks-node-pools"
+  dns_prefix          = "${var.infrastructurename}-aks"
+  kubernetes_version  = var.kubernetesVersion
+
+  linux_profile {
+    admin_username = "simphera"
+    ssh_key {
+      key_data = file(var.ssh_public_key_path)
+    }
+  }
+
+  default_node_pool {
+    name                = "default"
+    node_count          = var.linuxNodeCountMin
+    vm_size             = var.linuxNodeSize
+    min_count           = var.linuxNodeCountMin
+    max_count           = var.linuxNodeCountMax
+    enable_auto_scaling = true
+    os_disk_size_gb     = 128
+    type                = "VirtualMachineScaleSets"
+    max_pods            = 50
+    vnet_subnet_id      = azurerm_subnet.default-node-pool-subnet.id
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin      = "azure"
+    service_cidr        = "10.0.64.0/19" # MUST be smaller than /12
+    dns_service_ip      = "10.0.64.10" # MUST NOT be the first IP address in the address range
+    docker_bridge_cidr  = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
+  }
+
+  role_based_access_control {
+    enabled = true
+  }
+
+  addon_profile {
+    aci_connector_linux {
+      enabled = false
+    }
+
+    azure_policy {
+      enabled = false
+    }
+
+    http_application_routing {
+      enabled = false
+    }
+
+    kube_dashboard {
+      enabled = false
+    }
+
+    oms_agent {
+      enabled                    = var.logAnalyticsWorkspaceName != ""
+      log_analytics_workspace_id = "${var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null }"
+    }
+  }
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        default_node_pool[0].node_count,
+        tags,
+        api_server_authorized_ip_ranges
+    ]
+  }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
+  provider              = azurerm.cluster-provider-subscription
+  name                  = "execnodes"
+  mode                  = "User"
+  orchestrator_version  = var.kubernetesVersion
+  os_disk_size_gb       = 128
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  min_count             = var.linuxExecutionNodeCountMin
+  max_count             = var.linuxExecutionNodeCountMax
+  node_count            = var.linuxExecutionNodeCountMin
+  vm_size               = var.linuxExecutionNodeSize
+  max_pods              = 30
+  enable_auto_scaling   = true
+  vnet_subnet_id        = azurerm_subnet.execution-nodes-subnet.id
+
+  node_labels = {
+    "purpose" = "execution"
+    "kubernetes.io/os" = "linux"
+  }
+
+  node_taints = [
+    "purpose=execution:NoSchedule"
+  ]
+
+  tags = var.tags
+
+  lifecycle {
+      ignore_changes = [
+          availability_zones,
+          enable_host_encryption,
+          enable_node_public_ip,
+          vnet_subnet_id,
+          node_count
+      ]
+  }
+}
