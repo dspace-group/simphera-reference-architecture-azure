@@ -16,6 +16,10 @@ The reference architecture is defined as a _Terraform configurations_. It is dev
 Both folders contain separate Terraform configurations that have to be applied individually.
 This repository has been tested with Terraform version v1.0.0.
 
+The following figure shows the main resources of the architecture:
+
+![SIMPHERA Reference Architecture fur Azure](AzureReferenceArchitecture.png)
+
 ## Prerequisites
 
 Before you start you need an Azure subscription and typically the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
