@@ -1,6 +1,9 @@
 # The ID of the Azure subscription to be used
 subscriptionId = "xxxxx"
 
+# The Azure environment to be used
+environment = "public"
+
 # The Azure location to be used
 location = "westeurope"
 
@@ -20,7 +23,7 @@ minioAccountReplicationType = "ZRS"
 postgresqlAdminLogin = "dbuser"
 
 # Password of the account for the PostgreSQL Server
-postgresqlAdminPassword = "foobar1234"
+postgresqlAdminPassword = "Foobar1234"
 
 # PostgreSQL Server version to deploy
 postgresqlVersion = "11"

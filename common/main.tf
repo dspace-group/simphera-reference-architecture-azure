@@ -9,11 +9,13 @@ terraform {
 
 locals {
   subscriptionId = var.subscriptionId
+  environment = var.environment
 }  
 
 provider "azurerm"{
   alias  = "cluster-provider-subscription"
   subscription_id = local.subscriptionId
+  environment = local.environment
   features {}
 }
 

@@ -4,5 +4,6 @@ terraform {
     storage_account_name = "simpherainfra"
     container_name       = "terraformstate"
     key                  = "terraform.tfstate"
+    environment          = "public"
   }
 }
