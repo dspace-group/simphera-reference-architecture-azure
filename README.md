@@ -27,6 +27,22 @@ Before you start you need an Azure subscription and typically the `contributor` 
 - _Storage Account_: A storage account with Performance set to `standard` and account kind set to `StorageV2 (general purpose v2)` is needed to store the Terraform state. You have to create a container for the state inside the storage account.
 - _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
 
+### Authentication
+
+Authentication to Azure is done via [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/). Terraform only supports authenticating using the `az` CLI (which must be available on your PATH) - authenticating using the older `azure` CLI is not supported.
+
+To login to the Azure CLI, use
+
+```sh
+az login
+```
+
+If you plan on using the _China_ Azure Cloud, you'll first need to configure the Azure CLI to work with that cloud. You can do this by running:
+
+```sh
+az cloud set --name AzureChinaCloud
+```
+
 ## Common
 
 The common section creates the following Azure resources:
