@@ -24,17 +24,33 @@ The following figure shows the main resources of the architecture:
 
 Before you start you need an Azure subscription and typically the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
 
-* _Storage Account_: A storage account (standard; general purpose v2) is needed to store the Terraform state. You have to create a container for the state inside the storage account.
-* _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
+- _Storage Account_: A storage account with Performance set to `standard` and account kind set to `StorageV2 (general purpose v2)` is needed to store the Terraform state. You have to create a container for the state inside the storage account.
+- _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
+
+### Authentication
+
+Authentication to Azure is done via [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/). Terraform only supports authenticating using the `az` CLI (which must be available on your PATH) - authenticating using the older `azure` CLI is not supported.
+
+To login to the Azure CLI, use
+
+```sh
+az login
+```
+
+If you plan on using the _China_ Azure Cloud, you'll first need to configure the Azure CLI to work with that cloud. You can do this by running:
+
+```sh
+az cloud set --name AzureChinaCloud
+```
 
 ## Common
 
 The common section creates the following Azure resources:
 
-* _Virtual Network_: A virtual network with multiple subnets used for all services, endpoints, etc.
-* _Azure Kubernetes Service_: A managed Kubernetes cluster including two node pools.
-* _Private DNS zones_: Private DNS zones for PostgreSQL.
-* _Virtual machine_: A virtual Windows machine to be used as license server.
+- _Virtual Network_: A virtual network with multiple subnets used for all services, endpoints, etc.
+- _Azure Kubernetes Service_: A managed Kubernetes cluster including two node pools.
+- _Private DNS zones_: Private DNS zones for PostgreSQL.
+- _Virtual machine_: A virtual Windows machine to be used as license server.
 
 ### Configuration
 
@@ -53,6 +69,10 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N ""
 cd common
 ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 ```
+
+#### Azure China
+
+If you want to create your infrastructure in an Azure China subscription, you need to adjust both "environment" in `config.tfvars` and in `state-backend.tf` to "china".
 
 ### Deployment
 
@@ -94,19 +114,19 @@ ssh -i shared-ssh-key/ssh simphera@<name-or-ip-of-node>
 
 But please keep in mind the the nodes themselves do not get _public IPs_. Therefore you may need to create a _Linux jumpbox VM_ within your virtual network to be able to connect to a node from there. In that case you have to copy the private key to that machine and have to set the correct file access: `chmod 600 shared-ssh-key/ssh`. As an alternative you can use the _License Server Windows VM_ as jumpbox.
 
-
 ## Instance
 
 The instance section creates the following Azure resources:
 
-* _PostgreSQL Server_: A managed PostgreSQL server including two database of _SIMPHERA_ and _Keycloak_. Additionally, a private endpoint is added to the _paas_ subnet.
-* _Storage Account_: A standard account used to store the binary artifacts. This will be used by MinIO.
-* _Storage Account_: A standard account used to store CouchDB backup archive files. 
+- _PostgreSQL Server_: A managed PostgreSQL server including two database of _SIMPHERA_ and _Keycloak_. Additionally, a private endpoint is added to the _paas_ subnet.
+- _Storage Account_: A standard account used to store the binary artifacts. This will be used by MinIO.
+- _Storage Account_: A standard account used to store CouchDB backup archive files.
 
 ### Configuration
 
 This folder has a similar structure as the `common` folder. You also have to copy the template files and name them `config.tfvars` and `state-backend.tf`.
-To store the Terraform state of the SIMPHERA instance, you can use the same storage account and container used for the common infrastructure as configured in `common/state-backend.tf`, but in that case you must use a different key in `instance/state-backend.tf`, because otherwise Terraform will delete all your infrastructure resources: 
+To store the Terraform state of the SIMPHERA instance, you can use the same storage account and container used for the common infrastructure as configured in `common/state-backend.tf`, but in that case you must use a different key in `instance/state-backend.tf`, because otherwise Terraform will delete all your infrastructure resources:
+
 ```diff
 terraform {
   backend "azurerm" {
@@ -119,8 +139,7 @@ terraform {
 }
 ```
 
-
-In the `config.tvfars` file you have to set the values `subscriptionId`, `location` and `infrastructurename` to exactly the same values as for the _common_ part. The value `instancename` represents the name of your SIMPHERA instance, such as `production` or `testing`.
+In the `config.tvfars` file you have to set the values `subscriptionId`, `environment`, `location` and `infrastructurename` to exactly the same values as for the _common_ part. The value `instancename` represents the name of your SIMPHERA instance, such as `production` or `testing`.
 
 ### Deployment
 

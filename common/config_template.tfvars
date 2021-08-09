@@ -1,6 +1,9 @@
 # The ID of the Azure subscription to be used
 subscriptionId = "xxxxx"
 
+# The Azure environment to be used
+environment = "public"
+
 # The Azure location to be used
 location = "westeurope"
 
@@ -41,7 +44,7 @@ licenseServer = false
 licenseServerAdminLogin = "cluster"
 
 # Password of the local user of the license server
-licenseServerAdminPassword = "foobar1234"
+licenseServerAdminPassword = "Foobar1234"
 
 # The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics.
 logAnalyticsWorkspaceName = ""

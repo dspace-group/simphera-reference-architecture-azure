@@ -3,6 +3,11 @@ variable subscriptionId {
   description = "The ID of the Azure subscription to be used."
 }
 
+variable environment {
+  type        = string
+  description = "The Azure environment to be used."
+}
+
 variable location {
   type        = string
   description = "The Azure location to be used."
