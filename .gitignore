@@ -17,3 +17,5 @@
 *.lock.hcl
 
 **/OLD_*
+
+*.kubeconfig
