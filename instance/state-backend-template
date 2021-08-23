@@ -1,9 +1,9 @@
 terraform {
   backend "azurerm" {
     resource_group_name  = "terraform-state"
-    storage_account_name = "vintfstate"
+    storage_account_name = "simpherainfra"
     container_name       = "terraformstate"
-    key                  = "terraform.tfstate"
+    key                  = "instance.tfstate"
     environment          = "public"
   }
 }

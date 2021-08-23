@@ -3,7 +3,14 @@ resource "azurerm_resource_group" "license-server" {
   provider  = azurerm.cluster-provider-subscription
   name      = "${var.infrastructurename}-license-server"
   location  = "${var.location}"
-  tags      = var.tags
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_subnet" "license-server-subnet" {
@@ -30,6 +37,12 @@ resource "azurerm_network_interface" "license-server-nic" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_network_security_group" "license-server-nsg" {
@@ -64,6 +77,12 @@ resource "azurerm_network_security_group" "license-server-nsg" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_network_interface_security_group_association" "ni-license-server-sga" {
@@ -98,4 +117,10 @@ resource "azurerm_windows_virtual_machine" "license-server" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
