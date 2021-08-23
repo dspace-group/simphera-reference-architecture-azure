@@ -8,6 +8,7 @@ environment = "public"
 location = "westeurope"
 
 # The name of the infrastructure. e.g. simphera-infra
+# This name will also be used as a prefix to the resource group names created by terraform.
 infrastructurename = "simphera-infra"
 
 # The tags to be added to all resources
