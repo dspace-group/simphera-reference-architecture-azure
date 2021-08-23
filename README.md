@@ -110,7 +110,9 @@ terraform destroy -var-file="config.tfvars"
 
 ### Kubernetes
 
-This _common_ part includes a deployment of a managed kubernetes cluster (AKS). In order to use command line tools such as `kubectl` or `helm` you can load the access configuration by executing the follwowing command:
+This _common_ part includes a deployment of a managed kubernetes cluster (AKS). In order to use command line tools such as `kubectl` or `helm` you need a _kubeconfig_ configuration file. This file will automatically be exported by terraform under the filename `<infrastructurename>.kubeconfig`.
+
+Alternatively, you can use the following Azure CLI command to load the _kubeconfig_ file. This command will add the configuration of the new cluster to your default _kubeconfig_ file:
 
 ```sh
 az aks get-credentials --resource-group <infrastructurename>-aks --name <infrastructurename>-aks
@@ -122,7 +124,7 @@ If you want to _ssh_ into a node you can use a command like this:
 ssh -i shared-ssh-key/ssh simphera@<name-or-ip-of-node>
 ```
 
-But please keep in mind the the nodes themselves do not get _public IPs_. Therefore you may need to create a _Linux jumpbox VM_ within your virtual network to be able to connect to a node from there. In that case you have to copy the private key to that machine and have to set the correct file access: `chmod 600 shared-ssh-key/ssh`. As an alternative you can use the _License Server Windows VM_ as jumpbox.
+But please keep in mind that the nodes themselves do not get _public IPs_. Therefore you may need to create a _Linux jumpbox VM_ within your virtual network to be able to connect to a node from there. In that case you have to copy the private key to that machine and have to set the correct file access: `chmod 600 shared-ssh-key/ssh`. As an alternative you can use the _License Server Windows VM_ as jumpbox.
 
 ## Instance
 
