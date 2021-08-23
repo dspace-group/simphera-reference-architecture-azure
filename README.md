@@ -55,7 +55,7 @@ The common section creates the following Azure resources:
 
 ### Configuration
 
-If you did not already clone this Git repository please clone it now to our local administration PC.
+If you did not already clone this Git repository please clone it now to your local administration PC.
 
 For your configuration, make a copy of the file `config_template.tfvars` named `config.tfvars` and make your changes in this copy. This file contains all variables that are configurable including the documentation of the variables. Please adapt the values before you deploy the resources.
 
