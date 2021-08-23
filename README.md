@@ -81,7 +81,7 @@ To deploy the common part, you first have to login to your Azure subscription an
 ```sh
 cd common
 az account set --subscription "My Subscription"
-Terraform init
+terraform init
 ```
 
 Afterwards you can deploy the resources:
