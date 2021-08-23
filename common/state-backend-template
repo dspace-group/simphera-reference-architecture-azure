@@ -3,7 +3,7 @@ terraform {
     resource_group_name  = "terraform-state"
     storage_account_name = "simpherainfra"
     container_name       = "terraformstate"
-    key                  = "terraform.tfstate"
+    key                  = "common.tfstate"
     environment          = "public"
   }
 }

@@ -1,7 +1,7 @@
 # The ID of the Azure subscription to be used
 subscriptionId = "xxxxx"
 
-# The Azure environment to be used
+# The Azure environment to be used, either 'public' or 'china'
 environment = "public"
 
 # The Azure location to be used
@@ -20,10 +20,10 @@ linuxNodeSize = "Standard_D4s_v3"
 linuxNodeCountMin = 1
 
 # The maximum number of Linux nodes for the regular services
-linuxNodeCountMax = 1
+linuxNodeCountMax = 10
 
 # The machine size of the Linux nodes for the job execution
-linuxExecutionNodeSize = "Standard_D16s_v3"
+linuxExecutionNodeSize = "Standard_D4s_v3"
 
 # The minimum number of Linux nodes for the job execution
 linuxExecutionNodeCountMin = 0

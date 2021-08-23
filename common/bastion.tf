@@ -2,7 +2,14 @@ resource "azurerm_resource_group" "bastion" {
   provider  = azurerm.cluster-provider-subscription
   name      = "${var.infrastructurename}-bastion"
   location  = "${var.location}"
-  tags      = var.tags
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_subnet" "bastion-subnet" {
@@ -21,6 +28,14 @@ resource "azurerm_public_ip" "bastion-pubip" {
   resource_group_name = azurerm_resource_group.bastion.name
   allocation_method   = "Static"
   sku                 = "Standard"
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_bastion_host" "bastion-host" {
@@ -36,5 +51,11 @@ resource "azurerm_bastion_host" "bastion-host" {
     public_ip_address_id = azurerm_public_ip.bastion-pubip.0.id
   }
 
-  tags      = var.tags
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }

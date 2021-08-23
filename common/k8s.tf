@@ -116,7 +116,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
 
   node_labels = {
     "purpose" = "execution"
-    "kubernetes.io/os" = "linux"
   }
 
   node_taints = [
