@@ -2,15 +2,29 @@
 
 This repository contains the reference architecture of the infrastructure needed to deploy dSPACE SIMPHERA to the Azure Public Cloud. It does not contain the helm chart needed to deploy SIMPHERA itself, but only the base infrastructure such as Kubernetes, PostgreSQL, storage accounts, etc.
 
-You can use the reference architecture as a starting point for your SIMPHERA installation if you plan to deploy SIMPHERA to Azure. You can use the reference architecture as it is and only have to configure few individual values. If you have special requirements feel free to adapt the architecture to your needs. For example, the reference architecture does not contain any kind of VPN connection to a private, on-premise network because this is highly user specific. But the reference architecture is configured in such a way that the ingress points are available in the public internet.
+You can use the reference architecture as a starting point for your SIMPHERA installation if you plan to deploy SIMPHERA to Azure. You can use the reference architecture as is and only have to configure few individual values. If you have special requirements feel free to adapt the architecture to your needs. For example, the reference architecture does not contain any kind of VPN connection to a private, on-premise network because this is highly specific. But the reference architecture is configured in such a way that the ingress points are available in the public internet.
 
 Using the reference architecture you can deploy a single or even multiple instances of SIMPHERA, e.g. one for _production_ and one for _testing_.
 
+## Terraform
+
+This reference architecture is provided as [Terraform](https://terraform.io/) configurations. Terraform is an open-source command line tool to automatically create and manage cloud resources. A Terraform configuration consists of various `.tf` files that can be opened in any text editor. These files contain the specifications of the resources to be created in the cloud infrastructure. That is the reason why this approach is called _infrastructure-as-code_. The main advantage of this approach is _reproducibility_ becaue the configuration can be mainted in a source control system such as Git.
+
+### Variables
+
+Terraform uses _variables_ to make the specification configurable. The concrete values for these variables are specified in `.tfvars` files. So it is the task of the administrator to fill the `.tfvars` files with the correct values. This is explained in more detailed in a later chapter.
+
+### State
+
+Terraform has the concept of a _state_. On the one hand side there are the resource specifications in the `.tf` files. On the other hand there are the resources in the cloud infrastructure that are created based on these files. Terraform needs to store _mapping information_ which element of the specification belongs to which resource in the cloud infrastructure. This mapping is called the _state_. In general you could store the state on your local hard drive. But that is not a good idea because in that case nobody else could change some settings and apply these changes. Therefore the state itself should be stored in the cloud.
+
+So you need to manually create a storage account in Azure before you can start using Terraform. This is explained in more detail in the section _Prerequisites_.
+
 ## Overview
 
-The reference architecture is defined as _Terraform configurations_. It is devided into two sections:
+As mentioned before, the reference architecture is defined as _Terraform configurations_. It is devided into two sections:
 
-1. `common`: As mentioned before this reference architecture supports the deployment of a single instance or multiple instances of SIMPHERA. Some Azure resources will be shared between these instances. These resources are defined in the `common` section.
+1. `common`: This reference architecture supports the deployment of a single instance or multiple instances of SIMPHERA. Some Azure resources will be shared between these instances. These resources are defined in the `common` section.
 2. `instance`: This section contains the SIMPHERA instance specific Azure resources.
 
 Both folders contain separate Terraform configurations that have to be applied individually. So please keep in mind to first apply the _common_ section and afterwards apply the _instance_ section.
