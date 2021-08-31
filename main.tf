@@ -12,13 +12,15 @@ locals {
   environment = var.environment
 }  
 
-provider "azurerm"{
+provider "azurerm" {
   alias  = "cluster-provider-subscription"
   subscription_id = local.subscriptionId
   environment = local.environment
   features {}
 }
 
-data "azurerm_client_config" "current" {
-  provider  = azurerm.cluster-provider-subscription
+# The following block is needed to get around the following error:
+# Error: Invalid required_providers object
+provider "azurerm" {
+  features {}
 }

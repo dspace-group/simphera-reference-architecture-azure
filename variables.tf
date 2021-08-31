@@ -107,3 +107,18 @@ variable kubernetesVersion {
   description = "The version of the AKS cluster."
   default     = "1.20.7"
 }
+
+variable simpheraInstances {
+  type = map(object({
+    name = string
+    minioAccountReplicationType = string
+    postgresqlAdminLogin = string
+    postgresqlAdminPassword = string
+    postgresqlVersion = string
+    postgresqlSkuName = string
+    postgresqlStorage = number
+  }))
+
+  description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
+  default     = {}
+}

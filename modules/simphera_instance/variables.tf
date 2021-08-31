@@ -18,9 +18,19 @@ variable infrastructurename {
   description = "The name of the infrastructure. e.g. simphera-infra"
 }
 
-variable instancename {
+variable paasServicesSubnetId {
   type        = string
-  description = "The name of the cluster. e.g. production"
+  description = "The id of the PaaS subnet"
+}
+
+variable postgresqlPrivatelinkDnsZoneId {
+  type        = string
+  description = "The id of the private DNS zone for PostgreSQL"
+}
+
+variable name {
+  type        = string
+  description = "The name of the SIMPHERA instance. e.g. production"
 }
 
 variable tags {
@@ -29,7 +39,7 @@ variable tags {
   default     = {}
 }
 
-variable "minioAccountReplicationType" {
+variable minioAccountReplicationType {
     type        = string
     description = "The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS."
     default     = "ZRS"
@@ -62,5 +72,5 @@ variable postgresqlSkuName {
 variable postgresqlStorage {
   type        = number
   description = "PostgreSQL Storage in MB, must be divisble by 1024"
-  default     = 640000
+  default     = 5120
 }

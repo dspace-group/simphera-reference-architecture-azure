@@ -1,6 +1,5 @@
 resource "azurerm_resource_group" "couchbackup"{
-  provider  = azurerm.cluster-provider-subscription
-  name      = "${var.instancename}-couchbackup"
+  name      = "${var.name}-couchbackup"
   location  = "${var.location}"
   tags      = var.tags
 }
@@ -9,8 +8,7 @@ resource "random_uuid" "couchbackup-acl" {
 }
 
 resource "azurerm_storage_account" "couchbackup_storage_account" {
-  name                     = join("", [substr(replace(var.instancename, "-", ""), 0, 13), "couchbackup"])
-  provider                 = azurerm.cluster-provider-subscription
+  name                     = join("", [substr(replace(var.name, "-", ""), 0, 13), "couchbackup"])
   resource_group_name      = azurerm_resource_group.couchbackup.name
   location                 = "${var.location}"
   account_tier             = "Standard"
@@ -20,7 +18,6 @@ resource "azurerm_storage_account" "couchbackup_storage_account" {
 
 resource "azurerm_storage_share" "couchbackup-share" {
   name                 = "couchbackup-share"
-  provider             = azurerm.cluster-provider-subscription
   storage_account_name = azurerm_storage_account.couchbackup_storage_account.name
   quota                = 50
 
