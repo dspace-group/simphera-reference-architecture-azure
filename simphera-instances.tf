@@ -8,7 +8,7 @@ module simphera_instance {
   location = var.location
   infrastructurename = var.infrastructurename
   paasServicesSubnetId = azurerm_subnet.paas-services-subnet.id
-  postgresqlPrivatelinkDnsZoneId = azurerm_private_dns_zone_virtual_network_link.postgresql-privatelink-network-link.id
+  postgresqlPrivatelinkDnsZoneId = azurerm_private_dns_zone.postgresql-privatelink-dns-zone.id
   
   name = each.value.name
   minioAccountReplicationType = each.value.minioAccountReplicationType

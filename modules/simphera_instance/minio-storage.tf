@@ -4,6 +4,12 @@ resource "azurerm_resource_group" "minio-storage" {
   location  = "${var.location}"
   
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_storage_account" "minio_storage_account" {
@@ -16,4 +22,10 @@ resource "azurerm_storage_account" "minio_storage_account" {
   access_tier              = "Hot"
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }

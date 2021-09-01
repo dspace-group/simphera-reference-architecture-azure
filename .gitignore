@@ -6,13 +6,12 @@
 *.tfstate
 *.tfstate.*
 
-# all .tfvars files except template ones
+# all .tfvars files except template one
 **/*.tfvars
-!common/config_template.tfvars
-!instance/config_template.tfvars
+!config_template.tfvars
 
-# all state-backends
-**/state-backend.tf
+# state-backend
+state-backend.tf
 
 *.lock.hcl
 

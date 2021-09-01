@@ -24,6 +24,12 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   ssl_enforcement_enabled          = false
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_private_endpoint" "postgresql-endpoint" {
@@ -45,6 +51,12 @@ resource "azurerm_private_endpoint" "postgresql-endpoint" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_postgresql_database" "keycloak" {

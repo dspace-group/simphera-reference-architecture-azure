@@ -1,7 +1,14 @@
 resource "azurerm_resource_group" "couchbackup"{
   name      = "${var.name}-couchbackup"
   location  = "${var.location}"
-  tags      = var.tags
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "random_uuid" "couchbackup-acl" {
@@ -14,6 +21,14 @@ resource "azurerm_storage_account" "couchbackup_storage_account" {
   account_tier             = "Standard"
   account_replication_type = "GRS"
   access_tier              = "Cool"
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_storage_share" "couchbackup-share" {
