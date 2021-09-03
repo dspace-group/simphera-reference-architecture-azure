@@ -7,6 +7,7 @@ module simphera_instance {
   environment = var.environment
   location = var.location
   infrastructurename = var.infrastructurename
+  tags = var.tags
   paasServicesSubnetId = azurerm_subnet.paas-services-subnet.id
   postgresqlPrivatelinkDnsZoneId = azurerm_private_dns_zone.postgresql-privatelink-dns-zone.id
   
@@ -17,5 +18,4 @@ module simphera_instance {
   postgresqlVersion = each.value.postgresqlVersion
   postgresqlSkuName = each.value.postgresqlSkuName
   postgresqlStorage = each.value.postgresqlStorage
-  tags = each.value.tags
 }
