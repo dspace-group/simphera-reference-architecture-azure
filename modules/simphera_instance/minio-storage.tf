@@ -13,7 +13,7 @@ resource "azurerm_resource_group" "minio-storage" {
 }
 
 resource "azurerm_storage_account" "minio_storage_account" {
-  name                     = substr(replace("${​​​var.name}​​​${​​​var.infrastructurename}​​​", "-", ""), 0, 24)
+  name                     = substr(replace(join("", [var.name, var.infrastructurename]), "-", ""), 0, 24)
   resource_group_name      = azurerm_resource_group.minio-storage.name
   location                 = azurerm_resource_group.minio-storage.location
   account_tier             = "Standard"
