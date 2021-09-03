@@ -78,7 +78,7 @@ simpheraInstances = {
         # PostgreSQL SKU Name
         postgresqlSkuName = "GP_Gen5_2"
 
-        # PostgreSQL Storage in MB, must be divisble by 1024
+        # PostgreSQL Storage in MB, must be divisible by 1024
         postgresqlStorage = "5120"
     }
 }

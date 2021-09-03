@@ -17,4 +17,5 @@ module simphera_instance {
   postgresqlVersion = each.value.postgresqlVersion
   postgresqlSkuName = each.value.postgresqlSkuName
   postgresqlStorage = each.value.postgresqlStorage
+  tags = each.value.tags
 }
