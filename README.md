@@ -8,7 +8,7 @@ Using the reference architecture you can deploy a single or even multiple instan
 
 ## Terraform
 
-This reference architecture is provided as a [Terraform](https://terraform.io/) configuration. Terraform is an open-source command line tool to automatically create and manage cloud resources. A Terraform configuration consists of various `.tf` files that can be opened in any text editor. These files contain the specifications of the resources to be created in the cloud infrastructure. That is the reason why this approach is called _infrastructure-as-code_. The main advantage of this approach is _reproducibility_ becaue the configuration can be mainted in a source control system such as Git.
+This reference architecture is provided as a [Terraform](https://terraform.io/) configuration. Terraform is an open-source command line tool to automatically create and manage cloud resources. A Terraform configuration consists of various `.tf` text files. These files contain the specifications of the resources to be created in the cloud infrastructure. That is the reason why this approach is called _infrastructure-as-code_. The main advantage of this approach is _reproducibility_ becaue the configuration can be mainted in a source control system such as Git.
 
 ### Variables
 
@@ -30,16 +30,16 @@ The following figure shows the main resources of the architecture:
 
 ## Prerequisites
 
-Before you start you need an Azure subscription and typically the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
+Before you start you need an Azure subscription and the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
 
 - _Storage Account_: A storage account with Performance set to `standard` and account kind set to `StorageV2 (general purpose v2)` is needed to store the Terraform state. You also have to create a container for the state inside the storage account.
 - _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
 
+On your administration PC you need to install the [Terraform](https://terraform.io/) command, the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) and `ssh-keygen` which is typically available on most operating systems.
+
 ## Authentication
 
-Authentication to Azure is done via [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/). Terraform only supports authenticating using the `az` CLI (which must be available on your PATH).
-
-To login to the Azure CLI, use:
+To login to Azure, use:
 
 ```sh
 az login
@@ -57,7 +57,7 @@ If you did not already clone this Git repository please clone it now to your loc
 
 ## SSH Keys
 
-In order to be able to connect to the Kubernetes nodes using _ssh_ you need to create private _ssh keys_. You can create such keys by executing the following command in the _root_ folder:
+In order to be able to connect to the Kubernetes nodes using _ssh_ you need to create private _ssh keys_. You have to create such keys by executing the following command in the _root_ folder:
 
 ```sh
 # bash
@@ -71,17 +71,17 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 
 As mentioned before Terraform stores the state of the resources it creates within a container of an Azure storage account. Therefore, you need to specify this location.
 
-To do so, you have to make a copy of the file `state-backend-template`, name it `state-backend.tf` and open the file using a text editor. The values have to point to the existing storage account to be used to store the Terraform state:
+To do so, please make a copy of the file `state-backend-template`, name it `state-backend.tf` and open the file in a text editor. The values have to point to an existing storage account to be used to store the Terraform state:
 
 * `resource_group_name`: The name of the resource group your storage account is located in.
-* `storage_account_name`: The name of the storage account that you created before.
+* `storage_account_name`: The name of the storage account.
 * `container_name`: The name of the container inside the storage account to be used to store the terraform state. You need to create this container manually.
 * `key`: The name of the file to be used inside the container to be used for this terraform state.
 * `environment`: Use the value `public` for the general Azure cloud.
 
 ## Configuration
 
-For your configuration, make a copy of the file `config_template.tfvars`, name it `config.tfvars` and open the file using a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
+For your configuration, please make a copy of the file `config_template.tfvars`, name it `config.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
 
 ### Mandatory Variables
 
@@ -89,9 +89,9 @@ Here is the list of the variables that you must change in `config.tfvars`:
 
 * `subscriptionId`: The ID of the Azure subscription you want to deploy SIMPHERA to
 * `location`: The name of the Azure region you want to deploy SIMPHERA to
-* `infrastructurename`: The name of this infrastructure. This name will also be used as a prefix for various Azure resource groups.
+* `infrastructurename`: The name of this infrastructure. This name will also be used as a prefix for various Azure resource groups. So please choose it carefully.
 * `licenseServerAdminPassword`: The password for the user `cluster` of the Windows VM used as the license server.
-* `simpheraInstances`: As mentioned before you can configure multiple instances of SIMPHERA. This variable contains a map of these instances. Per instance you must set the following variables:
+* `simpheraInstances`: As mentioned before you can configure multiple instances of SIMPHERA, such as _staging_ and _production_. This variable contains a map of these instances. Per instance you must set the following variables:
   * `name`: The name of the instance. This name will also be used as a prefix for various Azure resource groups.
   * `postgresqlAdminPassword`: The password for the user `dbuser` of the PostgreSQL server.
 
