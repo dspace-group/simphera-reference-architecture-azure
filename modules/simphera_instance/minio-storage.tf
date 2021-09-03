@@ -1,15 +1,19 @@
 
 resource "azurerm_resource_group" "minio-storage" {
-  provider  = azurerm.cluster-provider-subscription
-  name      = "${var.instancename}-storage"
+  name      = "${var.name}-storage"
   location  = "${var.location}"
   
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_storage_account" "minio_storage_account" {
-  name                     = substr(replace(var.instancename, "-", ""), 0, 24)
-  provider                 = azurerm.cluster-provider-subscription
+  name                     = substr(replace(join("", [var.name, var.infrastructurename]), "-", ""), 0, 24)
   resource_group_name      = azurerm_resource_group.minio-storage.name
   location                 = azurerm_resource_group.minio-storage.location
   account_tier             = "Standard"
@@ -18,4 +22,10 @@ resource "azurerm_storage_account" "minio_storage_account" {
   access_tier              = "Hot"
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }

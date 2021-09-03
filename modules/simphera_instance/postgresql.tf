@@ -1,13 +1,11 @@
 resource "azurerm_resource_group" "postgres"{
-  provider  = azurerm.cluster-provider-subscription
-  name      = "${var.instancename}-postgresql"
+  name      = "${var.name}-postgresql"
   location  = "${var.location}"
   tags      = var.tags
 }
 
 resource "azurerm_postgresql_server" "postgresql-server" {
-  provider            = azurerm.cluster-provider-subscription
-  name                = "${var.instancename}-postgresql"
+  name                = "${var.name}-postgresql"
   location            = azurerm_resource_group.postgres.location
   resource_group_name = azurerm_resource_group.postgres.name
 
@@ -26,18 +24,23 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   ssl_enforcement_enabled          = false
 
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_private_endpoint" "postgresql-endpoint" {
-  provider               = azurerm.cluster-provider-subscription
   name                   = "postgresql-endpoint"
   location               = azurerm_postgresql_server.postgresql-server.location
   resource_group_name    = azurerm_postgresql_server.postgresql-server.resource_group_name
-  subnet_id              = data.azurerm_subnet.paas-services-subnet.id
+  subnet_id              = var.paasServicesSubnetId
   
   private_dns_zone_group {
     name = "postgresql-zone-group"
-    private_dns_zone_ids = [data.azurerm_private_dns_zone.postgresql-privatelink-dns-zone.id]
+    private_dns_zone_ids = [var.postgresqlPrivatelinkDnsZoneId]
   } 
 
   private_service_connection {
@@ -48,16 +51,15 @@ resource "azurerm_private_endpoint" "postgresql-endpoint" {
   }
 
   tags = var.tags
-}
 
-data "azurerm_private_dns_zone" "postgresql-privatelink-dns-zone" {
-  provider             = azurerm.cluster-provider-subscription
-  name                 = "privatelink.postgres.database.azure.com"
-  resource_group_name  = "${var.infrastructurename}-network"
+  lifecycle {
+    ignore_changes = [
+        tags
+    ]
+  }
 }
 
 resource "azurerm_postgresql_database" "keycloak" {
-  provider              = azurerm.cluster-provider-subscription
   name                  = "keycloak"
   resource_group_name   = azurerm_postgresql_server.postgresql-server.resource_group_name
   server_name           = azurerm_postgresql_server.postgresql-server.name
@@ -66,7 +68,6 @@ resource "azurerm_postgresql_database" "keycloak" {
 }
 
 resource "azurerm_postgresql_database" "simphera" {
-  provider              = azurerm.cluster-provider-subscription
   name                  = "simphera"
   resource_group_name   = azurerm_postgresql_server.postgresql-server.resource_group_name
   server_name           = azurerm_postgresql_server.postgresql-server.name
