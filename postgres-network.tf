@@ -1,12 +1,12 @@
 resource "azurerm_private_dns_zone" "postgresql-privatelink-dns-zone" {
-  provider             = azurerm.cluster-provider-subscription
-  name                 = "privatelink.postgres.database.azure.com"
-  resource_group_name  = azurerm_resource_group.network.name
-  tags                 = var.tags
+  provider            = azurerm.cluster-provider-subscription
+  name                = "privatelink.postgres.database.azure.com"
+  resource_group_name = azurerm_resource_group.network.name
+  tags                = var.tags
 
   lifecycle {
     ignore_changes = [
-        tags
+      tags
     ]
   }
 }
@@ -21,7 +21,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql-privatelink
 
   lifecycle {
     ignore_changes = [
-        tags
+      tags
     ]
   }
 } 
