@@ -1,13 +1,13 @@
 
 resource "azurerm_resource_group" "minio-storage" {
-  name      = "${var.name}-storage"
-  location  = "${var.location}"
-  
+  name     = "${var.name}-storage"
+  location = var.location
+
   tags = var.tags
 
   lifecycle {
     ignore_changes = [
-        tags
+      tags
     ]
   }
 }
@@ -25,7 +25,7 @@ resource "azurerm_storage_account" "minio_storage_account" {
 
   lifecycle {
     ignore_changes = [
-        tags
+      tags
     ]
   }
 }
