@@ -1,4 +1,5 @@
 resource "azurerm_resource_group" "bastion" {
+  count    = var.licenseServer ? 1 : 0
   provider = azurerm.cluster-provider-subscription
   name     = "${var.infrastructurename}-bastion"
   location = var.location
@@ -13,6 +14,7 @@ resource "azurerm_resource_group" "bastion" {
 }
 
 resource "azurerm_subnet" "bastion-subnet" {
+  count                = var.licenseServer ? 1 : 0
   provider             = azurerm.cluster-provider-subscription
   name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.network.name
