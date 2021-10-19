@@ -1,6 +1,6 @@
 resource "azurerm_private_dns_zone" "postgresql-privatelink-dns-zone" {
   provider             = azurerm.cluster-provider-subscription
-  name                 = "privatelink.postgres.database.azure.com"
+  name                 = var.environment == "china" ? "privatelink.postgres.database.chinacloudapi.cn" : "privatelink.postgres.database.azure.com"
   resource_group_name  = azurerm_resource_group.network.name
   tags                 = var.tags
 
