@@ -1,6 +1,5 @@
 resource "azurerm_resource_group" "license-server" {
   count     = "${var.licenseServer ? 1 : 0}"
-  provider  = azurerm.cluster-provider-subscription
   name      = "${var.infrastructurename}-license-server"
   location  = "${var.location}"
 
@@ -15,7 +14,6 @@ resource "azurerm_resource_group" "license-server" {
 
 resource "azurerm_subnet" "license-server-subnet" {
   count                = "${var.licenseServer ? 1 : 0}"
-  provider             = azurerm.cluster-provider-subscription
   name                 = "license-server-subnet"
   resource_group_name  = azurerm_resource_group.network.name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
@@ -25,7 +23,6 @@ resource "azurerm_subnet" "license-server-subnet" {
 # Virtual machine using Azure Bastion via private IP address
 resource "azurerm_network_interface" "license-server-nic" {
   count               = "${var.licenseServer ? 1 : 0}"
-  provider            = azurerm.cluster-provider-subscription
   name                = "license-server-nic"
   resource_group_name = azurerm_resource_group.license-server[0].name
   location            = "${var.location}"
@@ -47,7 +44,6 @@ resource "azurerm_network_interface" "license-server-nic" {
 
 resource "azurerm_network_security_group" "license-server-nsg" {
   count               = "${var.licenseServer ? 1 : 0}"
-  provider            = azurerm.cluster-provider-subscription
   name                = "license-server-nsg"
   location            = "${var.location}"
   resource_group_name = azurerm_resource_group.license-server[0].name
@@ -87,7 +83,6 @@ resource "azurerm_network_security_group" "license-server-nsg" {
 
 resource "azurerm_network_interface_security_group_association" "ni-license-server-sga" {
   count                     = "${var.licenseServer ? 1 : 0}"
-  provider                  = azurerm.cluster-provider-subscription
   network_interface_id      = azurerm_network_interface.license-server-nic.0.id
   network_security_group_id = azurerm_network_security_group.license-server-nsg.0.id
 }
@@ -95,7 +90,6 @@ resource "azurerm_network_interface_security_group_association" "ni-license-serv
 
 resource "azurerm_windows_virtual_machine" "license-server" {
   count               = "${var.licenseServer ? 1 : 0}"
-  provider            = azurerm.cluster-provider-subscription
   resource_group_name = azurerm_resource_group.license-server[0].name
   name                = "license-server"
   location            = "${var.location}"
