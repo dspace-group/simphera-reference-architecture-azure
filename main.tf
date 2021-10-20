@@ -7,20 +7,8 @@ terraform {
   }
 }
 
-locals {
-  subscriptionId = var.subscriptionId
+provider "azurerm" {
+  subscription_id = var.subscriptionId
   environment = var.environment
-}  
-
-provider "azurerm" {
-  alias  = "cluster-provider-subscription"
-  subscription_id = local.subscriptionId
-  environment = local.environment
-  features {}
-}
-
-# The following block is needed to get around the following error:
-# Error: Invalid required_providers object
-provider "azurerm" {
   features {}
 }

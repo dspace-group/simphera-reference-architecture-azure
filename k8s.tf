@@ -1,12 +1,10 @@
 resource "azurerm_resource_group" "aks" {
-  provider  = azurerm.cluster-provider-subscription
   name      = "${var.infrastructurename}-aks"
   location  = "${var.location}"
   tags      = var.tags
 }
 
 resource "azurerm_subnet" "default-node-pool-subnet" {
-  provider             = azurerm.cluster-provider-subscription
   name                 = "default-node-pool-subnet"
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
@@ -14,7 +12,6 @@ resource "azurerm_subnet" "default-node-pool-subnet" {
 }
 
 resource "azurerm_subnet" "execution-nodes-subnet" {
-  provider             = azurerm.cluster-provider-subscription
   name                 = "execution-nodes-subnet"
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
@@ -22,7 +19,6 @@ resource "azurerm_subnet" "execution-nodes-subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  provider            = azurerm.cluster-provider-subscription
   name                = "${var.infrastructurename}-aks"
   location            = azurerm_resource_group.aks.location
   resource_group_name = azurerm_resource_group.aks.name
@@ -100,7 +96,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
-  provider              = azurerm.cluster-provider-subscription
   name                  = "execnodes"
   mode                  = "User"
   orchestrator_version  = var.kubernetesVersion
