@@ -1,7 +1,7 @@
 resource "azurerm_resource_group" "aks" {
-  name      = "${var.infrastructurename}-aks"
-  location  = "${var.location}"
-  tags      = var.tags
+  name     = "${var.infrastructurename}-aks"
+  location = var.location
+  tags     = var.tags
 }
 
 resource "azurerm_subnet" "default-node-pool-subnet" {
@@ -51,10 +51,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin      = "azure"
-    service_cidr        = "10.0.64.0/19" # MUST be smaller than /12
-    dns_service_ip      = "10.0.64.10" # MUST NOT be the first IP address in the address range
-    docker_bridge_cidr  = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
+    network_plugin     = "azure"
+    service_cidr       = "10.0.64.0/19"  # MUST be smaller than /12
+    dns_service_ip     = "10.0.64.10"    # MUST NOT be the first IP address in the address range
+    docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
   }
 
   role_based_access_control {
@@ -80,7 +80,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
     oms_agent {
       enabled                    = var.logAnalyticsWorkspaceName != ""
-      log_analytics_workspace_id = "${var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null }"
+      log_analytics_workspace_id = var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null
     }
   }
 
@@ -88,9 +88,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   lifecycle {
     ignore_changes = [
-        default_node_pool[0].node_count,
-        tags,
-        api_server_authorized_ip_ranges
+      default_node_pool[0].node_count,
+      tags,
+      api_server_authorized_ip_ranges
     ]
   }
 }
@@ -120,12 +120,12 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   tags = var.tags
 
   lifecycle {
-      ignore_changes = [
-          availability_zones,
-          enable_host_encryption,
-          enable_node_public_ip,
-          vnet_subnet_id,
-          node_count
-      ]
+    ignore_changes = [
+      availability_zones,
+      enable_host_encryption,
+      enable_node_public_ip,
+      vnet_subnet_id,
+      node_count
+    ]
   }
 }
