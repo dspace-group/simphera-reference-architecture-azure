@@ -50,7 +50,7 @@ output "postgresql_server_username" {
 }
 
 output "postgresql_server_password" {
-  value     = var.postgresqlAdminPassword
+  value     = local.password
   sensitive = true
 }
 
