@@ -19,3 +19,36 @@ module "simphera_instance" {
   postgresqlSkuName           = each.value.postgresqlSkuName
   postgresqlStorage           = each.value.postgresqlStorage
 }
+
+output "postgresql_server_hostnames" {
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.postgresql_server_hostname
+  })
+}
+
+output "postgresql_server_usernames" {
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.postgresql_server_username
+  })
+  sensitive = true
+}
+
+output "postgresql_server_passwords" {
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.postgresql_server_password
+  })
+  sensitive = true
+}
+
+output "minio_storage_usernames" {
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.minio_storage_username
+  })
+}
+
+output "minio_storage_passwords" {
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.minio_storage_password
+  })
+  sensitive = true
+}

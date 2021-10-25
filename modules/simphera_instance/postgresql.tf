@@ -4,13 +4,20 @@ resource "azurerm_resource_group" "postgres" {
   tags     = var.tags
 }
 
+locals {
+  servername = "${var.name}-postgresql"
+  login      = var.postgresqlAdminLogin
+  password   = var.postgresqlAdminPassword
+  fulllogin  = "${var.postgresqlAdminLogin}@${local.servername}"
+}
+
 resource "azurerm_postgresql_server" "postgresql-server" {
-  name                = "${var.name}-postgresql"
+  name                = local.servername
   location            = azurerm_resource_group.postgres.location
   resource_group_name = azurerm_resource_group.postgres.name
 
-  administrator_login          = var.postgresqlAdminLogin
-  administrator_login_password = var.postgresqlAdminPassword
+  administrator_login          = local.login
+  administrator_login_password = local.password
 
   sku_name   = var.postgresqlSkuName
   version    = var.postgresqlVersion
@@ -30,6 +37,21 @@ resource "azurerm_postgresql_server" "postgresql-server" {
       tags
     ]
   }
+}
+
+output "postgresql_server_hostname" {
+  value     = azurerm_postgresql_server.postgresql-server.fqdn
+  sensitive = false
+}
+
+output "postgresql_server_username" {
+  value     = local.fulllogin
+  sensitive = false
+}
+
+output "postgresql_server_password" {
+  value     = local.password
+  sensitive = true
 }
 
 resource "azurerm_private_endpoint" "postgresql-endpoint" {
