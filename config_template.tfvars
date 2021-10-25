@@ -30,7 +30,7 @@ linuxExecutionNodeSize = "Standard_D4s_v3"
 linuxExecutionNodeCountMin = 0
 
 # The maximum number of Linux nodes for the job execution
-linuxExecutionNodeCountMax  = 10
+linuxExecutionNodeCountMax = 10
 
 # Path to the public SSH key to be used for the kubernetes nodes
 ssh_public_key_path = "shared-ssh-key/ssh.pub"
@@ -58,27 +58,27 @@ kubernetesVersion = "1.20.7"
 
 # The SIMPHERA instances
 simpheraInstances = {
-    "production" = {
-        # The name of the cluster. e.g. production
-        # This name will also be used as a prefix to the resource group names created by terraform.
-        name = "production"
-        
-        # The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS.
-        minioAccountReplicationType = "ZRS"
+  "production" = {
+    # The name of the cluster. e.g. production
+    # This name will also be used as a prefix to the resource group names created by terraform.
+    name = "production"
 
-        # Login name of the account for the PostgreSQL Server (must not be 'admin')
-        postgresqlAdminLogin = "dbuser"
+    # The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS.
+    minioAccountReplicationType = "ZRS"
 
-        # Password of the account for the PostgreSQL Server
-        postgresqlAdminPassword = "dj237&jN#+)67jNfsd#267"
+    # Login name of the account for the PostgreSQL Server (must not be 'admin')
+    postgresqlAdminLogin = "dbuser"
 
-        # PostgreSQL Server version to deploy
-        postgresqlVersion = "11"
+    # Password of the account for the PostgreSQL Server
+    postgresqlAdminPassword = "dj237&jN#+)67jNfsd#267"
 
-        # PostgreSQL SKU Name
-        postgresqlSkuName = "GP_Gen5_2"
+    # PostgreSQL Server version to deploy
+    postgresqlVersion = "11"
 
-        # PostgreSQL Storage in MB, must be divisible by 1024
-        postgresqlStorage = "5120"
-    }
+    # PostgreSQL SKU Name
+    postgresqlSkuName = "GP_Gen5_2"
+
+    # PostgreSQL Storage in MB, must be divisible by 1024
+    postgresqlStorage = "5120"
+  }
 }

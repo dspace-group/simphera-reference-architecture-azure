@@ -1,12 +1,12 @@
 resource "azurerm_resource_group" "bastion" {
-  name      = "${var.infrastructurename}-bastion"
-  location  = "${var.location}"
+  name     = "${var.infrastructurename}-bastion"
+  location = var.location
 
   tags = var.tags
 
   lifecycle {
     ignore_changes = [
-        tags
+      tags
     ]
   }
 }
@@ -19,9 +19,9 @@ resource "azurerm_subnet" "bastion-subnet" {
 }
 
 resource "azurerm_public_ip" "bastion-pubip" {
-  count               = "${var.licenseServer ? 1 : 0}"
+  count               = var.licenseServer ? 1 : 0
   name                = "bastion-pubip"
-  location            = "${var.location}"
+  location            = var.location
   resource_group_name = azurerm_resource_group.bastion.name
   allocation_method   = "Static"
   sku                 = "Standard"
@@ -30,15 +30,15 @@ resource "azurerm_public_ip" "bastion-pubip" {
 
   lifecycle {
     ignore_changes = [
-        tags
+      tags
     ]
   }
 }
 
 resource "azurerm_bastion_host" "bastion-host" {
-  count               = "${var.licenseServer ? 1 : 0}"
+  count               = var.licenseServer ? 1 : 0
   name                = "bastion-host"
-  location            = "${var.location}"
+  location            = var.location
   resource_group_name = azurerm_resource_group.bastion.name
 
   ip_configuration {
@@ -51,7 +51,7 @@ resource "azurerm_bastion_host" "bastion-host" {
 
   lifecycle {
     ignore_changes = [
-        tags
+      tags
     ]
   }
 }
