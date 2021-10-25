@@ -42,7 +42,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     enable_auto_scaling = true
     os_disk_size_gb     = 128
     type                = "VirtualMachineScaleSets"
-    max_pods            = 50
+    max_pods            = 110
     vnet_subnet_id      = azurerm_subnet.default-node-pool-subnet.id
   }
 
@@ -105,7 +105,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   max_count             = var.linuxExecutionNodeCountMax
   node_count            = var.linuxExecutionNodeCountMin
   vm_size               = var.linuxExecutionNodeSize
-  max_pods              = 30
+  max_pods              = 50
   enable_auto_scaling   = true
   vnet_subnet_id        = azurerm_subnet.execution-nodes-subnet.id
 
