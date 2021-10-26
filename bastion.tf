@@ -1,4 +1,5 @@
 resource "azurerm_resource_group" "bastion" {
+  count    = var.licenseServer ? 1 : 0
   name     = "${var.infrastructurename}-bastion"
   location = var.location
 
@@ -12,6 +13,7 @@ resource "azurerm_resource_group" "bastion" {
 }
 
 resource "azurerm_subnet" "bastion-subnet" {
+  count                = var.licenseServer ? 1 : 0
   name                 = "AzureBastionSubnet"
   resource_group_name  = azurerm_resource_group.network.name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
@@ -22,7 +24,7 @@ resource "azurerm_public_ip" "bastion-pubip" {
   count               = var.licenseServer ? 1 : 0
   name                = "bastion-pubip"
   location            = var.location
-  resource_group_name = azurerm_resource_group.bastion.name
+  resource_group_name = azurerm_resource_group.bastion.0.name
   allocation_method   = "Static"
   sku                 = "Standard"
 
@@ -39,11 +41,11 @@ resource "azurerm_bastion_host" "bastion-host" {
   count               = var.licenseServer ? 1 : 0
   name                = "bastion-host"
   location            = var.location
-  resource_group_name = azurerm_resource_group.bastion.name
+  resource_group_name = azurerm_resource_group.bastion.0.name
 
   ip_configuration {
     name                 = "configuration"
-    subnet_id            = azurerm_subnet.bastion-subnet.id
+    subnet_id            = azurerm_subnet.bastion-subnet.0.id
     public_ip_address_id = azurerm_public_ip.bastion-pubip.0.id
   }
 
