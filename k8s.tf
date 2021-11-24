@@ -18,7 +18,15 @@ resource "azurerm_subnet" "execution-nodes-subnet" {
   name                 = "execution-nodes-subnet"
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
-  address_prefixes     = ["10.0.32.0/19"]
+  address_prefixes     = ["10.0.32.0/20"]
+}
+
+resource "azurerm_subnet" "gpu-nodes-subnet" {
+  count                = var.gpuNodePool ? 1 : 0
+  name                 = "execution-nodes-subnet"
+  resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
+  virtual_network_name = azurerm_virtual_network.simphera-vnet.name
+  address_prefixes     = ["10.0.48.0/20"]
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
@@ -133,4 +141,45 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
           node_count
       ]
   }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
+  count                 = var.gpuNodePool ? 1 : 0
+  name                  = "gpuexecnodes"
+  mode                  = "User"
+  orchestrator_version  = var.kubernetesVersion
+  os_disk_size_gb       = 128
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  min_count             = var.gpuNodeCountMin
+  max_count             = var.gpuNodeCountMax
+  node_count            = var.gpuNodeCountMin
+  vm_size               = var.gpuNodeSize
+  max_pods              = 50
+  enable_auto_scaling   = true
+  vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet.id
+
+  node_labels = {
+    "purpose" = "execution" # Todo: clarify if Aurelion exec pods expect specific node labels
+  }
+
+  node_taints = [
+    "purpose=gpu:NoSchedule"
+  ]
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+      availability_zones,
+      enable_host_encryption,
+      enable_node_public_ip,
+      vnet_subnet_id,
+      node_count
+    ]
+  }
+}
+
+output "kube_config" {
+  value     = azurerm_kubernetes_cluster.aks.kube_config
+  sensitive = true
 }
