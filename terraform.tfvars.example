@@ -32,6 +32,18 @@ linuxExecutionNodeCountMin = 0
 # The maximum number of Linux nodes for the job execution
 linuxExecutionNodeCountMax = 10
 
+# Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster
+gpuNodePool = false
+
+# The minimum number of nodes for gpu job execution
+gpuNodeCountMin = 0
+
+# The maximum number of nodes for gpu job execution
+gpuNodeCountMax = 10
+
+# The machine size of the nodes for the gpu job execution
+gpuNodeSize = "Standard_D4s_v3"
+
 # Path to the public SSH key to be used for the kubernetes nodes
 ssh_public_key_path = "shared-ssh-key/ssh.pub"
 
