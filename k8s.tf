@@ -151,7 +151,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   vm_size               = var.gpuNodeSize
   max_pods              = 50
   enable_auto_scaling   = true
-  vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet.id
+  vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet[0].id
 
   node_labels = {
     "purpose" = "execution" # Todo: clarify if Aurelion exec pods expect specific node labels
