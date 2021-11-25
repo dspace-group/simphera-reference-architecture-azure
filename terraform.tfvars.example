@@ -15,7 +15,7 @@ infrastructurename = "simphera-infra"
 tags = {}
 
 # The machine size of the Linux nodes for the regular services
-linuxNodeSize = "Standard_D4s_v3"
+linuxNodeSize = "Standard_D4s_v4"
 
 # The minimum number of Linux nodes for the regular services
 linuxNodeCountMin = 1
@@ -24,7 +24,7 @@ linuxNodeCountMin = 1
 linuxNodeCountMax = 10
 
 # The machine size of the Linux nodes for the job execution
-linuxExecutionNodeSize = "Standard_D4s_v3"
+linuxExecutionNodeSize = "Standard_D4s_v4"
 
 # The minimum number of Linux nodes for the job execution
 linuxExecutionNodeCountMin = 0
@@ -42,7 +42,7 @@ gpuNodeCountMin = 0
 gpuNodeCountMax = 10
 
 # The machine size of the nodes for the gpu job execution
-gpuNodeSize = "Standard_D4s_v3"
+gpuNodeSize = "Standard_NC16as_T4_v3"
 
 # Path to the public SSH key to be used for the kubernetes nodes
 ssh_public_key_path = "shared-ssh-key/ssh.pub"
