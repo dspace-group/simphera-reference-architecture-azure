@@ -38,6 +38,12 @@ Before you start you need an Azure subscription and the `contributor` role to cr
 On your administration PC you need to install the [Terraform](https://terraform.io/) command, the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) and `ssh-keygen` which is typically available on most operating systems.
 
 ## Authentication
+Since Azure China and Azure Global are different environments, the Azure CLI must be set to Azure China using the command: 
+
+```sh
+az cloud set -n AzureChinaCloud
+```
+For details refer to the [Azure CLI](https://docs.azure.cn/zh-cn/cli/authenticate-azure-cli?view=azure-cli-latest) documentation.
 
 To login to Azure, use:
 
@@ -50,7 +56,7 @@ To switch to the correct subscription you can use the following command:
 ```sh
 az account set --subscription "My Subscription"
 ```
-
+ 
 ## Clone Repository
 
 If you did not already clone this Git repository please clone it now to your local administration PC.
