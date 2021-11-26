@@ -154,7 +154,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet[0].id
 
   node_labels = {
-    "purpose" = "execution" # Todo: clarify if Aurelion exec pods expect specific node labels
+    "purpose" = "gpu" # Todo: clarify if Aurelion exec pods expect specific node labels
   }
 
   node_taints = [
