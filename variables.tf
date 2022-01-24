@@ -45,7 +45,7 @@ variable "linuxNodeCountMax" {
 variable "linuxExecutionNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the job execution"
-  default     = "Standard_D16s_v3"
+  default     = "Standard_D16s_v4"
 }
 
 variable "linuxExecutionNodeCountMin" {

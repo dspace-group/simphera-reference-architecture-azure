@@ -81,7 +81,7 @@ To do so, please make a copy of the file `state-backend-template`, name it `stat
 
 ## Configuration
 
-For your configuration, please rename the file `terraform.tfvars.example` to `terraform.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
+For your configuration, please make a copy of the file `terraform.tfvars.example`, name it `terraform.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
 
 ### Mandatory Variables
 
