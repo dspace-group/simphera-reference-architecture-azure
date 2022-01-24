@@ -27,7 +27,7 @@ variable "tags" {
 variable "linuxNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the regular services"
-  default     = "Standard_D4s_v3"
+  default     = "Standard_D4s_v4"
 }
 
 variable "linuxNodeCountMin" {
@@ -45,7 +45,7 @@ variable "linuxNodeCountMax" {
 variable "linuxExecutionNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the job execution"
-  default     = "Standard_D16s_v3"
+  default     = "Standard_D16s_v4"
 }
 
 variable "linuxExecutionNodeCountMin" {

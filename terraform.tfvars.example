@@ -15,7 +15,7 @@ infrastructurename = "simphera-infra"
 tags = {}
 
 # The machine size of the Linux nodes for the regular services
-linuxNodeSize = "Standard_D4s_v3"
+linuxNodeSize = "Standard_D4s_v4"
 
 # The minimum number of Linux nodes for the regular services
 linuxNodeCountMin = 1
