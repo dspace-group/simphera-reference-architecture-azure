@@ -1,78 +1,102 @@
-variable subscriptionId {
+variable "subscriptionId" {
   type        = string
   description = "The ID of the Azure subscription to be used."
 }
 
-variable environment {
+variable "environment" {
   type        = string
   description = "The Azure environment to be used."
 }
 
-variable location {
+variable "location" {
   type        = string
   description = "The Azure location to be used."
 }
 
-variable infrastructurename {
+variable "infrastructurename" {
   type        = string
   description = "The name of the infrastructure. e.g. simphera-infra"
 }
 
-variable tags {
-  type        = map
+variable "tags" {
+  type        = map(any)
   description = "The tags to be added to all resources."
   default     = {}
 }
 
-variable linuxNodeSize {
+variable "linuxNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the regular services"
-  default     = "Standard_D4s_v3"
+  default     = "Standard_D4s_v4"
 }
 
-variable linuxNodeCountMin {
+variable "linuxNodeCountMin" {
   type        = number
   description = "The minimum number of Linux nodes for the regular services"
   default     = 1
 }
 
-variable linuxNodeCountMax {
+variable "linuxNodeCountMax" {
   type        = number
   description = "The maximum number of Linux nodes for the regular services"
   default     = 12
 }
 
-variable linuxExecutionNodeSize {
+variable "linuxExecutionNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the job execution"
-  default     = "Standard_D16s_v3"
+  default     = "Standard_D16s_v4"
 }
 
-variable linuxExecutionNodeCountMin {
+variable "linuxExecutionNodeCountMin" {
   type        = number
   description = "The minimum number of Linux nodes for the job execution"
   default     = 0
 }
 
-variable linuxExecutionNodeCountMax {
+variable "linuxExecutionNodeCountMax" {
   type        = number
   description = "The maximum number of Linux nodes for the job execution"
   default     = 10
 }
 
-variable ssh_public_key_path {
+variable "gpuNodePool" {
+  type        = bool
+  description = "Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster"
+  default     = false
+}
+
+variable "gpuNodeCountMin" {
+  type        = number
+  description = "The minimum number of nodes for gpu job execution"
+  default     = 0
+}
+
+variable "gpuNodeCountMax" {
+  type        = number
+  description = "The maximum number of nodes for gpu job execution"
+  default     = 12
+}
+
+variable "gpuNodeSize" {
+  type        = string
+  description = "The machine size of the nodes for the gpu job execution"
+  default     = "Standard_NC16as_T4_v3"
+}
+
+variable "ssh_public_key_path" {
   type        = string
   description = "Path to the public SSH key to be used for the kubernetes nodes."
   default     = "shared-ssh-key/ssh.pub"
 }
 
-variable ssh_private_key_path {
+variable "ssh_private_key_path" {
   type        = string
   description = "Path to the private SSH key to be used for the kubernetes nodes."
   default     = "shared-ssh-key/ssh"
 }
 
-variable licenseServer {
+variable "licenseServer" {
   type        = bool
   description = "Specifies whether a VM for the dSPACE Installation Manager will be deployed."
   default     = false
@@ -90,33 +114,33 @@ variable "licenseServerAdminPassword" {
   sensitive   = true
 }
 
-variable logAnalyticsWorkspaceName {
+variable "logAnalyticsWorkspaceName" {
   type        = string
   description = "The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics."
   default     = ""
 }
 
-variable logAnalyticsWorkspaceResourceGroupName {
+variable "logAnalyticsWorkspaceResourceGroupName" {
   type        = string
   description = "The name of the resource group of the Log Analytics Workspace to be used."
   default     = ""
 }
 
-variable kubernetesVersion {
+variable "kubernetesVersion" {
   type        = string
   description = "The version of the AKS cluster."
   default     = "1.20.7"
 }
 
-variable simpheraInstances {
+variable "simpheraInstances" {
   type = map(object({
-    name = string
+    name                        = string
     minioAccountReplicationType = string
-    postgresqlAdminLogin = string
-    postgresqlAdminPassword = string
-    postgresqlVersion = string
-    postgresqlSkuName = string
-    postgresqlStorage = number
+    postgresqlAdminLogin        = string
+    postgresqlAdminPassword     = string
+    postgresqlVersion           = string
+    postgresqlSkuName           = string
+    postgresqlStorage           = number
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."

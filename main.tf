@@ -3,19 +3,19 @@ terraform {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "2.58.0"
-     }
+    }
   }
 }
 
 locals {
   subscriptionId = var.subscriptionId
-  environment = var.environment
-}  
+  environment    = var.environment
+}
 
 provider "azurerm" {
-  alias  = "cluster-provider-subscription"
+  alias           = "cluster-provider-subscription"
   subscription_id = local.subscriptionId
-  environment = local.environment
+  environment     = local.environment
   features {}
 }
 

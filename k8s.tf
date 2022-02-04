@@ -1,8 +1,8 @@
 resource "azurerm_resource_group" "aks" {
-  provider  = azurerm.cluster-provider-subscription
-  name      = "${var.infrastructurename}-aks"
-  location  = "${var.location}"
-  tags      = var.tags
+  provider = azurerm.cluster-provider-subscription
+  name     = "${var.infrastructurename}-aks"
+  location = var.location
+  tags     = var.tags
 }
 
 resource "azurerm_subnet" "default-node-pool-subnet" {
@@ -18,7 +18,15 @@ resource "azurerm_subnet" "execution-nodes-subnet" {
   name                 = "execution-nodes-subnet"
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
-  address_prefixes     = ["10.0.32.0/19"]
+  address_prefixes     = ["10.0.32.0/20"]
+}
+
+resource "azurerm_subnet" "gpu-nodes-subnet" {
+  count                = var.gpuNodePool ? 1 : 0
+  name                 = "execution-nodes-subnet"
+  resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
+  virtual_network_name = azurerm_virtual_network.simphera-vnet.name
+  address_prefixes     = ["10.0.48.0/20"]
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
@@ -55,10 +63,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin      = "azure"
-    service_cidr        = "10.0.64.0/19" # MUST be smaller than /12
-    dns_service_ip      = "10.0.64.10" # MUST NOT be the first IP address in the address range
-    docker_bridge_cidr  = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
+    network_plugin     = "azure"
+    service_cidr       = "10.0.64.0/19"  # MUST be smaller than /12
+    dns_service_ip     = "10.0.64.10"    # MUST NOT be the first IP address in the address range
+    docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
   }
 
   role_based_access_control {
@@ -84,7 +92,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
     oms_agent {
       enabled                    = var.logAnalyticsWorkspaceName != ""
-      log_analytics_workspace_id = "${var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null }"
+      log_analytics_workspace_id = var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null
     }
   }
 
@@ -92,9 +100,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   lifecycle {
     ignore_changes = [
-        default_node_pool[0].node_count,
-        tags,
-        api_server_authorized_ip_ranges
+      default_node_pool[0].node_count,
+      tags,
+      api_server_authorized_ip_ranges
     ]
   }
 }
@@ -125,12 +133,53 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   tags = var.tags
 
   lifecycle {
-      ignore_changes = [
-          availability_zones,
-          enable_host_encryption,
-          enable_node_public_ip,
-          vnet_subnet_id,
-          node_count
-      ]
+    ignore_changes = [
+      availability_zones,
+      enable_host_encryption,
+      enable_node_public_ip,
+      vnet_subnet_id,
+      node_count
+    ]
   }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
+  count                 = var.gpuNodePool ? 1 : 0
+  name                  = "gpuexecnodes"
+  mode                  = "User"
+  orchestrator_version  = var.kubernetesVersion
+  os_disk_size_gb       = 128
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  min_count             = var.gpuNodeCountMin
+  max_count             = var.gpuNodeCountMax
+  node_count            = var.gpuNodeCountMin
+  vm_size               = var.gpuNodeSize
+  max_pods              = 50
+  enable_auto_scaling   = true
+  vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet.id
+
+  node_labels = {
+    "purpose" = "gpu"
+  }
+
+  node_taints = [
+    "purpose=gpu:NoSchedule"
+  ]
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+      availability_zones,
+      enable_host_encryption,
+      enable_node_public_ip,
+      vnet_subnet_id,
+      node_count
+    ]
+  }
+}
+
+output "kube_config" {
+  value     = azurerm_kubernetes_cluster.aks.kube_config
+  sensitive = true
 }
