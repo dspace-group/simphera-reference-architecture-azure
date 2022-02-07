@@ -27,7 +27,7 @@ variable "tags" {
 variable "linuxNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the regular services"
-  default     = "Standard_D4s_v3"
+  default     = "Standard_D4s_v4"
 }
 
 variable "linuxNodeCountMin" {
@@ -45,7 +45,7 @@ variable "linuxNodeCountMax" {
 variable "linuxExecutionNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the job execution"
-  default     = "Standard_D16s_v3"
+  default     = "Standard_D16s_v4"
 }
 
 variable "linuxExecutionNodeCountMin" {
@@ -58,6 +58,30 @@ variable "linuxExecutionNodeCountMax" {
   type        = number
   description = "The maximum number of Linux nodes for the job execution"
   default     = 10
+}
+
+variable "gpuNodePool" {
+  type        = bool
+  description = "Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster"
+  default     = false
+}
+
+variable "gpuNodeCountMin" {
+  type        = number
+  description = "The minimum number of nodes for gpu job execution"
+  default     = 0
+}
+
+variable "gpuNodeCountMax" {
+  type        = number
+  description = "The maximum number of nodes for gpu job execution"
+  default     = 12
+}
+
+variable "gpuNodeSize" {
+  type        = string
+  description = "The machine size of the nodes for the gpu job execution"
+  default     = "Standard_NC16as_T4_v3"
 }
 
 variable "ssh_public_key_path" {

@@ -81,11 +81,11 @@ To do so, please make a copy of the file `state-backend-template`, name it `stat
 
 ## Configuration
 
-For your configuration, please make a copy of the file `config_template.tfvars`, name it `config.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
+For your configuration, please make a copy of the file `terraform.tfvars.example`, name it `terraform.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
 
 ### Mandatory Variables
 
-Here is the list of the variables that you must change in `config.tfvars`:
+Here is the list of the variables that you must change in `terraform.tfvars`:
 
 * `subscriptionId`: The ID of the Azure subscription you want to deploy SIMPHERA to
 * `location`: The name of the Azure region you want to deploy SIMPHERA to
@@ -95,7 +95,7 @@ Here is the list of the variables that you must change in `config.tfvars`:
   * `name`: The name of the instance. This name will also be used as a prefix for various Azure resource groups.
   * `postgresqlAdminPassword`: The password for the user `dbuser` of the PostgreSQL server.
 
-There are additional, optional variables. These variables are documented inside the `config_template.tfvars` file.
+There are additional, optional variables. These variables are documented inside the `terraform.tfvars` file.
 
 ## Deployment
 
@@ -108,8 +108,9 @@ terraform init
 Afterwards you can deploy the resources:
 
 ```sh
-terraform apply -var-file="config.tfvars"
+terraform apply
 ```
+Terraform automatically loads the variables from your `terraform.tfvars` variable definition file.
 
 ## MinIO Storage
 
@@ -132,7 +133,7 @@ But please keep in mind that the nodes themselves do not get _public IPs_. There
 To delete all resources you have to execute the following command:
 
 ```sh
-terraform destroy -var-file="config.tfvars"
+terraform destroy
 ```
 
 Please keep in mind that this command will also delete all storage accounts including your backups. So please be careful.
