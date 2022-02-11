@@ -45,3 +45,16 @@ resource "azurerm_storage_share" "couchbackup-share" {
     }
   }
 }
+
+output "couchbackup_storage_account_name" {
+  value = azurerm_storage_account.couchbackup_storage_account.name
+}
+
+output "couchbackup_storage_account_account-key" {
+  value     = azurerm_storage_account.couchbackup_storage_account.primary_access_key
+  sensitive = true
+}
+
+output "couchbackup_storage_account_share_name" {
+  value = azurerm_storage_share.couchbackup-share.name
+}
