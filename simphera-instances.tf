@@ -54,14 +54,21 @@ output "minio_storage_passwords" {
 }
 
 output "couchbackup_storage_names" {
-  value = module.simphera_instance[*].couchbackup_storage_name
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.couchbackup_storage_name
+  })
 }
 
 output "couchbackup_storage_account_keys" {
-  value     = module.simphera_instance[*].couchbackup_storage_account_key
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.couchbackup_storage_account_key
+  })
   sensitive = true
+
 }
 
 output "couchbackup_storage_share_names" {
-  value = module.simphera_instance[*].couchbackup_storage_share_name
+  value = tomap({
+    for name, instance in module.simphera_instance : name => instance.couchbackup_storage_share_name
+  })
 }
