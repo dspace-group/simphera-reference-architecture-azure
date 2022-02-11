@@ -46,7 +46,7 @@ output "postgresql_server_hostname" {
 
 output "postgresql_server_username" {
   value     = local.fulllogin
-  sensitive = false
+  sensitive = true
 }
 
 output "postgresql_server_password" {
