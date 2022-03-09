@@ -26,7 +26,7 @@ As mentioned before, the reference architecture is defined as a _Terraform confi
 
 The following figure shows the main resources of the architecture:
 
-![SIMPHERA Reference Architecture fur Azure](AzureReferenceArchitecture.png)
+![SIMPHERA Reference Architecture fur Azure](AzureReferenceArchitecture.drawio.png)
 
 ## Prerequisites
 
