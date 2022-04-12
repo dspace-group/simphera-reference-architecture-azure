@@ -27,6 +27,58 @@ resource "azurerm_subnet" "gpu-nodes-subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
+  count               = local.log_analytics_enabled ? 0 : 1
+  name                = "${var.infrastructurename}-aks"
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
+  node_resource_group = "${var.infrastructurename}-aks-node-pools"
+  dns_prefix          = "${var.infrastructurename}-aks"
+  kubernetes_version  = var.kubernetesVersion
+
+  linux_profile {
+    admin_username = "simphera"
+    ssh_key {
+      key_data = file(var.ssh_public_key_path)
+    }
+  }
+
+  default_node_pool {
+    name                = "default"
+    node_count          = var.linuxNodeCountMin
+    vm_size             = var.linuxNodeSize
+    min_count           = var.linuxNodeCountMin
+    max_count           = var.linuxNodeCountMax
+    enable_auto_scaling = true
+    os_disk_size_gb     = 128
+    type                = "VirtualMachineScaleSets"
+    max_pods            = 110
+    vnet_subnet_id      = azurerm_subnet.default-node-pool-subnet.id
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin     = "azure"
+    service_cidr       = "10.0.64.0/19"  # MUST be smaller than /12
+    dns_service_ip     = "10.0.64.10"    # MUST NOT be the first IP address in the address range
+    docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
+  }
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+      default_node_pool[0].node_count,
+      tags,
+      api_server_authorized_ip_ranges
+    ]
+  }
+}
+
+resource "azurerm_kubernetes_cluster" "aks_with_log" {
+  count               = local.log_analytics_enabled ? 1 : 0
   name                = "${var.infrastructurename}-aks"
   location            = azurerm_resource_group.aks.location
   resource_group_name = azurerm_resource_group.aks.name
@@ -83,12 +135,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
+
 resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   name                  = "execnodes"
   mode                  = "User"
   orchestrator_version  = var.kubernetesVersion
   os_disk_size_gb       = 128
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  kubernetes_cluster_id = local.log_analytics_enabled ? azurerm_kubernetes_cluster.aks_with_logs[0].id : azurerm_kubernetes_cluster.aks[0].id
   min_count             = var.linuxExecutionNodeCountMin
   max_count             = var.linuxExecutionNodeCountMax
   node_count            = var.linuxExecutionNodeCountMin
@@ -124,7 +177,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   mode                  = "User"
   orchestrator_version  = var.kubernetesVersion
   os_disk_size_gb       = 128
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  kubernetes_cluster_id = local.log_analytics_enabled ? azurerm_kubernetes_cluster.aks_with_logs[0].id : azurerm_kubernetes_cluster.aks[0].id
   min_count             = var.gpuNodeCountMin
   max_count             = var.gpuNodeCountMax
   node_count            = var.gpuNodeCountMin
@@ -155,6 +208,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
 }
 
 output "kube_config" {
-  value     = azurerm_kubernetes_cluster.aks.kube_config
+  value     = local.log_analytics_enabled ? azurerm_kubernetes_cluster.aks_with_logs[0].kube_config : azurerm_kubernetes_cluster.aks[0].kube_config
   sensitive = true
 }
