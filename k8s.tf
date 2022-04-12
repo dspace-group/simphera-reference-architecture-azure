@@ -67,9 +67,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   addon_profile {
 
-    azure_policy {
-      enabled = false
-    }
+
 
     http_application_routing {
       enabled = false
