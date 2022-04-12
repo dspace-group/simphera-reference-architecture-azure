@@ -65,8 +65,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
   }
 
-  role_based_access_control_enabled = true
-
   addon_profile {
     aci_connector_linux {
       enabled = false
