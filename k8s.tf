@@ -66,11 +66,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   addon_profile {
-
-    kube_dashboard {
-      enabled = false
-    }
-
     oms_agent {
       enabled                    = var.logAnalyticsWorkspaceName != ""
       log_analytics_workspace_id = var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null
