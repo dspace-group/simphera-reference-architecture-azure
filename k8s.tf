@@ -77,7 +77,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "azurerm_kubernetes_cluster" "aks_with_log" {
+resource "azurerm_kubernetes_cluster" "aks_with_logs" {
   count               = local.log_analytics_enabled ? 1 : 0
   name                = "${var.infrastructurename}-aks"
   location            = azurerm_resource_group.aks.location
@@ -117,11 +117,8 @@ resource "azurerm_kubernetes_cluster" "aks_with_log" {
     docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
   }
 
-  addon_profile {
-    oms_agent {
-      enabled                    = var.logAnalyticsWorkspaceName != ""
-      log_analytics_workspace_id = var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null
-    }
+  oms_agent {
+    log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id
   }
 
   tags = var.tags
