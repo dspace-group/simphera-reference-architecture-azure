@@ -66,9 +66,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   addon_profile {
-    aci_connector_linux {
-      enabled = false
-    }
 
     azure_policy {
       enabled = false
