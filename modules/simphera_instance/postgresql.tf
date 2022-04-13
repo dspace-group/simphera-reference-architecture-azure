@@ -27,8 +27,9 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = false
 
-  public_network_access_enabled = false
-  ssl_enforcement_enabled       = false
+  public_network_access_enabled    = false
+  ssl_enforcement_enabled          = false
+  ssl_minimal_tls_version_enforced = "TLSEnforcementDisabled"
 
   tags = var.tags
 
