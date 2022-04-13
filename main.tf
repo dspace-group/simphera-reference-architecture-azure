@@ -14,6 +14,6 @@ provider "azurerm" {
 }
 
 locals {
-  log_analytics_enabled = var.logAnalyticsWorkspaceName != "" ? 1 : 0
+  log_analytics_enabled = var.logAnalyticsWorkspaceName != "" ? true : false
 
 }
