@@ -129,7 +129,7 @@ variable "logAnalyticsWorkspaceResourceGroupName" {
 variable "kubernetesVersion" {
   type        = string
   description = "The version of the AKS cluster."
-  default     = "1.20.13"
+  default     = "1.21.9"
 }
 
 variable "simpheraInstances" {
