@@ -66,7 +66,7 @@ logAnalyticsWorkspaceName = ""
 logAnalyticsWorkspaceResourceGroupName = ""
 
 # The version of the AKS cluster.
-kubernetesVersion = "1.20.13"
+kubernetesVersion = "1.21.9"
 
 # The SIMPHERA instances
 simpheraInstances = {
