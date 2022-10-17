@@ -9,6 +9,8 @@ locals {
   login      = var.postgresqlAdminLogin
   password   = var.postgresqlAdminPassword
   fulllogin  = "${var.postgresqlAdminLogin}@${local.servername}"
+  basic_tier = startswith(var.postgresqlSkuName, "B_")
+  gp_tier    = startswith(var.postgresqlSkuName, "GP_")
 }
 
 resource "azurerm_postgresql_server" "postgresql-server" {
@@ -27,7 +29,7 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = false
 
-  public_network_access_enabled = false
+  public_network_access_enabled = local.basic_tier ? true : false
   ssl_enforcement_enabled       = false
 
   tags = var.tags
@@ -55,6 +57,7 @@ output "postgresql_server_password" {
 }
 
 resource "azurerm_private_endpoint" "postgresql-endpoint" {
+  count               = local.gp_tier ? 1 : 0
   name                = "postgresql-endpoint"
   location            = azurerm_postgresql_server.postgresql-server.location
   resource_group_name = azurerm_postgresql_server.postgresql-server.resource_group_name
@@ -80,6 +83,18 @@ resource "azurerm_private_endpoint" "postgresql-endpoint" {
     ]
   }
 }
+
+resource "azurerm_postgresql_firewall_rule" "postgresql-firewall" {
+  count               = local.basic_tier ? 1 : 0
+  name                = "azure_services"
+  resource_group_name = azurerm_resource_group.postgres.name
+  server_name         = azurerm_postgresql_server.postgresql-server.name
+  # The Azure feature `Allow access to Azure services` can be enabled by setting start_ip_address and end_ip_address to 0.0.0.0
+  start_ip_address = cidrhost("10.0.64.0/19", 0)
+  end_ip_address   = cidrhost("10.0.64.0/19", -1)
+}
+
+
 
 resource "azurerm_postgresql_database" "keycloak" {
   name                = "keycloak"
