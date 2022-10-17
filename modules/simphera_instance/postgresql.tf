@@ -9,8 +9,9 @@ locals {
   login      = var.postgresqlAdminLogin
   password   = var.postgresqlAdminPassword
   fulllogin  = "${var.postgresqlAdminLogin}@${local.servername}"
-  basic_tier = startswith(var.postgresqlSkuName, "B_")
-  gp_tier    = startswith(var.postgresqlSkuName, "GP_")
+  basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
+  gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
+  
 }
 
 resource "azurerm_postgresql_server" "postgresql-server" {
@@ -32,6 +33,7 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   public_network_access_enabled = local.basic_tier ? true : false
   ssl_enforcement_enabled       = false
 
+
   tags = var.tags
 
   lifecycle {
@@ -40,6 +42,8 @@ resource "azurerm_postgresql_server" "postgresql-server" {
     ]
   }
 }
+
+
 
 output "postgresql_server_hostname" {
   value     = azurerm_postgresql_server.postgresql-server.fqdn
