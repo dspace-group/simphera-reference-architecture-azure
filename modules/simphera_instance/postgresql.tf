@@ -11,8 +11,9 @@ locals {
   fulllogin  = "${var.postgresqlAdminLogin}@${local.servername}"
   basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
   gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
-  
+
 }
+
 
 resource "azurerm_postgresql_server" "postgresql-server" {
   name                = local.servername
@@ -30,8 +31,9 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = false
 
-  public_network_access_enabled = local.basic_tier ? true : false
-  ssl_enforcement_enabled       = false
+  public_network_access_enabled    = local.basic_tier ? true : false
+  ssl_enforcement_enabled          = false
+  ssl_minimal_tls_version_enforced = "TLSEnforcementDisabled"
 
 
   tags = var.tags
@@ -90,12 +92,11 @@ resource "azurerm_private_endpoint" "postgresql-endpoint" {
 
 resource "azurerm_postgresql_firewall_rule" "postgresql-firewall" {
   count               = local.basic_tier ? 1 : 0
-  name                = "azure_services"
+  name                = "aks_cluster"
   resource_group_name = azurerm_resource_group.postgres.name
   server_name         = azurerm_postgresql_server.postgresql-server.name
-  # The Azure feature `Allow access to Azure services` can be enabled by setting start_ip_address and end_ip_address to 0.0.0.0
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "0.0.0.0"
+  start_ip_address    = var.aksIpAddress
+  end_ip_address      = var.aksIpAddress
 }
 
 resource "azurerm_postgresql_database" "keycloak" {
