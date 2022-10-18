@@ -94,11 +94,9 @@ resource "azurerm_postgresql_firewall_rule" "postgresql-firewall" {
   resource_group_name = azurerm_resource_group.postgres.name
   server_name         = azurerm_postgresql_server.postgresql-server.name
   # The Azure feature `Allow access to Azure services` can be enabled by setting start_ip_address and end_ip_address to 0.0.0.0
-  start_ip_address = cidrhost("10.0.64.0/19", 0)
-  end_ip_address   = cidrhost("10.0.64.0/19", -1)
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
-
-
 
 resource "azurerm_postgresql_database" "keycloak" {
   name                = "keycloak"
