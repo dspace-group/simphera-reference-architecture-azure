@@ -24,7 +24,8 @@ So you need to manually create a storage account in Azure before you can start u
 
 As mentioned before, the reference architecture is defined as a _Terraform configuration_. It has been tested with Terraform version v1.0.0.
 
-The following figure shows the main resources of the architecture:
+The following figure shows the main resources of the architecture.
+The figure shows using Azure Database for PostgreSQL and Private Link. This configuration is recommended by dSPACE. The general purpose tier for the Postgresql server is required to use the private link. The reference architecture also supports the basic tier. In this case, instead of the private link, firewall rules are used that only allow access from within the Kubernetes cluster.
 
 ![SIMPHERA Reference Architecture fur Azure](AzureReferenceArchitecture.drawio.png)
 

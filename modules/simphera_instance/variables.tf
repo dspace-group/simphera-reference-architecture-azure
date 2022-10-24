@@ -74,3 +74,8 @@ variable "postgresqlStorage" {
   description = "PostgreSQL Storage in MB, must be divisble by 1024"
   default     = 5120
 }
+
+variable "aksIpAddress" {
+  type        = string
+  description = "IP Address of the AKS cluster"
+}

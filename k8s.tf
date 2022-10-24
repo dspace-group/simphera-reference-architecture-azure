@@ -26,6 +26,10 @@ resource "azurerm_subnet" "gpu-nodes-subnet" {
   address_prefixes     = ["10.0.48.0/20"]
 }
 
+data "azurerm_public_ip" "aks_outgoing" {
+  name                = join("", (regex("([^/]+)$", join("", azurerm_kubernetes_cluster.aks.network_profile[0].load_balancer_profile[0].effective_outbound_ips))))
+  resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
+}
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "${var.infrastructurename}-aks"
   location            = azurerm_resource_group.aks.location
@@ -65,31 +69,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
     docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
   }
 
-  role_based_access_control {
-    enabled = true
-  }
-
-  addon_profile {
-    aci_connector_linux {
-      enabled = false
-    }
-
-    azure_policy {
-      enabled = false
-    }
-
-    http_application_routing {
-      enabled = false
-    }
-
-    kube_dashboard {
-      enabled = false
-    }
-
-    oms_agent {
-      enabled                    = var.logAnalyticsWorkspaceName != ""
-      log_analytics_workspace_id = var.logAnalyticsWorkspaceName != "" ? data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id : null
-    }
+  dynamic "oms_agent"{
+      for_each = local.log_analytics_enabled ? [1] : []
+      content {
+        
+        log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id
+        
+      }      
   }
 
   tags = var.tags
@@ -129,7 +115,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
 
   lifecycle {
     ignore_changes = [
-      availability_zones,
+      zones,
       enable_host_encryption,
       enable_node_public_ip,
       vnet_subnet_id,
@@ -165,7 +151,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
 
   lifecycle {
     ignore_changes = [
-      availability_zones,
+      zones,
       enable_host_encryption,
       enable_node_public_ip,
       vnet_subnet_id,

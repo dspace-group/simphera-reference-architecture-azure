@@ -9,7 +9,11 @@ locals {
   login      = var.postgresqlAdminLogin
   password   = var.postgresqlAdminPassword
   fulllogin  = "${var.postgresqlAdminLogin}@${local.servername}"
+  basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
+  gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
+
 }
+
 
 resource "azurerm_postgresql_server" "postgresql-server" {
   name                = local.servername
@@ -27,8 +31,10 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = false
 
-  public_network_access_enabled = false
-  ssl_enforcement_enabled       = false
+  public_network_access_enabled    = local.basic_tier ? true : false
+  ssl_enforcement_enabled          = false
+  ssl_minimal_tls_version_enforced = "TLSEnforcementDisabled"
+
 
   tags = var.tags
 
@@ -38,6 +44,8 @@ resource "azurerm_postgresql_server" "postgresql-server" {
     ]
   }
 }
+
+
 
 output "postgresql_server_hostname" {
   value     = azurerm_postgresql_server.postgresql-server.fqdn
@@ -55,6 +63,7 @@ output "postgresql_server_password" {
 }
 
 resource "azurerm_private_endpoint" "postgresql-endpoint" {
+  count               = local.gp_tier ? 1 : 0
   name                = "postgresql-endpoint"
   location            = azurerm_postgresql_server.postgresql-server.location
   resource_group_name = azurerm_postgresql_server.postgresql-server.resource_group_name
@@ -79,6 +88,15 @@ resource "azurerm_private_endpoint" "postgresql-endpoint" {
       tags
     ]
   }
+}
+
+resource "azurerm_postgresql_firewall_rule" "postgresql-firewall" {
+  count               = local.basic_tier ? 1 : 0
+  name                = "aks_cluster"
+  resource_group_name = azurerm_resource_group.postgres.name
+  server_name         = azurerm_postgresql_server.postgresql-server.name
+  start_ip_address    = var.aksIpAddress
+  end_ip_address      = var.aksIpAddress
 }
 
 resource "azurerm_postgresql_database" "keycloak" {
