@@ -31,13 +31,13 @@ data "azurerm_public_ip" "aks_outgoing" {
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
 }
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "${var.infrastructurename}-aks"
-  location            = azurerm_resource_group.aks.location
-  resource_group_name = azurerm_resource_group.aks.name
-  node_resource_group = "${var.infrastructurename}-aks-node-pools"
-  dns_prefix          = "${var.infrastructurename}-aks"
-  kubernetes_version  = var.kubernetesVersion
-
+  name                 = "${var.infrastructurename}-aks"
+  location             = azurerm_resource_group.aks.location
+  resource_group_name  = azurerm_resource_group.aks.name
+  node_resource_group  = "${var.infrastructurename}-aks-node-pools"
+  dns_prefix           = "${var.infrastructurename}-aks"
+  kubernetes_version   = var.kubernetesVersion
+  azure_policy_enabled = true
   linux_profile {
     admin_username = "simphera"
     ssh_key {
@@ -69,13 +69,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
   }
 
-  dynamic "oms_agent"{
-      for_each = local.log_analytics_enabled ? [1] : []
-      content {
-        
-        log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id
-        
-      }      
+
+  dynamic "oms_agent" {
+    for_each = local.log_analytics_enabled ? [1] : []
+    content {
+
+      log_analytics_workspace_id = data.azurerm_log_analytics_workspace.log-analytics-workspace[0].id
+
+    }
   }
 
   tags = var.tags
