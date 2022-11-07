@@ -147,3 +147,9 @@ variable "simpheraInstances" {
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
   default     = {}
 }
+
+variable "allowedContainerImagesRegex" {
+  type        = string
+  description = "The RegEx rule used to match allowed container image field in a Kubernetes cluster. For example, to allow any Azure Container Registry image by matching partial path: ^[^\\/]+\\.azurecr\\.io\\/.+$ and for multiple registries: ^([^\\/]+\\.azurecr\\.io|registry\\.io)\\/.+$"
+  default     = "^(docker.io/groundnuty/k8s-wait-for|quay.io/oauth2-proxy/oauth2-proxy|docker.io/jboss/keycloak|docker.io/busybox|docker.io/eclipse-mosquitto|docker.io/bitnami/pgbouncer|registry.dspace.cloud/dspace/simphera/.*)(:.*)?$"
+}

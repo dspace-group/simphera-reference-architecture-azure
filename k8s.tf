@@ -161,6 +161,21 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   }
 }
 
+resource "azurerm_resource_policy_assignment" "K8sAzureContainerAllowedImages" {
+  name                 = "K8sAzureContainerAllowedImages@${azurerm_kubernetes_cluster.aks.name}"
+  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/febd0533-8e55-448f-b837-bd0e06f16469"
+  resource_id          = azurerm_kubernetes_cluster.aks.id
+  description          = "Kubernetes cluster containers should only use allowed images"
+  display_name         = "K8sAzureContainerAllowedImages@${azurerm_kubernetes_cluster.aks.name}"
+  parameters           = <<PARAMETERS
+  {
+  "allowedContainerImagesRegex": {
+    "value": "${var.allowedContainerImagesRegex}" 
+  }
+}
+PARAMETERS
+}
+
 output "kube_config" {
   value     = azurerm_kubernetes_cluster.aks.kube_config
   sensitive = true
