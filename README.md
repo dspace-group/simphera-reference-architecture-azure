@@ -131,7 +131,7 @@ But please keep in mind that the nodes themselves do not get _public IPs_. There
 
 ## Azure Policy
 
-This reference architecture deployes [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes) into the Kubernetes cluster. 
+This reference architecture deploys [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes) into the Kubernetes cluster. 
 With Azure Policy, security policies can be defined and violations monitored. 
 Azure provides various predefined policies. 
 By default, no policies are assigned to the Kubernetes cluster using the reference architecture. 
