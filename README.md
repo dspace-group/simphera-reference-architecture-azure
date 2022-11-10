@@ -75,13 +75,14 @@ To create a new Azure KeyVault with the key for Azure Disk Encryption, use the f
 Make sure to adjust the variables `$keyVaultResourceGroup`, `$keyVault` and `$location` and enter them also in your tfvars file.
 The Powershell snippet prints the `encryptionKeyUrl`. 
 Copy the line also into your tfvars file.
+You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
 
 ```powershell
 $resourcegroup = "<resource group>"
 $keyvault = "<keyvault name>"
 $location = "<azure location>"
 az group create --location $location --name $resourcegroup
-az keyvault create --resource-group $resourcegroup --name $keyvault --location $location
+az keyvault create --resource-group $resourcegroup --name $keyvault --location $location --enabled-for-disk-encryption
 az keyvault key create --name "AzureDiskEncryption" --vault-name $keyvault
 $key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyvault | ConvertFrom-Json
 Write-Host "encryptionKeyUrl=`"$($key.key.kid)`""
