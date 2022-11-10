@@ -118,3 +118,34 @@ resource "azurerm_windows_virtual_machine" "license-server" {
     ]
   }
 }
+
+data "azurerm_key_vault" "keyvault" {
+  name                = var.keyVault
+  resource_group_name = var.keyVaultResourceGroup
+}
+
+# For reference see https://github.com/Azure/terraform-azurerm-diskencrypt
+# To check the type_handler_version for actuality use `az vm extension image list-versions -l westeurope -p "Microsoft.Azure.Security" -n "AzureDiskEncryption"`
+resource "azurerm_virtual_machine_extension" "azureDiskEncryption" {
+  count                      = var.licenseServer ? 1 : 0
+  name                       = "license-server-encryption"
+  virtual_machine_id         = azurerm_windows_virtual_machine.license-server[0].id
+  publisher                  = "Microsoft.Azure.Security"
+  type                       = "AzureDiskEncryption"
+  type_handler_version       = "2.2"
+  auto_upgrade_minor_version = true
+
+  settings = <<SETTINGS
+    {
+        "EncryptionOperation": "EnableEncryption",
+        "KeyVaultURL": "${data.azurerm_key_vault.keyvault.vault_uri}",
+        "KeyVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
+        "KeyEncryptionKeyURL": "${var.encryptionKeyUrl}",
+        "KekVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
+        "KeyEncryptionAlgorithm": "RSA-OAEP",
+        "VolumeType": "All"
+    }
+SETTINGS
+
+  tags = var.tags
+}
