@@ -137,7 +137,7 @@ Azure provides various predefined policies.
 By default, no policies are assigned to the Kubernetes cluster using the reference architecture. 
 Instead, an administrator must assign policies manually which requires appropriate permissions.
 The Azure built-in roles *Resource Policy Contributor* and *Owner* have these permissions.
-DSpace recommends assigning the predefined policy [*Kubernetes cluster containers should only use allowed images*](https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/ContainerAllowedImages.json). 
+Using the predefined policy [*Kubernetes cluster containers should only use allowed images*](https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/ContainerAllowedImages.json) is recommended by dSPACE.
 To do this, use the CLI command below:
 
 ```powershell
