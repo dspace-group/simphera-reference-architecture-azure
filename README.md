@@ -148,7 +148,7 @@ $name = "K8sAzureContainerAllowedImages@${clustername}"
 $description = "Kubernetes cluster containers should only use allowed images"
 $scope = $cluster.id
 $policy = "febd0533-8e55-448f-b837-bd0e06f16469"
-$allowedContainerImagesRegex = "^(docker.io/groundnuty/k8s-wait-for|quay.io/oauth2-proxy/oauth2-proxy|docker.io/jboss/keycloak|docker.io/busybox|docker.io/eclipse-mosquitto|docker.io/bitnami/pgbouncer|registry.dspace.cloud/dspace/simphera/.*)(:.*)?$"
+$allowedContainerImagesRegex = "^(docker\.io\/(groundnuty|jboss|eclipse-mosquitto|bitnami)|quay\.io\/oauth2-proxy|registry\.dspace\.cloud|registry\.k8s\.io)\/.+$"
 $params_ = @"
 {
   "allowedContainerImagesRegex": {
