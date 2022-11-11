@@ -74,17 +74,17 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 To create a new Azure KeyVault with the key for Azure Disk Encryption, use the following Powershell script.
 Make sure to adjust the variables `$keyVaultResourceGroup`, `$keyVault` and `$location` and enter them also in your tfvars file.
 The Powershell snippet prints the `encryptionKeyUrl`. 
-Copy the line also into your tfvars file.
+Also copy the line that is printed to the console into your tfvars file.
 You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
 
 ```powershell
-$resourcegroup = "<resource group>"
-$keyvault = "<keyvault name>"
+$keyVaultResourceGroup = "<resource group>"
+$keyVault = "<keyvault name>"
 $location = "<azure location>"
-az group create --location $location --name $resourcegroup
-az keyvault create --resource-group $resourcegroup --name $keyvault --location $location --enabled-for-disk-encryption
-az keyvault key create --name "AzureDiskEncryption" --vault-name $keyvault
-$key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyvault | ConvertFrom-Json
+az group create --location $location --name $keyVaultResourceGroup
+az keyvault create --resource-group $keyVaultResourceGroup --name $keyVault --location $location --enabled-for-disk-encryption
+az keyvault key create --name "AzureDiskEncryption" --vault-name $keyVault
+$key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyVault | ConvertFrom-Json
 Write-Host "encryptionKeyUrl=`"$($key.key.kid)`""
 ```
 
