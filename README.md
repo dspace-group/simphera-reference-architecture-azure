@@ -129,6 +129,43 @@ ssh -i shared-ssh-key/ssh simphera@<name-or-ip-of-node>
 
 But please keep in mind that the nodes themselves do not get _public IPs_. Therefore you may need to create a _Linux jumpbox VM_ within your virtual network to be able to connect to a node from there. In that case you have to copy the private key to that machine and have to set the correct file access: `chmod 600 shared-ssh-key/ssh`. As an alternative you can use the _License Server Windows VM_ as jumpbox.
 
+## Azure Policy
+
+This reference architecture deploys [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes) into the Kubernetes cluster. 
+With Azure Policy, security policies can be defined and violations monitored. 
+Azure provides various predefined policies. 
+By default, no policies are assigned to the Kubernetes cluster using the reference architecture. 
+Instead, an administrator must assign policies manually which requires appropriate permissions.
+The Azure built-in roles *Resource Policy Contributor* and *Owner* have these permissions.
+Using the predefined policy [*Kubernetes cluster containers should only use allowed images*](https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/ContainerAllowedImages.json) is recommended by dSPACE.
+To do this, use the CLI command below:
+
+```powershell
+$clustername = "<cluster name>"
+$resourcegroup = "<cluster resource group>"
+$cluster = az aks show --name $clustername --resource-group $resourcegroup | ConvertFrom-Json
+$name = "K8sAzureContainerAllowedImages@${clustername}"
+$description = "Kubernetes cluster containers should only use allowed images"
+$scope = $cluster.id
+$policy = "febd0533-8e55-448f-b837-bd0e06f16469"
+$allowedContainerImagesRegex = "^(docker\.io\/(groundnuty|jboss|eclipse-mosquitto|bitnami)|quay\.io\/oauth2-proxy|registry\.dspace\.cloud|registry\.k8s\.io)\/.+$"
+$params_ = @"
+{
+  "allowedContainerImagesRegex": {
+    "value": "$allowedContainerImagesRegex" 
+  }
+}
+"@
+$params_ = $params_ -replace '\s',''
+$params = $params_ -replace '([\\]*)"', '$1$1\"'
+az policy assignment create `
+  --scope $scope `
+  --description $description `
+  --name $name `
+  --policy $policy `
+  --params $params
+```
+
 ## Delete Resources
 
 To delete all resources you have to execute the following command:
