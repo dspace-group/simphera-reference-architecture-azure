@@ -133,6 +133,21 @@ variable "kubernetesVersion" {
   default     = "1.23.12"
 }
 
+variable "keyVault" {
+  type        = string
+  description = "Name of the KeyVault"
+}
+
+variable "keyVaultResourceGroup" {
+  type        = string
+  description = "Name of the KeyVault's resource group"
+}
+
+variable "encryptionKeyUrl" {
+  type        = string
+  description = "URL of the KeyVault key used for Azure Disk Encryption"
+}
+
 variable "simpheraInstances" {
   type = map(object({
     name                        = string

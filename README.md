@@ -34,6 +34,7 @@ The figure shows using Azure Database for PostgreSQL and Private Link. This conf
 Before you start you need an Azure subscription and the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
 
 - _Storage Account_: A storage account with Performance set to `standard` and account kind set to `StorageV2 (general purpose v2)` is needed to store the Terraform state. You also have to create a container for the state inside the storage account.
+- _KeyVault_: The keys to encrypt the disks of the virtual machine for the license server need to be stored in an Azure KeyVault. The KeyVault is not managed by Terraform and has to be created manually (see Azure KeyVault section).
 - _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
 
 On your administration PC you need to install the [Terraform](https://terraform.io/) command, the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) and `ssh-keygen` which is typically available on most operating systems.
@@ -68,6 +69,25 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N ""
 ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 ```
 
+## Azure KeyVault
+
+To create a new Azure KeyVault with the key for Azure Disk Encryption, use the following Powershell script.
+Make sure to adjust the variables `$keyVaultResourceGroup`, `$keyVault` and `$location` and enter them also in your tfvars file.
+The Powershell snippet prints the `encryptionKeyUrl`. 
+Also copy the line that is printed to the console into your tfvars file.
+You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
+
+```powershell
+$keyVaultResourceGroup = "<resource group>"
+$keyVault = "<keyvault name>"
+$location = "<azure location>"
+az group create --location $location --name $keyVaultResourceGroup
+az keyvault create --resource-group $keyVaultResourceGroup --name $keyVault --location $location --enabled-for-disk-encryption
+az keyvault key create --name "AzureDiskEncryption" --vault-name $keyVault
+$key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyVault | ConvertFrom-Json
+Write-Host "encryptionKeyUrl=`"$($key.key.kid)`""
+```
+
 ## State
 
 As mentioned before Terraform stores the state of the resources it creates within a container of an Azure storage account. Therefore, you need to specify this location.
@@ -97,6 +117,7 @@ Here is the list of the variables that you must change in `terraform.tfvars`:
   * `postgresqlAdminPassword`: The password for the user `dbuser` of the PostgreSQL server.
 
 There are additional, optional variables. These variables are documented inside the `terraform.tfvars` file.
+
 
 ## Deployment
 
