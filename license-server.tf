@@ -120,6 +120,7 @@ resource "azurerm_windows_virtual_machine" "license-server" {
 }
 
 data "azurerm_key_vault" "keyvault" {
+  count               = var.licenseServer ? 1 : 0
   name                = var.keyVault
   resource_group_name = var.keyVaultResourceGroup
 }
@@ -138,10 +139,10 @@ resource "azurerm_virtual_machine_extension" "azureDiskEncryption" {
   settings = <<SETTINGS
     {
         "EncryptionOperation": "EnableEncryption",
-        "KeyVaultURL": "${data.azurerm_key_vault.keyvault.vault_uri}",
-        "KeyVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
+        "KeyVaultURL": "${data.azurerm_key_vault.keyvault[0].vault_uri}",
+        "KeyVaultResourceId": "${data.azurerm_key_vault.keyvault[0].id}",					
         "KeyEncryptionKeyURL": "${var.encryptionKeyUrl}",
-        "KekVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
+        "KekVaultResourceId": "${data.azurerm_key_vault.keyvault[0].id}",					
         "KeyEncryptionAlgorithm": "RSA-OAEP",
         "VolumeType": "All"
     }
