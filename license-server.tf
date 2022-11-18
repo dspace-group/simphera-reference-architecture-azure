@@ -94,8 +94,8 @@ resource "azurerm_windows_virtual_machine" "license-server" {
   name                  = "license-server"
   location              = var.location
   size                  = "Standard_D2s_v4"
-  admin_username        = var.licenseServerAdminLogin
-  admin_password        = var.licenseServerAdminPassword
+  admin_username        = local.license_server_secret["username"]
+  admin_password        = local.license_server_secret["password"]
   network_interface_ids = [azurerm_network_interface.license-server-nic.0.id, ]
 
   os_disk {

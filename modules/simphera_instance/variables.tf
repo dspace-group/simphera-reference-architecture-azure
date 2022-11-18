@@ -44,19 +44,6 @@ variable "minioAccountReplicationType" {
   description = "The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS."
   default     = "ZRS"
 }
-
-variable "postgresqlAdminLogin" {
-  type        = string
-  description = "Login name of the account for the PostgreSQL Server"
-  sensitive   = true
-}
-
-variable "postgresqlAdminPassword" {
-  type        = string
-  description = "Password of the account for the PostgreSQL Server"
-  sensitive   = true
-}
-
 variable "postgresqlVersion" {
   type        = string
   description = "PostgreSQL Server version to deploy"
@@ -78,4 +65,14 @@ variable "postgresqlStorage" {
 variable "aksIpAddress" {
   type        = string
   description = "IP Address of the AKS cluster"
+}
+
+variable "keyVault" {
+  type        = string
+  description = "Name of the KeyVault"
+}
+
+variable "secretname" {
+  type        = string
+  description = "Name of the secret that stores credentials."
 }

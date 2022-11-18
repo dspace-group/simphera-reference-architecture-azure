@@ -78,15 +78,95 @@ Also copy the line that is printed to the console into your tfvars file.
 You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
 
 ```powershell
+# Create the KeyVault
 $keyVaultResourceGroup = "<resource group>"
 $keyVault = "<keyvault name>"
 $location = "<azure location>"
 az group create --location $location --name $keyVaultResourceGroup
 az keyvault create --resource-group $keyVaultResourceGroup --name $keyVault --location $location --enabled-for-disk-encryption
+
+# Create a key that is used for Azure Disk Encryption feature of the license server
 az keyvault key create --name "AzureDiskEncryption" --vault-name $keyVault
 $key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyVault | ConvertFrom-Json
 Write-Host "encryptionKeyUrl=`"$($key.key.kid)`""
+
+# Create credentials for license server
+$licenseServerCredentials = @"
+{
+    "username" : "<your username>",
+    "password" : "<your password>"
+}
+"@ | ConvertFrom-Json | ConvertTo-Json -Compress
+$licenseServerCredentials = $licenseServerCredentials -replace '([\\]*)"', '$1$1\"'
+az keyvault secret set --name "license_server" --vault-name $keyVault --value $licenseServerCredentials
+
+# Create credentials for postgresql (one per SIMPHERA instance)
+$postgresqlCredentials = @"
+{
+    "postgresql_username" : "<your username>",
+    "postgresql_password" : "<your password>"
+}
+"@ | ConvertFrom-Json | ConvertTo-Json -Compress
+$postgresqlCredentials = $postgresqlCredentials -replace '([\\]*)"', '$1$1\"'
+az keyvault secret set --name "<secret name>" --vault-name $keyVault --value $postgresqlCredentials
 ```
+:warning: The usernames for the license and postgresql server should not be changed once the resources are created.
+Changing the usernames would force the replacement of the resources what would result in data loss.
+
+The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile). 
+The username of the license server must not be one of these: "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5"<sup>.
+
+The supplied password must be between 8-123 characters long and must satisfy at least 3 of password complexity requirements from the following:
+1. Contains an uppercase character
+2. Contains a lowercase character
+3. Contains a numeric digit
+4. Contains a special character
+5. Control characters are not allowed
+
+
+
+Add the configuration to your tfvars file:
+```diff
++keyVault="<keyvault name>"
++keyVaultResourceGroup="<resource group>"
++encryptionKeyUrl="https://..."
+simpheraInstances = {
+  "production" = {
++    secretname = "<secret name>"
+    }
+}  
+```
+
+To get a list of all postgresql passwords run the following command:
+```powershell
+$secretnames = terraform output -json secretnames | ConvertFrom-Json
+foreach($prop in $secretnames.PsObject.Properties)
+{
+    $secret = az keyvault secret show --name $prop.Value --vault-name $keyVault | ConvertFrom-Json
+    $value = $secret.value | ConvertFrom-Json
+    $password = ConvertTo-SecureString $value.postgresql_password -AsPlainText -Force
+    Remove-Variable secret
+    Remove-Variable value
+    $password
+}
+```
+
+
+To get a list of all storage account keys run the following command:
+```powershell
+$storageaccounts = terraform output -json minio_storage_usernames | ConvertFrom-Json
+foreach($prop in $storageaccounts.PsObject.Properties)
+{
+
+  $keys = az storage account keys list -n $prop.value | ConvertFrom-Json
+  $access_key = ConvertTo-SecureString $keys[0].value -AsPlainText -Force
+  Remove-Variable $keys
+  $access_key
+}
+
+```
+
+
 
 ## State
 

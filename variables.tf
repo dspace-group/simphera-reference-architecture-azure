@@ -103,18 +103,6 @@ variable "licenseServer" {
   default     = false
 }
 
-variable "licenseServerAdminLogin" {
-  type        = string
-  description = "Login name of the local user of the license server"
-  sensitive   = true
-}
-
-variable "licenseServerAdminPassword" {
-  type        = string
-  description = "Password of the local user of the license server"
-  sensitive   = true
-}
-
 variable "logAnalyticsWorkspaceName" {
   type        = string
   description = "The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics."
@@ -152,8 +140,7 @@ variable "simpheraInstances" {
   type = map(object({
     name                        = string
     minioAccountReplicationType = string
-    postgresqlAdminLogin        = string
-    postgresqlAdminPassword     = string
+    secretname                  = string
     postgresqlVersion           = string
     postgresqlSkuName           = string
     postgresqlStorage           = number
