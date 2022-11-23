@@ -68,6 +68,9 @@ logAnalyticsWorkspaceResourceGroupName = ""
 # The version of the AKS cluster.
 kubernetesVersion = "1.23.12"
 
+# Restrict the kubernetes API access to authorized IP ranges, e.g. ["198.51.100.0/24"]
+apiServerAuthorizedIpRanges = null 
+
 # The SIMPHERA instances
 simpheraInstances = {
   "production" = {
