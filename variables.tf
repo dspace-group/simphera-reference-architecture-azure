@@ -147,5 +147,11 @@ variable "simpheraInstances" {
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
-  default     = {}
+}
+
+variable "apiServerAuthorizedIpRanges" {
+  type        = set(string)
+  description = "List of authorized IP address ranges that are granted access to the Kubernetes API server."
+  default     = null
+
 }
