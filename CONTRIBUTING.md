@@ -12,6 +12,7 @@ You can install the hook using these commands on Windows:
 ```powershell
 choco install python
 pip install pre-commit
+pre-commit install
 ```
 
 The hook is configured in `.pre-commit-config.yaml`.
