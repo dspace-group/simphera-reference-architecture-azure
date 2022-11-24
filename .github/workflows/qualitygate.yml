@@ -1,0 +1,36 @@
+name: qualitygate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  qualitygate:
+    name: Qualitygate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: HashiCorp - Setup Terraform
+        # You may pin to the exact commit or the version.
+        # uses: hashicorp/setup-terraform@17d4c9b8043b238f6f35641cdd8433da1e6f3867
+        uses: hashicorp/setup-terraform@v2.0.0
+        # with:
+        #   # The hostname of a Terraform Cloud/Enterprise instance to place within the credentials block of the Terraform CLI configuration file. Defaults to `app.terraform.io`.
+        #   cli_config_credentials_hostname: # optional, default is app.terraform.io
+        #   # The API token for a Terraform Cloud/Enterprise instance to place within the credentials block of the Terraform CLI configuration file.
+        #   cli_config_credentials_token: # optional
+        #   # The version of Terraform CLI to install. Instead of full version string you can also specify constraint string starting with "<" (for example `<1.13.0`) to install the latest version satisfying the constraint. A value of `latest` will install the latest version of Terraform CLI. Defaults to `latest`.
+        #   terraform_version: # optional, default is latest
+        #   # Whether or not to install a wrapper to wrap subsequent calls of the `terraform` binary and expose its STDOUT, STDERR, and exit code as outputs named `stdout`, `stderr`, and `exitcode` respectively. Defaults to `true`.
+        #   terraform_wrapper: # optional, default is true
+      # - name: tfsec action
+      #   uses: aquasecurity/tfsec-action@v1.0.2
+      #   with:
+      #     additional_args: -m CRITICAL   
+      - name: Terraform format
+        run: terraform fmt -check
+      - name: Terraform init
+        run: terraform init -backend=false
+      - name: Terraform validate
+        run: terraform validate
