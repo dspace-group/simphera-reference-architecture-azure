@@ -21,12 +21,14 @@ module "simphera_instance" {
 }
 
 output "postgresql_server_hostnames" {
+  description = "Map whose keys are SIMPHERA instance names and values are PostgreSQL hostnames."
   value = {
     for name, instance in module.simphera_instance : name => instance.postgresql_server_hostname
   }
 }
 
 output "postgresql_server_usernames" {
+  description = "Map whose keys are SIMPHERA instance names and values are PostgreSQL usernames."
   value = {
     for name, instance in module.simphera_instance : name => instance.postgresql_server_username
   }
@@ -34,12 +36,14 @@ output "postgresql_server_usernames" {
 }
 
 output "secretnames" {
+  description = "Map whose keys are SIMPHERA instance names and values are names of the KeyVault secrets."
   value = {
     for name, instance in module.simphera_instance : name => instance.secretname
   }
 }
 
 output "minio_storage_usernames" {
+  description = "Map whose keys are SIMPHERA instance names and values are MinIO usernames."
   value = {
     for name, instance in module.simphera_instance : name => instance.minio_storage_username
   }
