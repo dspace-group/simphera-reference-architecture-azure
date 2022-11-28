@@ -31,13 +31,14 @@ data "azurerm_public_ip" "aks_outgoing" {
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
 }
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                 = "${var.infrastructurename}-aks"
-  location             = azurerm_resource_group.aks.location
-  resource_group_name  = azurerm_resource_group.aks.name
-  node_resource_group  = "${var.infrastructurename}-aks-node-pools"
-  dns_prefix           = "${var.infrastructurename}-aks"
-  kubernetes_version   = var.kubernetesVersion
-  azure_policy_enabled = true
+  name                            = "${var.infrastructurename}-aks"
+  location                        = azurerm_resource_group.aks.location
+  resource_group_name             = azurerm_resource_group.aks.name
+  node_resource_group             = "${var.infrastructurename}-aks-node-pools"
+  dns_prefix                      = "${var.infrastructurename}-aks"
+  kubernetes_version              = var.kubernetesVersion
+  azure_policy_enabled            = true
+  api_server_authorized_ip_ranges = var.apiServerAuthorizedIpRanges
   linux_profile {
     admin_username = "simphera"
     ssh_key {
