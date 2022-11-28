@@ -98,7 +98,7 @@ $licenseServerCredentials = @"
 }
 "@ | ConvertFrom-Json | ConvertTo-Json -Compress
 $licenseServerCredentials = $licenseServerCredentials -replace '([\\]*)"', '$1$1\"'
-az keyvault secret set --name "license_server" --vault-name $keyVault --value $licenseServerCredentials
+az keyvault secret set --name "licenseserver" --vault-name $keyVault --value $licenseServerCredentials
 Remove-Variable licenseServerCredentials
 
 # Create credentials for postgresql (one per SIMPHERA instance)

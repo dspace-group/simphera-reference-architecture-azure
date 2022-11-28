@@ -134,10 +134,10 @@ resource "azurerm_virtual_machine_extension" "azureDiskEncryption" {
   settings = <<SETTINGS
     {
         "EncryptionOperation": "EnableEncryption",
-        "KeyVaultURL": "${data.azurerm_key_vault.keyvault[0].vault_uri}",
-        "KeyVaultResourceId": "${data.azurerm_key_vault.keyvault[0].id}",					
+        "KeyVaultURL": "${data.azurerm_key_vault.keyvault.vault_uri}",
+        "KeyVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
         "KeyEncryptionKeyURL": "${var.encryptionKeyUrl}",
-        "KekVaultResourceId": "${data.azurerm_key_vault.keyvault[0].id}",					
+        "KekVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
         "KeyEncryptionAlgorithm": "RSA-OAEP",
         "VolumeType": "All"
     }
