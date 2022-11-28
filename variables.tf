@@ -164,6 +164,6 @@ variable "simpheraInstances" {
 
 variable "apiServerAuthorizedIpRanges" {
   type        = set(string)
-  description = "List of authorized IP address ranges that are granted access to the Kubernetes API server."
+  description = "List of authorized IP address ranges that are granted access to the Kubernetes API server, e.g. [\"198.51.100.0/24\"]"
   default     = null
 }
