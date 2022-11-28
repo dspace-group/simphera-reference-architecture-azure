@@ -6,11 +6,12 @@ resource "azurerm_resource_group" "postgres" {
 
 locals {
   servername = "${var.name}-postgresql"
-  login      = var.postgresqlAdminLogin
-  password   = var.postgresqlAdminPassword
-  fulllogin  = "${var.postgresqlAdminLogin}@${local.servername}"
+  login      = local.secrets["postgresql_username"]
+  password   = local.secrets["postgresql_password"]
+  fulllogin  = "${local.login}@${local.servername}"
   basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
   gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
+  secrets    = jsondecode(data.azurerm_key_vault_secret.secrets.value)
 
 }
 
@@ -20,8 +21,8 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   location            = azurerm_resource_group.postgres.location
   resource_group_name = azurerm_resource_group.postgres.name
 
-  administrator_login          = local.login
-  administrator_login_password = local.password
+  administrator_login          = local.secrets["postgresql_username"]
+  administrator_login_password = local.secrets["postgresql_password"]
 
   sku_name   = var.postgresqlSkuName
   version    = var.postgresqlVersion
@@ -45,8 +46,6 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   }
 }
 
-
-
 output "postgresql_server_hostname" {
   value     = azurerm_postgresql_server.postgresql-server.fqdn
   sensitive = false
@@ -54,11 +53,6 @@ output "postgresql_server_hostname" {
 
 output "postgresql_server_username" {
   value     = local.fulllogin
-  sensitive = true
-}
-
-output "postgresql_server_password" {
-  value     = local.password
   sensitive = true
 }
 

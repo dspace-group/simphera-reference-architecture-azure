@@ -37,8 +37,3 @@ resource "azurerm_storage_account" "minio_storage_account" {
 output "minio_storage_username" {
   value = local.storageaccountname
 }
-
-output "minio_storage_password" {
-  value     = azurerm_storage_account.minio_storage_account.primary_access_key
-  sensitive = true
-}
