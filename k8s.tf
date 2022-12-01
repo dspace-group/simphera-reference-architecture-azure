@@ -103,6 +103,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   vm_size               = var.linuxExecutionNodeSize
   max_pods              = 50
   enable_auto_scaling   = true
+  scale_down_mode       = var.linuxExecutionNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.execution-nodes-subnet.id
 
   node_labels = {
@@ -139,6 +140,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   vm_size               = var.gpuNodeSize
   max_pods              = 50
   enable_auto_scaling   = true
+  scale_down_mode       = var.gpuNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet[0].id
 
   node_labels = {

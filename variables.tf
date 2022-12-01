@@ -61,6 +61,12 @@ variable "linuxExecutionNodeCountMax" {
   default     = 10
 }
 
+variable "linuxExecutionNodeDeallocate" {
+  type        = bool
+  description = "Configures whether the Linux nodes for the job execution are 'Deallocated (Stopped)' by the cluster auto scaler or 'Deleted'."
+  default     = true
+}
+
 variable "gpuNodePool" {
   type        = bool
   description = "Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster"
@@ -83,6 +89,12 @@ variable "gpuNodeSize" {
   type        = string
   description = "The machine size of the nodes for the gpu job execution"
   default     = "Standard_NC16as_T4_v3"
+}
+
+variable "gpuNodeDeallocate" {
+  type        = bool
+  description = "Configures whether the nodes for the gpu job execution are 'Deallocated (Stopped)' by the cluster auto scaler or 'Deleted'."
+  default     = true
 }
 
 variable "ssh_public_key_path" {
