@@ -38,4 +38,4 @@ jobs:
         with:
           image: zenika/terraform-azure-cli:latest
           options: -v ${{ github.workspace }}:/workspace
-          run: ./hooks/validate_tfvars.sh
+          run: chmod +x /workspace/hooks/validate_tfvars.sh && /workspace/hooks/validate_tfvars.sh
