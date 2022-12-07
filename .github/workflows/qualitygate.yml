@@ -34,7 +34,7 @@ jobs:
         run: terraform init -backend=false
       - name: Terraform validate
         run: terraform validate
-    - uses: addnab/docker-run-action@v3
-      with:
-        image: zenika/terraform-azure-cli:latest
-        run: ./hooks/validate_tfvars.sh
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: zenika/terraform-azure-cli:latest
+          run: ./hooks/validate_tfvars.sh
