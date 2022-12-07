@@ -34,7 +34,7 @@ The figure shows using Azure Database for PostgreSQL and Private Link. This conf
 Before you start you need an Azure subscription and the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
 
 - _Storage Account_: A storage account with Performance set to `standard` and account kind set to `StorageV2 (general purpose v2)` is needed to store the Terraform state. You also have to create a container for the state inside the storage account.
-- _KeyVault_: The keys to encrypt the disks of the virtual machine for the license server need to be stored in an Azure KeyVault. The KeyVault is not managed by Terraform and has to be created manually (see Azure KeyVault section).
+- _KeyVault_: The credentials of the PostgreSQL servers and the keys to encrypt the disks of the virtual machine for the license server must be stored in an Azure KeyVault. The KeyVault is not managed by Terraform and has to be created manually (see Azure KeyVault section).
 - _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
 
 On your administration PC you need to install the [Terraform](https://terraform.io/) command, the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) and `ssh-keygen` which is typically available on most operating systems.
@@ -71,10 +71,13 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 
 ## Azure KeyVault
 
-To create a new Azure KeyVault with the key for Azure Disk Encryption, use the following Powershell script.
+You need to create a KeyVault that stores the following:
+- One secret per SIMPHERA instance that stores the PostgreSQL credentials of each instance as every SIMPHERA instances comes with its own PostgreSQL server.
+- A key named `licenseserver` for Azure Disk Encryption of the license server (optional). Because the license server is shared between all SIMPHERA instances, you only need one key for that single license server.
+
+To create a new Azure KeyVault with the key for Azure Disk Encryption and the secret for the PostgreSQL credentials, use the following Powershell script.
 Make sure to adjust the variables `$keyVaultResourceGroup`, `$keyVault` and `$location` and enter them also in your tfvars file.
-The Powershell snippet prints the `encryptionKeyUrl`. 
-Also copy the line that is printed to the console into your tfvars file.
+The Powershell snippet prints the `encryptionKeyUrl` you need to copy into your `.tfvars` file.
 You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
 
 ```powershell
@@ -114,6 +117,8 @@ Remove-Variable postgresqlCredentials
 ```
 :warning: The usernames for the license and postgresql server should not be changed once the resources are created.
 Changing the usernames would force the replacement of the resources what would result in data loss.
+
+It is recommended that `<secret name>` reflects the name(s) of the SIMPHERA instance(s) as defined in the terraform variable `simpheraInstances`.
 
 The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile). 
 The username of the license server must not be one of these: "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
