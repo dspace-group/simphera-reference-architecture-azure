@@ -72,6 +72,7 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 ## Azure KeyVault
 
 You need to create a KeyVault that stores the following:
+
 - One secret per SIMPHERA instance that stores the PostgreSQL credentials of each instance as every SIMPHERA instances comes with its own PostgreSQL server.
 - A key named `licenseserver` for Azure Disk Encryption of the license server (optional). Because the license server is shared between all SIMPHERA instances, you only need one key for that single license server.
 
@@ -115,24 +116,25 @@ $postgresqlCredentials = $postgresqlCredentials -replace '([\\]*)"', '$1$1\"'
 az keyvault secret set --name "<secret name>" --vault-name $keyVault --value $postgresqlCredentials
 Remove-Variable postgresqlCredentials
 ```
+
 :warning: The usernames for the license and postgresql server should not be changed once the resources are created.
 Changing the usernames would force the replacement of the resources what would result in data loss.
 
 It is recommended that `<secret name>` reflects the name(s) of the SIMPHERA instance(s) as defined in the terraform variable `simpheraInstances`.
 
-The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile). 
+The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile).
 The username of the license server must not be one of these: "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
 
 The supplied password must be between 8-123 characters long and must satisfy at least 3 of password complexity requirements from the following:
+
 1. Contains an uppercase character
 2. Contains a lowercase character
 3. Contains a numeric digit
 4. Contains a special character
 5. Control characters are not allowed
 
-
-
 Add the configuration to your .tfvars file:
+
 ```diff
 +keyVault="<keyvault name>"
 +keyVaultResourceGroup="<resource group>"
@@ -145,6 +147,7 @@ simpheraInstances = {
 ```
 
 To get a list of all postgresql passwords run the following command:
+
 ```powershell
 $secretnames = terraform output -json secretnames | ConvertFrom-Json
 $postgresql_passwords = @{}
@@ -158,8 +161,8 @@ foreach($prop in $secretnames.PsObject.Properties)
 }
 ```
 
-
 To get a list of all storage account keys run the following command:
+
 ```powershell
 $access_keys = @{}
 $storageaccounts = terraform output -json minio_storage_usernames | ConvertFrom-Json
@@ -173,11 +176,24 @@ foreach($prop in $storageaccounts.PsObject.Properties)
 ```
 
 You can read the plaintext values like this:
+
 ```powershell
 ConvertFrom-SecureString $access_keys["production"] -AsPlainText
 ```
 
+## Log Analytics Workspace
 
+As mentioned before in order to store the log data of the services you have to provide such a workspace in your subscription.
+
+To create Log analytics workspace, use:
+
+```sh
+az monitor log-analytics workspace create --workspace-name "<LogAnalyticsWorkspaceName>" --resource-group "<LogAnalyticsWorkspaceResourceGroup>" --location "<Location>"
+```
+
+- LogAnalyticsWorkspaceName - Name of the Log Analytics Workspace
+- LogAnalyticsWorkspaceResourceGroup - Name of the Log Analytics Workspace resource group
+- Location - Location of the Log Analytics Workspace, eg. westeurope
 
 ## State
 
@@ -185,31 +201,17 @@ As mentioned before Terraform stores the state of the resources it creates withi
 
 To do so, please make a copy of the file `state-backend-template`, name it `state-backend.tf` and open the file in a text editor. The values have to point to an existing storage account to be used to store the Terraform state:
 
-* `resource_group_name`: The name of the resource group your storage account is located in.
-* `storage_account_name`: The name of the storage account.
-* `container_name`: The name of the container inside the storage account to be used to store the terraform state. You need to create this container manually.
-* `key`: The name of the file to be used inside the container to be used for this terraform state.
-* `environment`: Use the value `public` for the general Azure cloud.
+- `resource_group_name`: The name of the resource group your storage account is located in.
+- `storage_account_name`: The name of the storage account.
+- `container_name`: The name of the container inside the storage account to be used to store the terraform state. You need to create this container manually.
+- `key`: The name of the file to be used inside the container to be used for this terraform state.
+- `environment`: Use the value `public` for the general Azure cloud.
 
 ## Configuration
 
 For your configuration, please make a copy of the file `terraform.tfvars.example`, name it `terraform.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
+List with description of all mandatory and optional variables could be find in the [Inputs](#inputs) part of this readme file.
 It is recommended to restrict the access to the Kubernetes API server using authorized IP address ranges by setting the variable `apiServerAuthorizedIpRanges`.
-
-### Mandatory Variables
-
-Here is the list of the variables that you must change in `terraform.tfvars`:
-
-* `subscriptionId`: The ID of the Azure subscription you want to deploy SIMPHERA to
-* `location`: The name of the Azure region you want to deploy SIMPHERA to
-* `infrastructurename`: The name of this infrastructure. This name will also be used as a prefix for various Azure resource groups. So please choose it carefully.
-* `licenseServerAdminPassword`: The password for the user `cluster` of the Windows VM used as the license server.
-* `simpheraInstances`: As mentioned before you can configure multiple instances of SIMPHERA, such as _staging_ and _production_. This variable contains a map of these instances. Per instance you must set the following variables:
-  * `name`: The name of the instance. This name will also be used as a prefix for various Azure resource groups.
-  * `postgresqlAdminPassword`: The password for the user `dbuser` of the PostgreSQL server.
-
-There are additional, optional variables. These variables are documented inside the `terraform.tfvars` file.
-
 
 ## Deployment
 
@@ -224,6 +226,7 @@ Afterwards you can deploy the resources:
 ```sh
 terraform apply
 ```
+
 Terraform automatically loads the variables from your `terraform.tfvars` variable definition file.
 
 ## MinIO Storage
@@ -244,13 +247,13 @@ But please keep in mind that the nodes themselves do not get _public IPs_. There
 
 ## Azure Policy
 
-This reference architecture deploys [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes) into the Kubernetes cluster. 
-With Azure Policy, security policies can be defined and violations monitored. 
-Azure provides various predefined policies. 
-By default, no policies are assigned to the Kubernetes cluster using the reference architecture. 
+This reference architecture deploys [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes) into the Kubernetes cluster.
+With Azure Policy, security policies can be defined and violations monitored.
+Azure provides various predefined policies.
+By default, no policies are assigned to the Kubernetes cluster using the reference architecture.
 Instead, an administrator must assign policies manually which requires appropriate permissions.
-The Azure built-in roles *Resource Policy Contributor* and *Owner* have these permissions.
-Using the predefined policy [*Kubernetes cluster containers should only use allowed images*](https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/ContainerAllowedImages.json) is recommended by dSPACE.
+The Azure built-in roles _Resource Policy Contributor_ and _Owner_ have these permissions.
+Using the predefined policy [_Kubernetes cluster containers should only use allowed images_](https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/ContainerAllowedImages.json) is recommended by dSPACE.
 To do this, use the CLI command below:
 
 ```powershell
