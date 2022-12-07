@@ -24,13 +24,17 @@ jobs:
         #   terraform_version: # optional, default is latest
         #   # Whether or not to install a wrapper to wrap subsequent calls of the `terraform` binary and expose its STDOUT, STDERR, and exit code as outputs named `stdout`, `stderr`, and `exitcode` respectively. Defaults to `true`.
         #   terraform_wrapper: # optional, default is true
-      # - name: tfsec action
-      #   uses: aquasecurity/tfsec-action@v1.0.2
-      #   with:
-      #     additional_args: -m CRITICAL   
+      - name: tfsec action
+        uses: aquasecurity/tfsec-action@v1.0.2
+        with:
+          additional_args: -m CRITICAL
       - name: Terraform format
         run: terraform fmt -check
       - name: Terraform init
         run: terraform init -backend=false
       - name: Terraform validate
         run: terraform validate
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: zenika/terraform-azure-cli:latest
+        run: ./hooks/validate_tfvars.sh
