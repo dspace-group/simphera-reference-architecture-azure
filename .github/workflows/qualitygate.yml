@@ -37,4 +37,5 @@ jobs:
       - uses: addnab/docker-run-action@v3
         with:
           image: zenika/terraform-azure-cli:latest
+          options: -v ${{ github.workspace }}:/workspace
           run: ./hooks/validate_tfvars.sh
