@@ -53,6 +53,13 @@ ssh_private_key_path = "shared-ssh-key/ssh"
 # Specifies whether a VM for the dSPACE Installation Manager will be deployed
 licenseServer = true
 
+# Enables instalation of IaaSAntimalware extension on license server VM
+licenseServerIaaSAntimalware = true
+
+# Enables instalation of MicrosoftMonitoringAgent extension on license server VM.
+#For using this extension logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName needs to be set.
+licenseServerMicrosoftMonitoringAgent = true
+
 # The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics.
 logAnalyticsWorkspaceName = ""
 
