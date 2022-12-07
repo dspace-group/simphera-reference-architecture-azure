@@ -148,12 +148,12 @@ resource "azurerm_virtual_machine_extension" "azureDiskEncryption" {
 
 # To check the type_handler_version for actuality use `az vm extension image list-versions -l westeurope -p "Microsoft.Azure.Security" -n "IaaSAntimalware"`
 resource "azurerm_virtual_machine_extension" "iaaSAntimalware" {
-  count                      = var.licenseServerIaaSAntimalware ? 1 : 0
-  name                       = "IaaSAntimalware"
-  virtual_machine_id         = azurerm_windows_virtual_machine.license-server[0].id
-  publisher                  = "Microsoft.Azure.Security"
-  type                       = "IaaSAntimalware"
-  type_handler_version       = "1.6"
+  count                = var.licenseServerIaaSAntimalware ? 1 : 0
+  name                 = "IaaSAntimalware"
+  virtual_machine_id   = azurerm_windows_virtual_machine.license-server[0].id
+  publisher            = "Microsoft.Azure.Security"
+  type                 = "IaaSAntimalware"
+  type_handler_version = "1.6"
 
   settings = <<SETTINGS
     {
@@ -173,12 +173,12 @@ resource "azurerm_virtual_machine_extension" "iaaSAntimalware" {
 
 # To check the type_handler_version for actuality use `az vm extension image list-versions -l westeurope -p "Microsoft.EnterpriseCloud.Monitoring" -n "MicrosoftMonitoringAgent"`
 resource "azurerm_virtual_machine_extension" "microsoftMonitoringAgent" {
-  count                      = var.licenseServerMicrosoftMonitoringAgent ? 1 : 0
-  name                       = "MicrosoftMonitoringAgent"
-  virtual_machine_id         = azurerm_windows_virtual_machine.license-server[0].id
-  publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
-  type                       = "MicrosoftMonitoringAgent"
-  type_handler_version       = "1.0"
+  count                = var.licenseServerMicrosoftMonitoringAgent ? 1 : 0
+  name                 = "MicrosoftMonitoringAgent"
+  virtual_machine_id   = azurerm_windows_virtual_machine.license-server[0].id
+  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
+  type                 = "MicrosoftMonitoringAgent"
+  type_handler_version = "1.0"
 
   settings = <<SETTINGS
     {
