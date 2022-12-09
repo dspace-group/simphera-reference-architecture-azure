@@ -213,20 +213,6 @@ For your configuration, please make a copy of the file `terraform.tfvars.example
 List with description of all mandatory and optional variables could be find in the [Inputs](#inputs) part of this readme file.
 It is recommended to restrict the access to the Kubernetes API server using authorized IP address ranges by setting the variable `apiServerAuthorizedIpRanges`.
 
-### Mandatory Variables
-
-Here is the list of the variables that you must change in `terraform.tfvars`:
-
-* `subscriptionId`: The ID of the Azure subscription you want to deploy SIMPHERA to
-* `location`: The name of the Azure region you want to deploy SIMPHERA to
-* `infrastructurename`: The name of this infrastructure. This name will also be used as a prefix for various Azure resource groups. So please choose it carefully.
-* `licenseServerAdminPassword`: The password for the user `cluster` of the Windows VM used as the license server.
-* `simpheraInstances`: As mentioned before you can configure multiple instances of SIMPHERA, such as _staging_ and _production_. This variable contains a map of these instances. Per instance you must set the following variables:
-  * `name`: The name of the instance. This name will also be used as a prefix for various Azure resource groups.
-  * `postgresqlAdminPassword`: The password for the user `dbuser` of the PostgreSQL server.
-
-There are additional, optional variables. These variables are documented inside the `terraform.tfvars` file.
-
 ### Scale Down Mode
 
 If you use AURELION with SIMPHERA then the AURELION Pods are executed in the GPU node pool. Typically, you have autoscaling enabled for that pool so that VMs are scaled down if they are no longer needed. However, the AURELION container image is big and it takes time to download the image to the Kubernetes node. Depending on your location this can take more than 30 minutes. To shorten these times the _Scale Down Mode_ of the GPU node pool should be set to _Deallocate_. That means, that a GPU VM is not _deleted_ but only _deallocated_. So you no longer have to pay for the compute resources but only for the disk that will not be deleted when using this mode.
