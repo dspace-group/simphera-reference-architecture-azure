@@ -9,6 +9,12 @@ resource "azurerm_subnet" "default-node-pool-subnet" {
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
   address_prefixes     = ["10.0.0.0/19"]
+
+  lifecycle {
+    ignore_changes = [
+      address_prefixes
+    ]
+  }
 }
 
 resource "azurerm_subnet" "execution-nodes-subnet" {
@@ -16,6 +22,12 @@ resource "azurerm_subnet" "execution-nodes-subnet" {
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
   address_prefixes     = ["10.0.32.0/20"]
+
+  lifecycle {
+    ignore_changes = [
+      address_prefixes
+    ]
+  }
 }
 
 resource "azurerm_subnet" "gpu-nodes-subnet" {
@@ -24,6 +36,12 @@ resource "azurerm_subnet" "gpu-nodes-subnet" {
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
   address_prefixes     = ["10.0.48.0/20"]
+
+  lifecycle {
+    ignore_changes = [
+      address_prefixes
+    ]
+  }
 }
 
 data "azurerm_public_ip" "aks_outgoing" {
