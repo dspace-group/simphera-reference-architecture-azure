@@ -9,6 +9,12 @@ resource "azurerm_subnet" "default-node-pool-subnet" {
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
   address_prefixes     = ["10.0.0.0/19"]
+
+  lifecycle {
+    ignore_changes = [
+      address_prefixes
+    ]
+  }
 }
 
 resource "azurerm_subnet" "execution-nodes-subnet" {
@@ -16,6 +22,12 @@ resource "azurerm_subnet" "execution-nodes-subnet" {
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
   address_prefixes     = ["10.0.32.0/20"]
+
+  lifecycle {
+    ignore_changes = [
+      address_prefixes
+    ]
+  }
 }
 
 resource "azurerm_subnet" "gpu-nodes-subnet" {
@@ -24,6 +36,12 @@ resource "azurerm_subnet" "gpu-nodes-subnet" {
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
   address_prefixes     = ["10.0.48.0/20"]
+
+  lifecycle {
+    ignore_changes = [
+      address_prefixes
+    ]
+  }
 }
 
 data "azurerm_public_ip" "aks_outgoing" {
@@ -103,6 +121,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   vm_size               = var.linuxExecutionNodeSize
   max_pods              = 50
   enable_auto_scaling   = true
+  scale_down_mode       = var.linuxExecutionNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.execution-nodes-subnet.id
 
   node_labels = {
@@ -139,6 +158,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   vm_size               = var.gpuNodeSize
   max_pods              = 50
   enable_auto_scaling   = true
+  scale_down_mode       = var.gpuNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet[0].id
 
   node_labels = {
