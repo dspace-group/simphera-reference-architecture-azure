@@ -34,7 +34,7 @@ The figure shows using Azure Database for PostgreSQL and Private Link. This conf
 Before you start you need an Azure subscription and the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
 
 - _Storage Account_: A storage account with Performance set to `standard` and account kind set to `StorageV2 (general purpose v2)` is needed to store the Terraform state. You also have to create a container for the state inside the storage account.
-- _KeyVault_: The keys to encrypt the disks of the virtual machine for the license server need to be stored in an Azure KeyVault. The KeyVault is not managed by Terraform and has to be created manually (see Azure KeyVault section).
+- _KeyVault_: The credentials of the PostgreSQL servers and the keys to encrypt the disks of the virtual machine for the license server must be stored in an Azure KeyVault. The KeyVault is not managed by Terraform and has to be created manually (see Azure KeyVault section).
 - _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
 
 On your administration PC you need to install the [Terraform](https://terraform.io/) command, the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) and `ssh-keygen` which is typically available on most operating systems.
@@ -71,10 +71,14 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 
 ## Azure KeyVault
 
-To create a new Azure KeyVault with the key for Azure Disk Encryption, use the following Powershell script.
+You need to create a KeyVault that stores the following:
+
+- One secret per SIMPHERA instance that stores the PostgreSQL credentials of each instance as every SIMPHERA instances comes with its own PostgreSQL server.
+- A key named `licenseserver` for Azure Disk Encryption of the license server (optional). Because the license server is shared between all SIMPHERA instances, you only need one key for that single license server.
+
+To create a new Azure KeyVault with the key for Azure Disk Encryption and the secret for the PostgreSQL credentials, use the following Powershell script.
 Make sure to adjust the variables `$keyVaultResourceGroup`, `$keyVault` and `$location` and enter them also in your tfvars file.
-The Powershell snippet prints the `encryptionKeyUrl`. 
-Also copy the line that is printed to the console into your tfvars file.
+The Powershell snippet prints the `encryptionKeyUrl` you need to copy into your `.tfvars` file.
 You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
 
 ```powershell
@@ -112,22 +116,25 @@ $postgresqlCredentials = $postgresqlCredentials -replace '([\\]*)"', '$1$1\"'
 az keyvault secret set --name "<secret name>" --vault-name $keyVault --value $postgresqlCredentials
 Remove-Variable postgresqlCredentials
 ```
+
 :warning: The usernames for the license and postgresql server should not be changed once the resources are created.
 Changing the usernames would force the replacement of the resources what would result in data loss.
 
-The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile). 
+It is recommended that `<secret name>` reflects the name(s) of the SIMPHERA instance(s) as defined in the terraform variable `simpheraInstances`.
+
+The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile).
 The username of the license server must not be one of these: "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
 
 The supplied password must be between 8-123 characters long and must satisfy at least 3 of password complexity requirements from the following:
+
 1. Contains an uppercase character
 2. Contains a lowercase character
 3. Contains a numeric digit
 4. Contains a special character
 5. Control characters are not allowed
 
-
-
 Add the configuration to your .tfvars file:
+
 ```diff
 +keyVault="<keyvault name>"
 +keyVaultResourceGroup="<resource group>"
@@ -140,6 +147,7 @@ simpheraInstances = {
 ```
 
 To get a list of all postgresql passwords run the following command:
+
 ```powershell
 $secretnames = terraform output -json secretnames | ConvertFrom-Json
 $postgresql_passwords = @{}
@@ -153,8 +161,8 @@ foreach($prop in $secretnames.PsObject.Properties)
 }
 ```
 
-
 To get a list of all storage account keys run the following command:
+
 ```powershell
 $access_keys = @{}
 $storageaccounts = terraform output -json minio_storage_usernames | ConvertFrom-Json
@@ -168,11 +176,24 @@ foreach($prop in $storageaccounts.PsObject.Properties)
 ```
 
 You can read the plaintext values like this:
+
 ```powershell
 ConvertFrom-SecureString $access_keys["production"] -AsPlainText
 ```
 
+## Log Analytics Workspace
 
+As mentioned before in order to store the log data of the services you have to provide such a workspace in your subscription.
+
+To create Log analytics workspace, use:
+
+```sh
+az monitor log-analytics workspace create --workspace-name "<LogAnalyticsWorkspaceName>" --resource-group "<LogAnalyticsWorkspaceResourceGroup>" --location "<Location>"
+```
+
+- LogAnalyticsWorkspaceName - Name of the Log Analytics Workspace
+- LogAnalyticsWorkspaceResourceGroup - Name of the Log Analytics Workspace resource group
+- Location - Location of the Log Analytics Workspace, eg. westeurope
 
 ## State
 
@@ -180,15 +201,16 @@ As mentioned before Terraform stores the state of the resources it creates withi
 
 To do so, please make a copy of the file `state-backend-template`, name it `state-backend.tf` and open the file in a text editor. The values have to point to an existing storage account to be used to store the Terraform state:
 
-* `resource_group_name`: The name of the resource group your storage account is located in.
-* `storage_account_name`: The name of the storage account.
-* `container_name`: The name of the container inside the storage account to be used to store the terraform state. You need to create this container manually.
-* `key`: The name of the file to be used inside the container to be used for this terraform state.
-* `environment`: Use the value `public` for the general Azure cloud.
+- `resource_group_name`: The name of the resource group your storage account is located in.
+- `storage_account_name`: The name of the storage account.
+- `container_name`: The name of the container inside the storage account to be used to store the terraform state. You need to create this container manually.
+- `key`: The name of the file to be used inside the container to be used for this terraform state.
+- `environment`: Use the value `public` for the general Azure cloud.
 
 ## Configuration
 
 For your configuration, please make a copy of the file `terraform.tfvars.example`, name it `terraform.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
+List with description of all mandatory and optional variables could be find in the [Inputs](#inputs) part of this readme file.
 It is recommended to restrict the access to the Kubernetes API server using authorized IP address ranges by setting the variable `apiServerAuthorizedIpRanges`.
 
 ### Mandatory Variables
@@ -224,6 +246,7 @@ Afterwards you can deploy the resources:
 ```sh
 terraform apply
 ```
+
 Terraform automatically loads the variables from your `terraform.tfvars` variable definition file.
 
 ## MinIO Storage
@@ -244,13 +267,13 @@ But please keep in mind that the nodes themselves do not get _public IPs_. There
 
 ## Azure Policy
 
-This reference architecture deploys [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes) into the Kubernetes cluster. 
-With Azure Policy, security policies can be defined and violations monitored. 
-Azure provides various predefined policies. 
-By default, no policies are assigned to the Kubernetes cluster using the reference architecture. 
+This reference architecture deploys [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes) into the Kubernetes cluster.
+With Azure Policy, security policies can be defined and violations monitored.
+Azure provides various predefined policies.
+By default, no policies are assigned to the Kubernetes cluster using the reference architecture.
 Instead, an administrator must assign policies manually which requires appropriate permissions.
-The Azure built-in roles *Resource Policy Contributor* and *Owner* have these permissions.
-Using the predefined policy [*Kubernetes cluster containers should only use allowed images*](https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/ContainerAllowedImages.json) is recommended by dSPACE.
+The Azure built-in roles _Resource Policy Contributor_ and _Owner_ have these permissions.
+Using the predefined policy [_Kubernetes cluster containers should only use allowed images_](https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/ContainerAllowedImages.json) is recommended by dSPACE.
 To do this, use the CLI command below:
 
 ```powershell
@@ -292,3 +315,102 @@ Please keep in mind that this command will also delete all storage accounts incl
 ## Next steps
 
 As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using the SIMPHERA Quick Start helm chart. You will find detailed instructions in the README file inside the Helm chart itself.
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 3.27.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.27.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.2.3 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_simphera_instance"></a> [simphera\_instance](#module\_simphera\_instance) | ./modules/simphera_instance | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [azurerm_bastion_host.bastion-host](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/bastion_host) | resource |
+| [azurerm_kubernetes_cluster.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster) | resource |
+| [azurerm_kubernetes_cluster_node_pool.execution-nodes](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster_node_pool) | resource |
+| [azurerm_kubernetes_cluster_node_pool.gpu-execution-nodes](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster_node_pool) | resource |
+| [azurerm_network_interface.license-server-nic](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface) | resource |
+| [azurerm_network_interface_security_group_association.ni-license-server-sga](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface_security_group_association) | resource |
+| [azurerm_network_security_group.license-server-nsg](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_security_group) | resource |
+| [azurerm_private_dns_zone.postgresql-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
+| [azurerm_private_dns_zone_virtual_network_link.postgresql-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone_virtual_network_link) | resource |
+| [azurerm_public_ip.bastion-pubip](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/public_ip) | resource |
+| [azurerm_resource_group.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
+| [azurerm_resource_group.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
+| [azurerm_resource_group.license-server](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
+| [azurerm_resource_group.network](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
+| [azurerm_subnet.bastion-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
+| [azurerm_subnet.default-node-pool-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
+| [azurerm_subnet.execution-nodes-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
+| [azurerm_subnet.gpu-nodes-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
+| [azurerm_subnet.license-server-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
+| [azurerm_subnet.paas-services-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
+| [azurerm_virtual_machine_extension.azureDiskEncryption](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_virtual_machine_extension.iaaSAntimalware](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_virtual_machine_extension.microsoftMonitoringAgent](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_virtual_network.simphera-vnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_network) | resource |
+| [azurerm_windows_virtual_machine.license-server](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/windows_virtual_machine) | resource |
+| [local_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
+| [azurerm_key_vault.keyvault](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/key_vault) | data source |
+| [azurerm_key_vault_secret.license_server_secret](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_log_analytics_workspace.log-analytics-workspace](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/log_analytics_workspace) | data source |
+| [azurerm_public_ip.aks_outgoing](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/public_ip) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_apiServerAuthorizedIpRanges"></a> [apiServerAuthorizedIpRanges](#input\_apiServerAuthorizedIpRanges) | List of authorized IP address ranges that are granted access to the Kubernetes API server, e.g. ["198.51.100.0/24"] | `set(string)` | `null` | no |
+| <a name="input_encryptionKeyUrl"></a> [encryptionKeyUrl](#input\_encryptionKeyUrl) | URL of the KeyVault key used for Azure Disk Encryption | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The Azure environment to be used. | `string` | `"public"` | no |
+| <a name="input_gpuNodeCountMax"></a> [gpuNodeCountMax](#input\_gpuNodeCountMax) | The maximum number of nodes for gpu job execution | `number` | `12` | no |
+| <a name="input_gpuNodeCountMin"></a> [gpuNodeCountMin](#input\_gpuNodeCountMin) | The minimum number of nodes for gpu job execution | `number` | `0` | no |
+| <a name="input_gpuNodePool"></a> [gpuNodePool](#input\_gpuNodePool) | Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster | `bool` | `false` | no |
+| <a name="input_gpuNodeSize"></a> [gpuNodeSize](#input\_gpuNodeSize) | The machine size of the nodes for the gpu job execution | `string` | `"Standard_NC16as_T4_v3"` | no |
+| <a name="input_infrastructurename"></a> [infrastructurename](#input\_infrastructurename) | The name of the infrastructure. e.g. simphera-infra | `string` | n/a | yes |
+| <a name="input_keyVault"></a> [keyVault](#input\_keyVault) | Name of the KeyVault | `string` | n/a | yes |
+| <a name="input_keyVaultResourceGroup"></a> [keyVaultResourceGroup](#input\_keyVaultResourceGroup) | Name of the KeyVault's resource group | `string` | n/a | yes |
+| <a name="input_kubernetesVersion"></a> [kubernetesVersion](#input\_kubernetesVersion) | The version of the AKS cluster. | `string` | `"1.23.12"` | no |
+| <a name="input_licenseServer"></a> [licenseServer](#input\_licenseServer) | Specifies whether a VM for the dSPACE Installation Manager will be deployed. | `bool` | `false` | no |
+| <a name="input_licenseServerIaaSAntimalware"></a> [licenseServerIaaSAntimalware](#input\_licenseServerIaaSAntimalware) | Specifies whether a IaaSAntimalware extension will be installed on license server VM. | `bool` | `true` | no |
+| <a name="input_licenseServerMicrosoftMonitoringAgent"></a> [licenseServerMicrosoftMonitoringAgent](#input\_licenseServerMicrosoftMonitoringAgent) | Specifies whether a MicrosoftMonitoringAgent extension will be installed on license server VM. | `bool` | `true` | no |
+| <a name="input_linuxExecutionNodeCountMax"></a> [linuxExecutionNodeCountMax](#input\_linuxExecutionNodeCountMax) | The maximum number of Linux nodes for the job execution | `number` | `10` | no |
+| <a name="input_linuxExecutionNodeCountMin"></a> [linuxExecutionNodeCountMin](#input\_linuxExecutionNodeCountMin) | The minimum number of Linux nodes for the job execution | `number` | `0` | no |
+| <a name="input_linuxExecutionNodeSize"></a> [linuxExecutionNodeSize](#input\_linuxExecutionNodeSize) | The machine size of the Linux nodes for the job execution | `string` | `"Standard_D16s_v4"` | no |
+| <a name="input_linuxNodeCountMax"></a> [linuxNodeCountMax](#input\_linuxNodeCountMax) | The maximum number of Linux nodes for the regular services | `number` | `12` | no |
+| <a name="input_linuxNodeCountMin"></a> [linuxNodeCountMin](#input\_linuxNodeCountMin) | The minimum number of Linux nodes for the regular services | `number` | `1` | no |
+| <a name="input_linuxNodeSize"></a> [linuxNodeSize](#input\_linuxNodeSize) | The machine size of the Linux nodes for the regular services | `string` | `"Standard_D4s_v4"` | no |
+| <a name="input_location"></a> [location](#input\_location) | The Azure location to be used. | `string` | n/a | yes |
+| <a name="input_logAnalyticsWorkspaceName"></a> [logAnalyticsWorkspaceName](#input\_logAnalyticsWorkspaceName) | The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics. | `string` | `""` | no |
+| <a name="input_logAnalyticsWorkspaceResourceGroupName"></a> [logAnalyticsWorkspaceResourceGroupName](#input\_logAnalyticsWorkspaceResourceGroupName) | The name of the resource group of the Log Analytics Workspace to be used. | `string` | `""` | no |
+| <a name="input_simpheraInstances"></a> [simpheraInstances](#input\_simpheraInstances) | A list containing the individual SIMPHERA instances, such as 'staging' and 'production'. | <pre>map(object({<br>    name                        = string<br>    minioAccountReplicationType = string<br>    secretname                  = string<br>    postgresqlVersion           = string<br>    postgresqlSkuName           = string<br>    postgresqlStorage           = number<br>  }))</pre> | n/a | yes |
+| <a name="input_ssh_private_key_path"></a> [ssh\_private\_key\_path](#input\_ssh\_private\_key\_path) | Path to the private SSH key to be used for the kubernetes nodes. | `string` | `"shared-ssh-key/ssh"` | no |
+| <a name="input_ssh_public_key_path"></a> [ssh\_public\_key\_path](#input\_ssh\_public\_key\_path) | Path to the public SSH key to be used for the kubernetes nodes. | `string` | `"shared-ssh-key/ssh.pub"` | no |
+| <a name="input_subscriptionId"></a> [subscriptionId](#input\_subscriptionId) | The ID of the Azure subscription to be used. | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | The tags to be added to all resources. | `map(any)` | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | n/a |
+| <a name="output_minio_storage_usernames"></a> [minio\_storage\_usernames](#output\_minio\_storage\_usernames) | n/a |
+| <a name="output_postgresql_server_hostnames"></a> [postgresql\_server\_hostnames](#output\_postgresql\_server\_hostnames) | n/a |
+| <a name="output_postgresql_server_usernames"></a> [postgresql\_server\_usernames](#output\_postgresql\_server\_usernames) | n/a |
+| <a name="output_secretnames"></a> [secretnames](#output\_secretnames) | n/a |
+<!-- END_TF_DOCS -->

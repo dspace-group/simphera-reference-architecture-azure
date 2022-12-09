@@ -53,11 +53,12 @@ ssh_private_key_path = "shared-ssh-key/ssh"
 # Specifies whether a VM for the dSPACE Installation Manager will be deployed
 licenseServer = true
 
-# Login name of the local user of the license server
-licenseServerAdminLogin = "cluster"
+# Enables instalation of IaaSAntimalware extension on license server VM
+licenseServerIaaSAntimalware = true
 
-# Password of the local user of the license server
-licenseServerAdminPassword = "Foobar1234"
+# Enables instalation of MicrosoftMonitoringAgent extension on license server VM.
+# For using this extension logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName needs to be set.
+licenseServerMicrosoftMonitoringAgent = true
 
 # The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics.
 logAnalyticsWorkspaceName = ""
@@ -68,8 +69,17 @@ logAnalyticsWorkspaceResourceGroupName = ""
 # The version of the AKS cluster.
 kubernetesVersion = "1.23.12"
 
+# Name of the KeyVault
+keyVault = "mykeyvault"
+
+# Name of the KeyVault's resource group
+keyVaultResourceGroup = "myresourcegroup"
+
+# URL of the KeyVault key used for Azure Disk Encryption
+encryptionKeyUrl = "https://..."
+
 # Restrict the kubernetes API access to authorized IP ranges, e.g. ["198.51.100.0/24"]
-apiServerAuthorizedIpRanges = null 
+apiServerAuthorizedIpRanges = null
 
 # The SIMPHERA instances
 simpheraInstances = {
@@ -78,14 +88,11 @@ simpheraInstances = {
     # This name will also be used as a prefix to the resource group names created by terraform.
     name = "production"
 
+    # The name of the secret contained in the keyvault storing PostgreSQL credentials.
+    secretname = "production"
+
     # The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS.
     minioAccountReplicationType = "ZRS"
-
-    # Login name of the account for the PostgreSQL Server (must not be 'admin')
-    postgresqlAdminLogin = "dbuser"
-
-    # Password of the account for the PostgreSQL Server
-    postgresqlAdminPassword = "dj237&jN#+)67jNfsd#267"
 
     # PostgreSQL Server version to deploy
     postgresqlVersion = "11"

@@ -141,7 +141,57 @@ resource "azurerm_virtual_machine_extension" "azureDiskEncryption" {
         "KeyEncryptionAlgorithm": "RSA-OAEP",
         "VolumeType": "All"
     }
-SETTINGS
+  SETTINGS
+
+  tags = var.tags
+}
+
+# To check the type_handler_version for actuality use `az vm extension image list-versions -l westeurope -p "Microsoft.Azure.Security" -n "IaaSAntimalware"`
+resource "azurerm_virtual_machine_extension" "iaaSAntimalware" {
+  count                = var.licenseServer && var.licenseServerIaaSAntimalware ? 1 : 0
+  name                 = "IaaSAntimalware"
+  virtual_machine_id   = azurerm_windows_virtual_machine.license-server[0].id
+  publisher            = "Microsoft.Azure.Security"
+  type                 = "IaaSAntimalware"
+  type_handler_version = "1.6"
+
+  settings = <<SETTINGS
+    {
+        "AntimalwareEnabled": true,
+        "RealtimeProtectionEnabled": "true",
+        "ScheduledScanSettings": {
+            "day": "7",
+            "isEnabled": "true",
+            "scanType": "Quick",
+            "time": "120"
+        }
+    }
+  SETTINGS
+
+  tags = var.tags
+}
+
+# To check the type_handler_version for actuality use `az vm extension image list-versions -l westeurope -p "Microsoft.EnterpriseCloud.Monitoring" -n "MicrosoftMonitoringAgent"`
+resource "azurerm_virtual_machine_extension" "microsoftMonitoringAgent" {
+  count                = var.licenseServer && var.licenseServerMicrosoftMonitoringAgent && var.logAnalyticsWorkspaceName != "" ? 1 : 0
+  name                 = "MicrosoftMonitoringAgent"
+  virtual_machine_id   = azurerm_windows_virtual_machine.license-server[0].id
+  publisher            = "Microsoft.EnterpriseCloud.Monitoring"
+  type                 = "MicrosoftMonitoringAgent"
+  type_handler_version = "1.0"
+
+  settings = <<SETTINGS
+    {
+        "stopOnMultipleConnections": "false",
+        "workspaceId": "${data.azurerm_log_analytics_workspace.log-analytics-workspace[0].workspace_id}"
+    }
+  SETTINGS
+
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "workspaceKey" : "${data.azurerm_log_analytics_workspace.log-analytics-workspace[0].primary_shared_key}"
+    }
+  PROTECTED_SETTINGS
 
   tags = var.tags
 }
