@@ -60,6 +60,9 @@ licenseServerIaaSAntimalware = true
 # For using this extension logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName needs to be set.
 licenseServerMicrosoftMonitoringAgent = true
 
+# Enables instalation of Microsoft Guest configuration extension on license server VM.
+licenseServerMicrosoftGuestConfiguration = true
+
 # The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics.
 logAnalyticsWorkspaceName = ""
 

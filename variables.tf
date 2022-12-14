@@ -127,6 +127,12 @@ variable "licenseServerMicrosoftMonitoringAgent" {
   default     = true
 }
 
+variable "licenseServerMicrosoftGuestConfiguration" {
+  type        = bool
+  description = "Specifies whether a Microsoft Guest configuration extension will be installed on license server VM."
+  default     = true
+}
+
 variable "logAnalyticsWorkspaceName" {
   type        = string
   description = "The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics."
