@@ -112,8 +112,8 @@ resource "azurerm_windows_virtual_machine" "license-server" {
 
   dynamic "identity" {
     for_each = var.licenseServerMicrosoftGuestConfiguration ? [1] : []
-    content{
-      type = "SystemAssigned" 
+    content {
+      type = "SystemAssigned"
     }
   }
 
@@ -205,7 +205,7 @@ resource "azurerm_virtual_machine_extension" "microsoftMonitoringAgent" {
 
 # To check the type_handler_version for actuality use `az vm extension image list-versions -l westeurope -p "Microsoft.GuestConfiguration" -n "ConfigurationforWindows"`
 resource "azurerm_virtual_machine_extension" "gc" {
-  count                = var.licenseServer && var.licenseServerMicrosoftGuestConfiguration ? 1 : 0
+  count                      = var.licenseServer && var.licenseServerMicrosoftGuestConfiguration ? 1 : 0
   name                       = "AzurePolicyforWindows"
   virtual_machine_id         = azurerm_windows_virtual_machine.license-server[0].id
   publisher                  = "Microsoft.GuestConfiguration"
