@@ -29,7 +29,7 @@ jobs:
         with:
           additional_args: -m CRITICAL
       - name: Terraform format
-        run: terraform fmt -check
+        run: terraform fmt -check -recursive
       - name: Terraform init
         run: terraform init -backend=false
       - name: Terraform validate
