@@ -117,19 +117,19 @@ variable "licenseServer" {
 
 variable "licenseServerIaaSAntimalware" {
   type        = bool
-  description = "Specifies whether a IaaSAntimalware extension will be installed on license server VM."
+  description = "Specifies whether a IaaSAntimalware extension will be installed on license server VM. Depends on licenseServer variable."
   default     = true
 }
 
 variable "licenseServerMicrosoftMonitoringAgent" {
   type        = bool
-  description = "Specifies whether a MicrosoftMonitoringAgent extension will be installed on license server VM."
+  description = "Specifies whether a MicrosoftMonitoringAgent extension will be installed on license server VM. Variable licenseServer, logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName variables."
   default     = true
 }
 
 variable "licenseServerMicrosoftGuestConfiguration" {
   type        = bool
-  description = "Specifies whether a Microsoft Guest configuration extension will be installed on license server VM."
+  description = "Specifies whether a Microsoft Guest configuration extension will be installed on license server VM. Depends on licenseServer variable."
   default     = true
 }
 
