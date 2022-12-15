@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "postgres" {
 
 locals {
   servername = "${var.name}-postgresql"
-  username      = local.secrets["postgresql_username"]
+  username   = local.secrets["postgresql_username"]
   fulllogin  = "${local.username}@${local.servername}"
   basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
   gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
