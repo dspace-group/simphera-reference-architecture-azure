@@ -110,6 +110,13 @@ resource "azurerm_windows_virtual_machine" "license-server" {
     version   = "latest"
   }
 
+  dynamic "identity" {
+    for_each = var.licenseServerMicrosoftGuestConfiguration ? [1] : []
+    content {
+      type = "SystemAssigned"
+    }
+  }
+
   tags = var.tags
 
   lifecycle {
@@ -194,4 +201,15 @@ resource "azurerm_virtual_machine_extension" "microsoftMonitoringAgent" {
   PROTECTED_SETTINGS
 
   tags = var.tags
+}
+
+# To check the type_handler_version for actuality use `az vm extension image list-versions -l westeurope -p "Microsoft.GuestConfiguration" -n "ConfigurationforWindows"`
+resource "azurerm_virtual_machine_extension" "gc" {
+  count                      = var.licenseServer && var.licenseServerMicrosoftGuestConfiguration ? 1 : 0
+  name                       = "AzurePolicyforWindows"
+  virtual_machine_id         = azurerm_windows_virtual_machine.license-server[0].id
+  publisher                  = "Microsoft.GuestConfiguration"
+  type                       = "ConfigurationforWindows"
+  type_handler_version       = "1.1"
+  auto_upgrade_minor_version = "true"
 }

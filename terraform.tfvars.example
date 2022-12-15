@@ -54,11 +54,16 @@ ssh_private_key_path = "shared-ssh-key/ssh"
 licenseServer = true
 
 # Enables instalation of IaaSAntimalware extension on license server VM
+# For using this extension licenseServer needs to be set.
 licenseServerIaaSAntimalware = true
 
 # Enables instalation of MicrosoftMonitoringAgent extension on license server VM.
-# For using this extension logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName needs to be set.
+# For using this extension licenseServer, logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName needs to be set.
 licenseServerMicrosoftMonitoringAgent = true
+
+# Enables installation of Microsoft Guest configuration extension on license server VM.
+# For using this extension licenseServer needs to be set.
+licenseServerMicrosoftGuestConfiguration = true
 
 # The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics.
 logAnalyticsWorkspaceName = ""

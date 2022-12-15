@@ -347,6 +347,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | [azurerm_subnet.license-server-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
 | [azurerm_subnet.paas-services-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
 | [azurerm_virtual_machine_extension.azureDiskEncryption](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_virtual_machine_extension.gc](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.iaaSAntimalware](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.microsoftMonitoringAgent](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_network.simphera-vnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_network) | resource |
@@ -366,6 +367,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_environment"></a> [environment](#input\_environment) | The Azure environment to be used. | `string` | `"public"` | no |
 | <a name="input_gpuNodeCountMax"></a> [gpuNodeCountMax](#input\_gpuNodeCountMax) | The maximum number of nodes for gpu job execution | `number` | `12` | no |
 | <a name="input_gpuNodeCountMin"></a> [gpuNodeCountMin](#input\_gpuNodeCountMin) | The minimum number of nodes for gpu job execution | `number` | `0` | no |
+| <a name="input_gpuNodeDeallocate"></a> [gpuNodeDeallocate](#input\_gpuNodeDeallocate) | Configures whether the nodes for the gpu job execution are 'Deallocated (Stopped)' by the cluster auto scaler or 'Deleted'. | `bool` | `true` | no |
 | <a name="input_gpuNodePool"></a> [gpuNodePool](#input\_gpuNodePool) | Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster | `bool` | `false` | no |
 | <a name="input_gpuNodeSize"></a> [gpuNodeSize](#input\_gpuNodeSize) | The machine size of the nodes for the gpu job execution | `string` | `"Standard_NC16as_T4_v3"` | no |
 | <a name="input_infrastructurename"></a> [infrastructurename](#input\_infrastructurename) | The name of the infrastructure. e.g. simphera-infra | `string` | n/a | yes |
@@ -374,9 +376,11 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_kubernetesVersion"></a> [kubernetesVersion](#input\_kubernetesVersion) | The version of the AKS cluster. | `string` | `"1.23.12"` | no |
 | <a name="input_licenseServer"></a> [licenseServer](#input\_licenseServer) | Specifies whether a VM for the dSPACE Installation Manager will be deployed. | `bool` | `false` | no |
 | <a name="input_licenseServerIaaSAntimalware"></a> [licenseServerIaaSAntimalware](#input\_licenseServerIaaSAntimalware) | Specifies whether a IaaSAntimalware extension will be installed on license server VM. | `bool` | `true` | no |
+| <a name="input_licenseServerMicrosoftGuestConfiguration"></a> [licenseServerMicrosoftGuestConfiguration](#input\_licenseServerMicrosoftGuestConfiguration) | Specifies whether a Microsoft Guest configuration extension will be installed on license server VM. | `bool` | `true` | no |
 | <a name="input_licenseServerMicrosoftMonitoringAgent"></a> [licenseServerMicrosoftMonitoringAgent](#input\_licenseServerMicrosoftMonitoringAgent) | Specifies whether a MicrosoftMonitoringAgent extension will be installed on license server VM. | `bool` | `true` | no |
 | <a name="input_linuxExecutionNodeCountMax"></a> [linuxExecutionNodeCountMax](#input\_linuxExecutionNodeCountMax) | The maximum number of Linux nodes for the job execution | `number` | `10` | no |
 | <a name="input_linuxExecutionNodeCountMin"></a> [linuxExecutionNodeCountMin](#input\_linuxExecutionNodeCountMin) | The minimum number of Linux nodes for the job execution | `number` | `0` | no |
+| <a name="input_linuxExecutionNodeDeallocate"></a> [linuxExecutionNodeDeallocate](#input\_linuxExecutionNodeDeallocate) | Configures whether the Linux nodes for the job execution are 'Deallocated (Stopped)' by the cluster auto scaler or 'Deleted'. | `bool` | `true` | no |
 | <a name="input_linuxExecutionNodeSize"></a> [linuxExecutionNodeSize](#input\_linuxExecutionNodeSize) | The machine size of the Linux nodes for the job execution | `string` | `"Standard_D16s_v4"` | no |
 | <a name="input_linuxNodeCountMax"></a> [linuxNodeCountMax](#input\_linuxNodeCountMax) | The maximum number of Linux nodes for the regular services | `number` | `12` | no |
 | <a name="input_linuxNodeCountMin"></a> [linuxNodeCountMin](#input\_linuxNodeCountMin) | The minimum number of Linux nodes for the regular services | `number` | `1` | no |
