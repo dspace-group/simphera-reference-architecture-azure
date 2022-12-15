@@ -123,7 +123,7 @@ variable "licenseServerIaaSAntimalware" {
 
 variable "licenseServerMicrosoftMonitoringAgent" {
   type        = bool
-  description = "Specifies whether a MicrosoftMonitoringAgent extension will be installed on license server VM. Variable licenseServer, logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName variables."
+  description = "Specifies whether a MicrosoftMonitoringAgent extension will be installed on license server VM. Depends on licenseServer, logAnalyticsWorkspaceName and logAnalyticsWorkspaceResourceGroupName variables."
   default     = true
 }
 

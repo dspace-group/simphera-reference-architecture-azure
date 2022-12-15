@@ -6,15 +6,12 @@ resource "azurerm_resource_group" "postgres" {
 
 locals {
   servername = "${var.name}-postgresql"
-  login      = local.secrets["postgresql_username"]
-  password   = local.secrets["postgresql_password"]
-  fulllogin  = "${local.login}@${local.servername}"
+  username   = local.secrets["postgresql_username"]
+  fulllogin  = "${local.username}@${local.servername}"
   basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
   gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
   secrets    = jsondecode(data.azurerm_key_vault_secret.secrets.value)
-
 }
-
 
 resource "azurerm_postgresql_server" "postgresql-server" {
   name                = local.servername
