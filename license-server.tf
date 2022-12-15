@@ -83,8 +83,8 @@ resource "azurerm_network_security_group" "license-server-nsg" {
 
 resource "azurerm_network_interface_security_group_association" "ni-license-server-sga" {
   count                     = var.licenseServer ? 1 : 0
-  network_interface_id      = azurerm_network_interface.license-server-nic.0.id
-  network_security_group_id = azurerm_network_security_group.license-server-nsg.0.id
+  network_interface_id      = azurerm_network_interface.license-server-nic[0].id
+  network_security_group_id = azurerm_network_security_group.license-server-nsg[0].id
 }
 
 
@@ -96,7 +96,7 @@ resource "azurerm_windows_virtual_machine" "license-server" {
   size                  = "Standard_D2s_v4"
   admin_username        = local.license_server_secret["username"]
   admin_password        = local.license_server_secret["password"]
-  network_interface_ids = [azurerm_network_interface.license-server-nic.0.id, ]
+  network_interface_ids = [azurerm_network_interface.license-server-nic[0].id, ]
 
   os_disk {
     caching              = "ReadWrite"

@@ -103,12 +103,6 @@ variable "ssh_public_key_path" {
   default     = "shared-ssh-key/ssh.pub"
 }
 
-variable "ssh_private_key_path" {
-  type        = string
-  description = "Path to the private SSH key to be used for the kubernetes nodes."
-  default     = "shared-ssh-key/ssh"
-}
-
 variable "licenseServer" {
   type        = bool
   description = "Specifies whether a VM for the dSPACE Installation Manager will be deployed."
