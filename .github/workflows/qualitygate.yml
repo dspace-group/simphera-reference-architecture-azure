@@ -24,14 +24,27 @@ jobs:
         #   terraform_version: # optional, default is latest
         #   # Whether or not to install a wrapper to wrap subsequent calls of the `terraform` binary and expose its STDOUT, STDERR, and exit code as outputs named `stdout`, `stderr`, and `exitcode` respectively. Defaults to `true`.
         #   terraform_wrapper: # optional, default is true
+      
+      - name: Setup tflint
+        uses: terraform-linters/setup-tflint@v2
+
       - name: tfsec action
         uses: aquasecurity/tfsec-action@v1.0.2
         with:
           additional_args: -m CRITICAL
+
       - name: Terraform format
         run: terraform fmt -check -recursive
+
       - name: Terraform init
         run: terraform init -backend=false
+
+      - name: Init TFLint
+        run: tflint --init
+
+      - name: Terraform lint
+        run: tflint
+
       - name: Terraform validate
         run: terraform validate
       - uses: addnab/docker-run-action@v3
