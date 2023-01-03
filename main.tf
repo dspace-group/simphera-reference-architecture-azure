@@ -6,6 +6,9 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.27.0"
     }
+    local = {
+      version = "2.2.3"
+    }
   }
 }
 
