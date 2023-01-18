@@ -26,7 +26,7 @@ resource "azurerm_private_endpoint" "keyvault-private-endpoint" {
 }
 
 resource "azurerm_private_dns_zone" "keyvault-privatelink-dns-zone" {
-  name                = "privatelink.vaultcore.azure.com"
+  name                = "privatelink.vaultcore.azure.net"
   resource_group_name = azurerm_resource_group.network.name
   tags                = var.tags
 
@@ -35,12 +35,4 @@ resource "azurerm_private_dns_zone" "keyvault-privatelink-dns-zone" {
       tags
     ]
   }
-}
-
-resource "azurerm_private_dns_a_record" "key-vault-dns-record" {
-  name                = "key-vault-dns-record"
-  zone_name           = azurerm_private_dns_zone.keyvault-privatelink-dns-zone.name
-  resource_group_name = azurerm_resource_group.network.name
-  ttl                 = 10
-  records             = [azurerm_private_endpoint.keyvault-private-endpoint.private_service_connection[0].private_ip_address]
 }
