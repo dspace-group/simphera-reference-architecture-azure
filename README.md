@@ -307,7 +307,9 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 3.27.0 |
+| <a name="requirement_local"></a> [local](#requirement\_local) | 2.2.3 |
 
 ## Providers
 
@@ -333,7 +335,9 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | [azurerm_network_interface.license-server-nic](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface) | resource |
 | [azurerm_network_interface_security_group_association.ni-license-server-sga](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface_security_group_association) | resource |
 | [azurerm_network_security_group.license-server-nsg](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_security_group) | resource |
+| [azurerm_private_dns_zone.minio-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone.postgresql-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
+| [azurerm_private_dns_zone_virtual_network_link.minio-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.postgresql-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_public_ip.bastion-pubip](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/public_ip) | resource |
 | [azurerm_resource_group.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
@@ -352,7 +356,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | [azurerm_virtual_machine_extension.microsoftMonitoringAgent](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_network.simphera-vnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_network) | resource |
 | [azurerm_windows_virtual_machine.license-server](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/windows_virtual_machine) | resource |
-| [local_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
+| [local_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/2.2.3/docs/resources/file) | resource |
 | [azurerm_key_vault.keyvault](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/key_vault) | data source |
 | [azurerm_key_vault_secret.license_server_secret](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/key_vault_secret) | data source |
 | [azurerm_log_analytics_workspace.log-analytics-workspace](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/log_analytics_workspace) | data source |
