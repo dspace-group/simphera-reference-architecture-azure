@@ -10,6 +10,7 @@ module "simphera_instance" {
   tags                           = var.tags
   paasServicesSubnetId           = azurerm_subnet.paas-services-subnet.id
   postgresqlPrivatelinkDnsZoneId = azurerm_private_dns_zone.postgresql-privatelink-dns-zone.id
+  minioPrivatelinkDnsZoneId      = azurerm_private_dns_zone.minio-privatelink-dns-zone.id
   aksIpAddress                   = data.azurerm_public_ip.aks_outgoing.ip_address
   keyVault                       = data.azurerm_key_vault.keyvault.id
   name                           = each.value.name

@@ -28,6 +28,11 @@ variable "postgresqlPrivatelinkDnsZoneId" {
   description = "The id of the private DNS zone for PostgreSQL"
 }
 
+variable "minioPrivatelinkDnsZoneId" {
+  type        = string
+  description = "The id of the private DNS zone for MinIO"
+}
+
 variable "name" {
   type        = string
   description = "The name of the SIMPHERA instance. e.g. production"
