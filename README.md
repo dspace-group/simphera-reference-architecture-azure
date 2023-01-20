@@ -94,27 +94,32 @@ az keyvault key create --name "AzureDiskEncryption" --vault-name $keyVault
 $key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyVault | ConvertFrom-Json
 Write-Host "encryptionKeyUrl=`"$($key.key.kid)`""
 
+$licenseServerCredentials = Get-Credential -Message "Enter username and password for license server."
+
 # Create credentials for license server
-$licenseServerCredentials = @"
+$licenseServerSecret = @"
 {
-    "username" : "<your username>",
-    "password" : "<your password>"
+    "username" : "$($licenseServerCredentials.UserName)",
+    "password" : "$(ConvertFrom-SecureString $licenseServerCredentials.Password -AsPlainText)"
 }
 "@ | ConvertFrom-Json | ConvertTo-Json -Compress
-$licenseServerCredentials = $licenseServerCredentials -replace '([\\]*)"', '$1$1\"'
-az keyvault secret set --name "licenseserver" --vault-name $keyVault --value $licenseServerCredentials
+$licenseServerSecret = $licenseServerSecret -replace '([\\]*)"', '$1$1\"'
+az keyvault secret set --name "licenseserver" --vault-name $keyVault --value $licenseServerSecret
 Remove-Variable licenseServerCredentials
+Remove-Variable licenseServerSecret
 
 # Create credentials for postgresql (one per SIMPHERA instance)
-$postgresqlCredentials = @"
+$postgresqlCredentials = Get-Credential -Message "Enter username and password for PostgreSQL server."
+$postgresqlSecret = @"
 {
-    "postgresql_username" : "<your username>",
-    "postgresql_password" : "<your password>"
+    "postgresql_username" : "$($postgresqlCredentials.UserName)",
+    "postgresql_password" : "$(ConvertFrom-SecureString $postgresqlCredentials.Password -AsPlainText)"
 }
 "@ | ConvertFrom-Json | ConvertTo-Json -Compress
-$postgresqlCredentials = $postgresqlCredentials -replace '([\\]*)"', '$1$1\"'
-az keyvault secret set --name "<secret name>" --vault-name $keyVault --value $postgresqlCredentials
+$postgresqlSecret = $postgresqlSecret -replace '([\\]*)"', '$1$1\"'
+az keyvault secret set --name "<secret name>" --vault-name $keyVault --value $postgresqlSecret
 Remove-Variable postgresqlCredentials
+Remove-Variable postgresqlSecret
 ```
 
 :warning: The usernames for the license and postgresql server should not be changed once the resources are created.
