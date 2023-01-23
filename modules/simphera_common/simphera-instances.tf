@@ -1,7 +1,7 @@
 module "simphera_instance" {
   for_each = var.simpheraInstances
 
-  source = "./modules/simphera_instance"
+  source = "../simphera_instance"
 
   subscriptionId                 = var.subscriptionId
   environment                    = var.environment
