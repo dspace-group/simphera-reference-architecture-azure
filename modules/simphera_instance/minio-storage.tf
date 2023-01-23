@@ -66,8 +66,8 @@ resource "azurerm_storage_account_network_rules" "minio_storage_network_rule" {
 
   default_action             = "Deny"
   ip_rules                   = []
-  virtual_network_subnet_ids = [var.paasServicesSubnetId]
-  bypass                     = ["AzureServices", "Metrics"]
+  virtual_network_subnet_ids = []
+  bypass                     = []
 }
 
 output "minio_storage_username" {
