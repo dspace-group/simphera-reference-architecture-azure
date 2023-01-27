@@ -92,7 +92,7 @@ resource "azurerm_key_vault_key" "azure-disk-encryption-test" {
 resource "random_password" "license-server-rnd-pass" {
   length           = 16
   special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  override_special = "!#$%&*-_=+:?"
 }
 
 resource "azurerm_key_vault_secret" "licenseserver-test" {
@@ -104,7 +104,7 @@ resource "azurerm_key_vault_secret" "licenseserver-test" {
 resource "random_password" "postgresql-rnd-pass" {
   length           = 16
   special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  override_special = "!#$%&*-_=+:?"
 }
 
 resource "azurerm_key_vault_secret" "postgresqlCredentials-test" {
