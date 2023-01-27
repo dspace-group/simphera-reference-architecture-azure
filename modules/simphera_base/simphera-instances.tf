@@ -1,7 +1,7 @@
 module "simphera_instance" {
   for_each = var.simpheraInstances
 
-  source = "../simphera_instance"
+  source = "./modules/simphera_instance"
 
   location                       = var.location
   infrastructurename             = var.infrastructurename
