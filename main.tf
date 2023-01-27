@@ -18,8 +18,8 @@ provider "azurerm" {
   features {}
 }
 
-module "simphera-common" {
-  source = "./modules/simphera_common"
+module "simphera-base" {
+  source = "./modules/simphera_base"
 
   location                                 = var.location
   infrastructurename                       = var.infrastructurename
