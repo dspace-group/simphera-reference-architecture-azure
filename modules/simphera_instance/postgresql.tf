@@ -10,7 +10,7 @@ locals {
   fulllogin  = "${local.username}@${local.servername}"
   basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
   gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
-  secrets    = jsondecode(data.azurerm_key_vault_secret.secrets.value)
+  secrets    = jsondecode(azurerm_key_vault_secret.postgresqlcredentials.value)
 }
 
 resource "azurerm_postgresql_server" "postgresql-server" {
