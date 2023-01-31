@@ -97,18 +97,6 @@ resource "azurerm_key_vault_secret" "license-server-secret" {
   key_vault_id = azurerm_key_vault.simphera-key-vault.id
 }
 
-resource "random_password" "postgresql-rnd-pass" {
-  length           = 16
-  special          = true
-  override_special = "!#$%&*-_=+:?"
-}
-
-resource "azurerm_key_vault_secret" "postgresql-credentials" {
-  name         = "postgresqlcredentials"
-  value        = jsonencode({"postgresql_username" : "dbuser","postgresql_password" : "${random_password.postgresql-rnd-pass.result}"})
-  key_vault_id = azurerm_key_vault.simphera-key-vault.id
-}
-
 resource "azurerm_private_endpoint" "keyvault-private-endpoint" {
   name                = "keyvault-private-endpoint"
   location            = var.location

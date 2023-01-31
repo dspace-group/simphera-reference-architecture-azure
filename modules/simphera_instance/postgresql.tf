@@ -4,13 +4,25 @@ resource "azurerm_resource_group" "postgres" {
   tags     = var.tags
 }
 
+resource "random_password" "postgresql-rnd-pass" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*-_=+:?"
+}
+
+resource "azurerm_key_vault_secret" "postgresql-credentials" {
+  name         = "${var.name}-postgresqlcredentials"
+  value        = jsonencode({"postgresql_username" : "dbuser","postgresql_password" : "${random_password.postgresql-rnd-pass.result}"})
+  key_vault_id = var.keyVault
+}
+
 locals {
   servername = "${var.name}-postgresql"
-  username   = local.secrets["postgresql_username"]
+  username   = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_username"]
+  sqlSecret  = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_password"]
   fulllogin  = "${local.username}@${local.servername}"
   basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
   gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
-  secrets    = jsondecode(azurerm_key_vault_secret.postgresqlcredentials.value)
 }
 
 resource "azurerm_postgresql_server" "postgresql-server" {
@@ -18,8 +30,8 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   location            = azurerm_resource_group.postgres.location
   resource_group_name = azurerm_resource_group.postgres.name
 
-  administrator_login          = local.secrets["postgresql_username"]
-  administrator_login_password = local.secrets["postgresql_password"]
+  administrator_login          = local.username
+  administrator_login_password = local.sqlSecret
 
   sku_name   = var.postgresqlSkuName
   version    = var.postgresqlVersion
