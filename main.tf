@@ -20,5 +20,4 @@ provider "azurerm" {
 
 locals {
   log_analytics_enabled = var.logAnalyticsWorkspaceName != "" ? true : false
-  license_server_secret = var.licenseServer ? jsondecode(azurerm_key_vault_secret.license-server-secret[0].value) : { username = "", password = "" }
 }
