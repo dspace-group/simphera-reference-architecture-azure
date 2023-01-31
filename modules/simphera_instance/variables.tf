@@ -76,8 +76,3 @@ variable "keyVault" {
   type        = string
   description = "Name of the KeyVault"
 }
-
-variable "secretname" {
-  type        = string
-  description = "Name of the secret that stores credentials."
-}
