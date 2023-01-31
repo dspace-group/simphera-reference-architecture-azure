@@ -69,123 +69,6 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N ""
 ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 ```
 
-## Azure KeyVault
-
-You need to create a KeyVault that stores the following:
-
-- One secret per SIMPHERA instance that stores the PostgreSQL credentials of each instance as every SIMPHERA instances comes with its own PostgreSQL server.
-- A key named `licenseserver` for Azure Disk Encryption of the license server (optional). Because the license server is shared between all SIMPHERA instances, you only need one key for that single license server.
-
-To create a new Azure KeyVault with the key for Azure Disk Encryption and the secret for the PostgreSQL credentials, use the following Powershell script.
-Make sure to adjust the variables `$keyVaultResourceGroup`, `$keyVault` and `$location` and enter them also in your tfvars file.
-The Powershell snippet prints the `encryptionKeyUrl` you need to copy into your `.tfvars` file.
-You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
-
-```powershell
-# Create the KeyVault
-$keyVaultResourceGroup = "<resource group>"
-$keyVault = "<keyvault name>"
-$location = "<azure location>"
-az group create --location $location --name $keyVaultResourceGroup
-az keyvault create --resource-group $keyVaultResourceGroup --name $keyVault --location $location --enabled-for-disk-encryption
-
-# Create a key that is used for Azure Disk Encryption feature of the license server
-az keyvault key create --name "AzureDiskEncryption" --vault-name $keyVault
-$key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyVault | ConvertFrom-Json
-Write-Host "encryptionKeyUrl=`"$($key.key.kid)`""
-
-$licenseServerCredentials = Get-Credential -Message "Enter username and password for license server."
-
-# Create credentials for license server
-$licenseServerSecret = @"
-{
-    "username" : "$($licenseServerCredentials.UserName)",
-    "password" : "$(ConvertFrom-SecureString $licenseServerCredentials.Password -AsPlainText)"
-}
-"@ | ConvertFrom-Json | ConvertTo-Json -Compress
-$licenseServerSecret = $licenseServerSecret -replace '([\\]*)"', '$1$1\"'
-az keyvault secret set --name "licenseserver" --vault-name $keyVault --value $licenseServerSecret
-Remove-Variable licenseServerCredentials
-Remove-Variable licenseServerSecret
-
-# Create credentials for postgresql (one per SIMPHERA instance)
-$postgresqlCredentials = Get-Credential -Message "Enter username and password for PostgreSQL server."
-$postgresqlSecret = @"
-{
-    "postgresql_username" : "$($postgresqlCredentials.UserName)",
-    "postgresql_password" : "$(ConvertFrom-SecureString $postgresqlCredentials.Password -AsPlainText)"
-}
-"@ | ConvertFrom-Json | ConvertTo-Json -Compress
-$postgresqlSecret = $postgresqlSecret -replace '([\\]*)"', '$1$1\"'
-az keyvault secret set --name "<secret name>" --vault-name $keyVault --value $postgresqlSecret
-Remove-Variable postgresqlCredentials
-Remove-Variable postgresqlSecret
-```
-
-:warning: The usernames for the license and postgresql server should not be changed once the resources are created.
-Changing the usernames would force the replacement of the resources what would result in data loss.
-
-It is recommended that `<secret name>` reflects the name(s) of the SIMPHERA instance(s) as defined in the terraform variable `simpheraInstances`.
-
-The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile).
-The username of the license server must not be one of these: "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
-
-The supplied password must be between 8-123 characters long and must satisfy at least 3 of password complexity requirements from the following:
-
-1. Contains an uppercase character
-2. Contains a lowercase character
-3. Contains a numeric digit
-4. Contains a special character
-5. Control characters are not allowed
-
-Add the configuration to your .tfvars file:
-
-```diff
-+keyVault="<keyvault name>"
-+keyVaultResourceGroup="<resource group>"
-+encryptionKeyUrl="https://..."
-simpheraInstances = {
-  "production" = {
-+    secretname = "<secret name>"
-    }
-}  
-```
-
-To get a list of all postgresql passwords run the following command:
-
-```powershell
-$secretnames = terraform output -json secretnames | ConvertFrom-Json
-$postgresql_passwords = @{}
-foreach($prop in $secretnames.PsObject.Properties)
-{
-    $secret = az keyvault secret show --name $prop.Value --vault-name $keyVault | ConvertFrom-Json
-    $value = $secret.value | ConvertFrom-Json
-    $postgresql_passwords[$prop.name] = ConvertTo-SecureString $value.postgresql_password -AsPlainText -Force
-    Remove-Variable secret
-    Remove-Variable value
-}
-```
-
-To get a list of all storage account keys run the following command:
-
-```powershell
-$access_keys = @{}
-$storageaccounts = terraform output -json minio_storage_usernames | ConvertFrom-Json
-foreach($prop in $storageaccounts.PsObject.Properties)
-{
-  $keys = az storage account keys list -n $prop.value | ConvertFrom-Json
-  $access_keys[$prop.name] = ConvertTo-SecureString $keys[0].value -AsPlainText -Force
-  Remove-Variable keys
-}
-
-```
-
-You can read the plaintext values like this:
-
-```powershell
-ConvertFrom-SecureString $access_keys["production"] -AsPlainText
-```
-
 ## Log Analytics Workspace
 
 As mentioned before in order to store the log data of the services you have to provide such a workspace in your subscription.
@@ -217,6 +100,7 @@ To do so, please make a copy of the file `state-backend-template`, name it `stat
 For your configuration, please make a copy of the file `terraform.tfvars.example`, name it `terraform.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
 List with description of all mandatory and optional variables could be find in the [Inputs](#inputs) part of this readme file.
 It is recommended to restrict the access to the Kubernetes API server using authorized IP address ranges by setting the variable `apiServerAuthorizedIpRanges`.
+It is recommended to restrict the access to the Key Vault using authorized IP address ranges by setting the variable `keyVaultAuthorizedIpRanges`.
 
 ### Scale Down Mode
 

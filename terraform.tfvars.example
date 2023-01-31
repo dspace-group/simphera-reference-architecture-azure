@@ -87,9 +87,6 @@ simpheraInstances = {
     # This name will also be used as a prefix to the resource group names created by terraform.
     name = "production"
 
-    # The name of the secret contained in the keyvault storing PostgreSQL credentials.
-    secretname = "production"
-
     # The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS.
     minioAccountReplicationType = "ZRS"
 
