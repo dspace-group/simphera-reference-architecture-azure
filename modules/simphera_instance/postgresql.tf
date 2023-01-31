@@ -12,7 +12,7 @@ resource "random_password" "postgresql-rnd-pass" {
 
 resource "azurerm_key_vault_secret" "postgresql-credentials" {
   name         = "${var.name}-postgresqlcredentials"
-  value        = jsonencode({"postgresql_username" : "dbuser","postgresql_password" : "${random_password.postgresql-rnd-pass.result}"})
+  value        = jsonencode({ "postgresql_username" : "dbuser", "postgresql_password" : "${random_password.postgresql-rnd-pass.result}" })
   key_vault_id = var.keyVault
 }
 

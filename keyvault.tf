@@ -61,10 +61,10 @@ resource "azurerm_key_vault" "simphera-key-vault" {
   }
 
   network_acls {
-    bypass = "AzureServices"
-    default_action = "Deny"
-    ip_rules = var.keyVaultAuthorizedIpRanges
-    virtual_network_subnet_ids =[]
+    bypass                     = "AzureServices"
+    default_action             = "Deny"
+    ip_rules                   = var.keyVaultAuthorizedIpRanges
+    virtual_network_subnet_ids = []
   }
 }
 
@@ -93,7 +93,7 @@ resource "random_password" "license-server-rnd-pass" {
 resource "azurerm_key_vault_secret" "license-server-secret" {
   count        = var.licenseServer ? 1 : 0
   name         = "licenseserver"
-  value        = jsonencode({"username" : "lcserveruser","password" : "${random_password.license-server-rnd-pass.result}"})
+  value        = jsonencode({ "username" : "lcserveruser", "password" : "${random_password.license-server-rnd-pass.result}" })
   key_vault_id = azurerm_key_vault.simphera-key-vault.id
 }
 
