@@ -150,12 +150,6 @@ variable "keyVault" {
   description = "Name of the KeyVault"
 }
 
-variable "keyVaultAuthorizedIpRanges" {
-  type        = set(string)
-  description = "List of authorized IP address ranges that are granted access to the Key Vault, e.g. [\"198.51.100.0/24\"]"
-  default     = null
-}
-
 variable "simpheraInstances" {
   type = map(object({
     name                        = string
