@@ -62,7 +62,7 @@ resource "azurerm_key_vault" "simphera-key-vault" {
 
   network_acls {
     bypass                     = "AzureServices"
-    default_action             = "Deny"
+    default_action             = (var.keyVaultAuthorizedIpRanges != null ? "Deny" : "Allow")
     ip_rules                   = var.keyVaultAuthorizedIpRanges
     virtual_network_subnet_ids = []
   }
@@ -134,4 +134,12 @@ resource "azurerm_private_dns_zone" "keyvault-privatelink-dns-zone" {
       tags
     ]
   }
+}
+
+output "key_vault_uri" {
+  value = azurerm_key_vault.simphera-key-vault.vault_uri
+}
+
+output "key_vault_id" {
+  value = azurerm_key_vault.simphera-key-vault.id
 }
