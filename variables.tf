@@ -153,7 +153,7 @@ variable "keyVault" {
 variable "keyVaultAuthorizedIpRanges" {
   type        = set(string)
   description = "List of authorized IP address ranges that are granted access to the Key Vault, e.g. [\"198.51.100.0/24\"]"
-  default     = ["192.168.0.1"]
+  default     = []
 }
 
 variable "simpheraInstances" {
