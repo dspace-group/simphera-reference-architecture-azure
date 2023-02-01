@@ -59,13 +59,6 @@ resource "azurerm_key_vault" "simphera-key-vault" {
       "Update",
     ]
   }
-
-  network_acls {
-    bypass                     = "AzureServices"
-    default_action             = (var.keyVaultAuthorizedIpRanges != null ? "Deny" : "Allow")
-    ip_rules                   = var.keyVaultAuthorizedIpRanges
-    virtual_network_subnet_ids = []
-  }
 }
 
 resource "azurerm_key_vault_key" "azure-disk-encryption" {
