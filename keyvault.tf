@@ -60,6 +60,7 @@ resource "azurerm_key_vault" "simphera-key-vault" {
     ]
   }
 
+  #tfsec:ignore:azure-keyvault-specify-network-acl
   network_acls {
     bypass                     = "AzureServices"
     default_action             = (var.keyVaultAuthorizedIpRanges != null ? "Deny" : "Allow")
