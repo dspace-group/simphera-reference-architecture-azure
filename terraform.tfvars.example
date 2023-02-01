@@ -75,6 +75,7 @@ kubernetesVersion = "1.23.12"
 keyVault = "mykeyvault"
 
 # Restrict the Key Vault access to authorized IP ranges, e.g. ["198.51.100.0/24"]
+# For setting the key vault firewall add IP range list, if the null value is used key vault will be expose to public access
 keyVaultAuthorizedIpRanges = null
 
 # Restrict the kubernetes API access to authorized IP ranges, e.g. ["198.51.100.0/24"]
