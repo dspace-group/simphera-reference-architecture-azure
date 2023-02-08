@@ -26,4 +26,5 @@ resource "azurerm_subnet" "paas-services-subnet" {
   virtual_network_name                      = azurerm_virtual_network.simphera-vnet.name
   address_prefixes                          = ["10.0.97.0/24"]
   private_endpoint_network_policies_enabled = true
+  service_endpoints                         = ["Microsoft.Storage"]
 }

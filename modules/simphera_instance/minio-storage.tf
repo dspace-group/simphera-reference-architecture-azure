@@ -61,6 +61,15 @@ resource "azurerm_private_endpoint" "minio-endpoint" {
   }
 }
 
+resource "azurerm_storage_account_network_rules" "minio_storage_network_rule" {
+  storage_account_id = azurerm_storage_account.minio_storage_account.id
+
+  default_action             = "Deny"
+  ip_rules                   = []
+  virtual_network_subnet_ids = []
+  bypass                     = []
+}
+
 output "minio_storage_username" {
   value = local.storageaccountname
 }
