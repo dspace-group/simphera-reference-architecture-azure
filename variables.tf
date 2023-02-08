@@ -145,11 +145,6 @@ variable "kubernetesVersion" {
   default     = "1.23.12"
 }
 
-variable "keyVault" {
-  type        = string
-  description = "Name of the KeyVault"
-}
-
 variable "keyVaultAuthorizedIpRanges" {
   type        = set(string)
   description = "List of authorized IP address ranges that are granted access to the Key Vault, e.g. [\"198.51.100.0/24\"]"
