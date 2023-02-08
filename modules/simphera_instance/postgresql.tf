@@ -17,12 +17,12 @@ resource "azurerm_key_vault_secret" "postgresql-credentials" {
 }
 
 locals {
-  servername = "${var.name}-postgresql"
-  postgresql_username   = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_username"]
-  postgresql_password  = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_password"]
-  fulllogin  = "${local.postgresql_username}@${local.servername}"
-  basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
-  gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
+  servername          = "${var.name}-postgresql"
+  postgresql_username = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_username"]
+  postgresql_password = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_password"]
+  fulllogin           = "${local.postgresql_username}@${local.servername}"
+  basic_tier          = split("_", var.postgresqlSkuName)[0] == "B"
+  gp_tier             = split("_", var.postgresqlSkuName)[0] == "GP"
 }
 
 resource "azurerm_postgresql_server" "postgresql-server" {
