@@ -160,7 +160,6 @@ variable "simpheraInstances" {
   type = map(object({
     name                        = string
     minioAccountReplicationType = string
-    secretname                  = string
     postgresqlVersion           = string
     postgresqlSkuName           = string
     postgresqlStorage           = number

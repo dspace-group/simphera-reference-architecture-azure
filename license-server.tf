@@ -12,6 +12,12 @@ resource "azurerm_resource_group" "license-server" {
   }
 }
 
+locals {
+  license_server_username = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["username"]
+  license_server_password = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["password"]
+}
+
+
 resource "azurerm_subnet" "license-server-subnet" {
   count                = var.licenseServer ? 1 : 0
   name                 = "license-server-subnet"
@@ -94,8 +100,8 @@ resource "azurerm_windows_virtual_machine" "license-server" {
   name                  = "license-server"
   location              = var.location
   size                  = "Standard_D2s_v4"
-  admin_username        = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["username"]
-  admin_password        = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["password"]
+  admin_username        = local.license_server_username
+  admin_password        = local.license_server_password
   network_interface_ids = [azurerm_network_interface.license-server-nic[0].id]
 
   os_disk {

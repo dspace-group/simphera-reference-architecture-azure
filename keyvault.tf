@@ -1,14 +1,14 @@
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_resource_group" "key-vault-rg" {
-  name     = "${var.keyVault}-rg"
+resource "azurerm_resource_group" "keyvault" {
+  name     = "${var.infrastructurename}-keyvault"
   location = var.location
 }
 
 resource "azurerm_key_vault" "simphera-key-vault" {
   name                        = var.keyVault
-  location                    = azurerm_resource_group.key-vault-rg.location
-  resource_group_name         = azurerm_resource_group.key-vault-rg.name
+  location                    = azurerm_resource_group.keyvault.location
+  resource_group_name         = azurerm_resource_group.keyvault.name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7
@@ -84,7 +84,7 @@ resource "azurerm_key_vault_key" "azure-disk-encryption" {
   ]
 }
 
-resource "random_password" "license-server-rnd-pass" {
+resource "random_password" "license-server-password" {
   length           = 16
   special          = true
   override_special = "!#$%&*-_=+:?"
@@ -93,14 +93,14 @@ resource "random_password" "license-server-rnd-pass" {
 resource "azurerm_key_vault_secret" "license-server-secret" {
   count        = var.licenseServer ? 1 : 0
   name         = "licenseserver"
-  value        = jsonencode({ "username" : "lcserveruser", "password" : random_password.license-server-rnd-pass.result })
+  value        = jsonencode({ "username" : "cluster", "password" : random_password.license-server-password.result })
   key_vault_id = azurerm_key_vault.simphera-key-vault.id
 }
 
 resource "azurerm_private_endpoint" "keyvault-private-endpoint" {
   name                = "keyvault-private-endpoint"
   location            = var.location
-  resource_group_name = azurerm_resource_group.key-vault-rg.name
+  resource_group_name = azurerm_resource_group.keyvault.name
   subnet_id           = azurerm_subnet.paas-services-subnet.id
 
   private_dns_zone_group {
