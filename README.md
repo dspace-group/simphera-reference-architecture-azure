@@ -69,6 +69,42 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N ""
 ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 ```
 
+## How to get secrets and keys
+
+To get a list of all postgresql passwords run the following command:
+
+```powershell
+$secretnames = terraform output -json secretnames | ConvertFrom-Json
+$postgresql_passwords = @{}
+foreach($prop in $secretnames.PsObject.Properties)
+{
+    $secret = az keyvault secret show --name $prop.Value --vault-name $keyVault | ConvertFrom-Json
+    $value = $secret.value | ConvertFrom-Json
+    $postgresql_passwords[$prop.name] = ConvertTo-SecureString $value.postgresql_password -AsPlainText -Force
+    Remove-Variable secret
+    Remove-Variable value
+}
+```
+
+To get list of all storage account keys run the following command:
+
+```powershell
+$access_keys = @{}
+$storageaccounts = terraform output -json minio_storage_usernames | ConvertFrom-Json
+foreach($prop in $storageaccounts.PsObject.Properties)
+{
+  $keys = az storage account keys list -n $prop.value | ConvertFrom-Json
+  $access_keys[$prop.name] = ConvertTo-SecureString $keys[0].value -AsPlainText -Force
+  Remove-Variable keys
+}
+```
+
+You can read the plaintext values like this:
+
+```powershell
+ConvertFrom-SecureString $access_keys["production"] -AsPlainText
+```
+
 ## Log Analytics Workspace
 
 As mentioned before in order to store the log data of the services you have to provide such a workspace in your subscription.
