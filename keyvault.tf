@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "keyvault" {
 }
 
 resource "azurerm_key_vault" "simphera-key-vault" {
-  name                        = substr(replace(join("", ["keyvault", var.infrastructurename]), "-", ""), 0, 24)
+  name                        = substr(replace(var.infrastructurename, "-", ""), 0, 24)
   location                    = azurerm_resource_group.keyvault.location
   resource_group_name         = azurerm_resource_group.keyvault.name
   enabled_for_disk_encryption = true
