@@ -75,12 +75,14 @@ To get a list of all postgresql passwords run the following command:
 
 ```powershell
 $secretnames = terraform output -json secretnames | ConvertFrom-Json
+$keyvaultname = terraform output -json key_vault_name
 $postgresql_passwords = @{}
 foreach($prop in $secretnames.PsObject.Properties)
 {
-    $secret = az keyvault secret show --name $prop.Value --vault-name $keyVault | ConvertFrom-Json
+    $secret = az keyvault secret show --name $prop.value --vault-name $keyvaultname | ConvertFrom-Json
     $value = $secret.value | ConvertFrom-Json
     $postgresql_passwords[$prop.name] = ConvertTo-SecureString $value.postgresql_password -AsPlainText -Force
+    Write-Host "The value of $($prop.value) secret for $($prop.name) instance is $value"
     Remove-Variable secret
     Remove-Variable value
 }
@@ -95,14 +97,9 @@ foreach($prop in $storageaccounts.PsObject.Properties)
 {
   $keys = az storage account keys list -n $prop.value | ConvertFrom-Json
   $access_keys[$prop.name] = ConvertTo-SecureString $keys[0].value -AsPlainText -Force
+  Write-Host "The value of $($prop.value) key for $($prop.name) instance is $(ConvertFrom-SecureString $access_keys[$prop.name] -AsPlainText)"
   Remove-Variable keys
 }
-```
-
-You can read the plaintext values like this:
-
-```powershell
-ConvertFrom-SecureString $access_keys["production"] -AsPlainText
 ```
 
 ## Log Analytics Workspace
@@ -333,9 +330,11 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | Name | Description |
 |------|-------------|
 | <a name="output_key_vault_id"></a> [key\_vault\_id](#output\_key\_vault\_id) | n/a |
+| <a name="output_key_vault_name"></a> [key\_vault\_name](#output\_key\_vault\_name) | n/a |
 | <a name="output_key_vault_uri"></a> [key\_vault\_uri](#output\_key\_vault\_uri) | n/a |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | n/a |
 | <a name="output_minio_storage_usernames"></a> [minio\_storage\_usernames](#output\_minio\_storage\_usernames) | n/a |
 | <a name="output_postgresql_server_hostnames"></a> [postgresql\_server\_hostnames](#output\_postgresql\_server\_hostnames) | n/a |
 | <a name="output_postgresql_server_usernames"></a> [postgresql\_server\_usernames](#output\_postgresql\_server\_usernames) | n/a |
+| <a name="output_secretnames"></a> [secretnames](#output\_secretnames) | n/a |
 <!-- END_TF_DOCS -->

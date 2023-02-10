@@ -117,3 +117,7 @@ resource "azurerm_postgresql_database" "simphera" {
   charset             = "UTF8"
   collation           = "English_United States.1252"
 }
+
+output "secretname" {
+  value = azurerm_key_vault_secret.postgresql-credentials.name
+}

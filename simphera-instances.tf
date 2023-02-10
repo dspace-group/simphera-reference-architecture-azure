@@ -33,6 +33,12 @@ output "postgresql_server_usernames" {
   sensitive = true
 }
 
+output "secretnames" {
+  value = {
+    for name, instance in module.simphera_instance : name => instance.secretname
+  }
+}
+
 output "minio_storage_usernames" {
   value = {
     for name, instance in module.simphera_instance : name => instance.minio_storage_username
