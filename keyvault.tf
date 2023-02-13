@@ -37,27 +37,6 @@ resource "azurerm_key_vault" "simphera-key-vault" {
       "Recover",
       "List"
     ]
-
-    storage_permissions = [
-      "Get",
-      "Delete",
-      "List",
-      "Purge",
-      "Set",
-      "Update"
-    ]
-
-    certificate_permissions = [
-      "Create",
-      "Delete",
-      "DeleteIssuers",
-      "Get",
-      "GetIssuers",
-      "List",
-      "ListIssuers",
-      "SetIssuers",
-      "Update",
-    ]
   }
 
   network_acls {
