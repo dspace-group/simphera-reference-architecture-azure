@@ -4,13 +4,25 @@ resource "azurerm_resource_group" "postgres" {
   tags     = var.tags
 }
 
+resource "random_password" "postgresql-password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*-_=+:?"
+}
+
+resource "azurerm_key_vault_secret" "postgresql-credentials" {
+  name         = "${var.name}-postgresqlcredentials"
+  value        = jsonencode({ "postgresql_username" : "dbuser", "postgresql_password" : random_password.postgresql-password.result })
+  key_vault_id = var.keyVaultId
+}
+
 locals {
-  servername = "${var.name}-postgresql"
-  username   = local.secrets["postgresql_username"]
-  fulllogin  = "${local.username}@${local.servername}"
-  basic_tier = split("_", var.postgresqlSkuName)[0] == "B"
-  gp_tier    = split("_", var.postgresqlSkuName)[0] == "GP"
-  secrets    = jsondecode(data.azurerm_key_vault_secret.secrets.value)
+  servername          = "${var.name}-postgresql"
+  postgresql_username = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_username"]
+  postgresql_password = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_password"]
+  fulllogin           = "${local.postgresql_username}@${local.servername}"
+  basic_tier          = split("_", var.postgresqlSkuName)[0] == "B"
+  gp_tier             = split("_", var.postgresqlSkuName)[0] == "GP"
 }
 
 resource "azurerm_postgresql_server" "postgresql-server" {
@@ -18,8 +30,8 @@ resource "azurerm_postgresql_server" "postgresql-server" {
   location            = azurerm_resource_group.postgres.location
   resource_group_name = azurerm_resource_group.postgres.name
 
-  administrator_login          = local.secrets["postgresql_username"]
-  administrator_login_password = local.secrets["postgresql_password"]
+  administrator_login          = local.postgresql_username
+  administrator_login_password = local.postgresql_password
 
   sku_name   = var.postgresqlSkuName
   version    = var.postgresqlVersion
@@ -104,4 +116,8 @@ resource "azurerm_postgresql_database" "simphera" {
   server_name         = azurerm_postgresql_server.postgresql-server.name
   charset             = "UTF8"
   collation           = "English_United States.1252"
+}
+
+output "secretname" {
+  value = azurerm_key_vault_secret.postgresql-credentials.name
 }

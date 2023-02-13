@@ -69,104 +69,26 @@ ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N ""
 ssh-keygen -t rsa -b 2048 -f shared-ssh-key/ssh -q -N """"
 ```
 
-## Azure KeyVault
-
-You need to create a KeyVault that stores the following:
-
-- One secret per SIMPHERA instance that stores the PostgreSQL credentials of each instance as every SIMPHERA instances comes with its own PostgreSQL server.
-- A key named `licenseserver` for Azure Disk Encryption of the license server (optional). Because the license server is shared between all SIMPHERA instances, you only need one key for that single license server.
-
-To create a new Azure KeyVault with the key for Azure Disk Encryption and the secret for the PostgreSQL credentials, use the following Powershell script.
-Make sure to adjust the variables `$keyVaultResourceGroup`, `$keyVault` and `$location` and enter them also in your tfvars file.
-The Powershell snippet prints the `encryptionKeyUrl` you need to copy into your `.tfvars` file.
-You can read more about [Azure Disk Encryption](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-portal-quickstart) in the Azure documentation.
-
-```powershell
-# Create the KeyVault
-$keyVaultResourceGroup = "<resource group>"
-$keyVault = "<keyvault name>"
-$location = "<azure location>"
-az group create --location $location --name $keyVaultResourceGroup
-az keyvault create --resource-group $keyVaultResourceGroup --name $keyVault --location $location --enabled-for-disk-encryption
-
-# Create a key that is used for Azure Disk Encryption feature of the license server
-az keyvault key create --name "AzureDiskEncryption" --vault-name $keyVault
-$key = az keyvault key show --name "AzureDiskEncryption" --vault-name $keyVault | ConvertFrom-Json
-Write-Host "encryptionKeyUrl=`"$($key.key.kid)`""
-
-$licenseServerCredentials = Get-Credential -Message "Enter username and password for license server."
-
-# Create credentials for license server
-$licenseServerSecret = @"
-{
-    "username" : "$($licenseServerCredentials.UserName)",
-    "password" : "$(ConvertFrom-SecureString $licenseServerCredentials.Password -AsPlainText)"
-}
-"@ | ConvertFrom-Json | ConvertTo-Json -Compress
-$licenseServerSecret = $licenseServerSecret -replace '([\\]*)"', '$1$1\"'
-az keyvault secret set --name "licenseserver" --vault-name $keyVault --value $licenseServerSecret
-Remove-Variable licenseServerCredentials
-Remove-Variable licenseServerSecret
-
-# Create credentials for postgresql (one per SIMPHERA instance)
-$postgresqlCredentials = Get-Credential -Message "Enter username and password for PostgreSQL server."
-$postgresqlSecret = @"
-{
-    "postgresql_username" : "$($postgresqlCredentials.UserName)",
-    "postgresql_password" : "$(ConvertFrom-SecureString $postgresqlCredentials.Password -AsPlainText)"
-}
-"@ | ConvertFrom-Json | ConvertTo-Json -Compress
-$postgresqlSecret = $postgresqlSecret -replace '([\\]*)"', '$1$1\"'
-az keyvault secret set --name "<secret name>" --vault-name $keyVault --value $postgresqlSecret
-Remove-Variable postgresqlCredentials
-Remove-Variable postgresqlSecret
-```
-
-:warning: The usernames for the license and postgresql server should not be changed once the resources are created.
-Changing the usernames would force the replacement of the resources what would result in data loss.
-
-It is recommended that `<secret name>` reflects the name(s) of the SIMPHERA instance(s) as defined in the terraform variable `simpheraInstances`.
-
-The username and password need to satisfy [special requirements](https://learn.microsoft.com/en-us/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#osprofile).
-The username of the license server must not be one of these: "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
-
-The supplied password must be between 8-123 characters long and must satisfy at least 3 of password complexity requirements from the following:
-
-1. Contains an uppercase character
-2. Contains a lowercase character
-3. Contains a numeric digit
-4. Contains a special character
-5. Control characters are not allowed
-
-Add the configuration to your .tfvars file:
-
-```diff
-+keyVault="<keyvault name>"
-+keyVaultResourceGroup="<resource group>"
-+encryptionKeyUrl="https://..."
-simpheraInstances = {
-  "production" = {
-+    secretname = "<secret name>"
-    }
-}  
-```
+## How to get secrets and keys
 
 To get a list of all postgresql passwords run the following command:
 
 ```powershell
 $secretnames = terraform output -json secretnames | ConvertFrom-Json
+$keyvaultname = terraform output -json key_vault_name
 $postgresql_passwords = @{}
 foreach($prop in $secretnames.PsObject.Properties)
 {
-    $secret = az keyvault secret show --name $prop.Value --vault-name $keyVault | ConvertFrom-Json
+    $secret = az keyvault secret show --name $prop.value --vault-name $keyvaultname | ConvertFrom-Json
     $value = $secret.value | ConvertFrom-Json
     $postgresql_passwords[$prop.name] = ConvertTo-SecureString $value.postgresql_password -AsPlainText -Force
+    Write-Host "The value of $($prop.value) secret for $($prop.name) instance is $value"
     Remove-Variable secret
     Remove-Variable value
 }
 ```
 
-To get a list of all storage account keys run the following command:
+To get list of all storage account keys run the following command:
 
 ```powershell
 $access_keys = @{}
@@ -175,15 +97,9 @@ foreach($prop in $storageaccounts.PsObject.Properties)
 {
   $keys = az storage account keys list -n $prop.value | ConvertFrom-Json
   $access_keys[$prop.name] = ConvertTo-SecureString $keys[0].value -AsPlainText -Force
+  Write-Host "The value of $($prop.value) key for $($prop.name) instance is $(ConvertFrom-SecureString $access_keys[$prop.name] -AsPlainText)"
   Remove-Variable keys
 }
-
-```
-
-You can read the plaintext values like this:
-
-```powershell
-ConvertFrom-SecureString $access_keys["production"] -AsPlainText
 ```
 
 ## Log Analytics Workspace
@@ -217,6 +133,7 @@ To do so, please make a copy of the file `state-backend-template`, name it `stat
 For your configuration, please make a copy of the file `terraform.tfvars.example`, name it `terraform.tfvars` and open the file in a text editor. This file contains all variables that are configurable including documentation of the variables. Please adapt the values before you deploy the resources.
 List with description of all mandatory and optional variables could be find in the [Inputs](#inputs) part of this readme file.
 It is recommended to restrict the access to the Kubernetes API server using authorized IP address ranges by setting the variable `apiServerAuthorizedIpRanges`.
+It is recommended to restrict the access to the Key Vault using authorized IP address ranges by setting the variable `keyVaultAuthorizedIpRanges`.
 
 ### Scale Down Mode
 
@@ -315,6 +232,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 3.27.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | 2.2.3 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | 3.4.3 |
 
 ## Providers
 
@@ -322,6 +240,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.27.0 |
 | <a name="provider_local"></a> [local](#provider\_local) | 2.2.3 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.4.3 |
 
 ## Modules
 
@@ -334,19 +253,25 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | Name | Type |
 |------|------|
 | [azurerm_bastion_host.bastion-host](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/bastion_host) | resource |
+| [azurerm_key_vault.simphera-key-vault](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/key_vault) | resource |
+| [azurerm_key_vault_key.azure-disk-encryption](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/key_vault_key) | resource |
+| [azurerm_key_vault_secret.license-server-secret](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/key_vault_secret) | resource |
 | [azurerm_kubernetes_cluster.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster) | resource |
 | [azurerm_kubernetes_cluster_node_pool.execution-nodes](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster_node_pool) | resource |
 | [azurerm_kubernetes_cluster_node_pool.gpu-execution-nodes](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster_node_pool) | resource |
 | [azurerm_network_interface.license-server-nic](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface) | resource |
 | [azurerm_network_interface_security_group_association.ni-license-server-sga](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface_security_group_association) | resource |
 | [azurerm_network_security_group.license-server-nsg](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_security_group) | resource |
+| [azurerm_private_dns_zone.keyvault-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone.minio-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone.postgresql-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.minio-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.postgresql-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone_virtual_network_link) | resource |
+| [azurerm_private_endpoint.keyvault-private-endpoint](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_endpoint) | resource |
 | [azurerm_public_ip.bastion-pubip](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/public_ip) | resource |
 | [azurerm_resource_group.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
+| [azurerm_resource_group.keyvault](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.license-server](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.network](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
 | [azurerm_subnet.bastion-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
@@ -362,8 +287,8 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | [azurerm_virtual_network.simphera-vnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_network) | resource |
 | [azurerm_windows_virtual_machine.license-server](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/windows_virtual_machine) | resource |
 | [local_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/2.2.3/docs/resources/file) | resource |
-| [azurerm_key_vault.keyvault](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/key_vault) | data source |
-| [azurerm_key_vault_secret.license_server_secret](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/key_vault_secret) | data source |
+| [random_password.license-server-password](https://registry.terraform.io/providers/hashicorp/random/3.4.3/docs/resources/password) | resource |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/client_config) | data source |
 | [azurerm_log_analytics_workspace.log-analytics-workspace](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/log_analytics_workspace) | data source |
 | [azurerm_public_ip.aks_outgoing](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/public_ip) | data source |
 
@@ -372,7 +297,6 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_apiServerAuthorizedIpRanges"></a> [apiServerAuthorizedIpRanges](#input\_apiServerAuthorizedIpRanges) | List of authorized IP address ranges that are granted access to the Kubernetes API server, e.g. ["198.51.100.0/24"] | `set(string)` | `null` | no |
-| <a name="input_encryptionKeyUrl"></a> [encryptionKeyUrl](#input\_encryptionKeyUrl) | URL of the KeyVault key used for Azure Disk Encryption | `string` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | The Azure environment to be used. | `string` | `"public"` | no |
 | <a name="input_gpuNodeCountMax"></a> [gpuNodeCountMax](#input\_gpuNodeCountMax) | The maximum number of nodes for gpu job execution | `number` | `12` | no |
 | <a name="input_gpuNodeCountMin"></a> [gpuNodeCountMin](#input\_gpuNodeCountMin) | The minimum number of nodes for gpu job execution | `number` | `0` | no |
@@ -380,8 +304,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_gpuNodePool"></a> [gpuNodePool](#input\_gpuNodePool) | Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster | `bool` | `false` | no |
 | <a name="input_gpuNodeSize"></a> [gpuNodeSize](#input\_gpuNodeSize) | The machine size of the nodes for the gpu job execution | `string` | `"Standard_NC16as_T4_v3"` | no |
 | <a name="input_infrastructurename"></a> [infrastructurename](#input\_infrastructurename) | The name of the infrastructure. e.g. simphera-infra | `string` | n/a | yes |
-| <a name="input_keyVault"></a> [keyVault](#input\_keyVault) | Name of the KeyVault | `string` | n/a | yes |
-| <a name="input_keyVaultResourceGroup"></a> [keyVaultResourceGroup](#input\_keyVaultResourceGroup) | Name of the KeyVault's resource group | `string` | n/a | yes |
+| <a name="input_keyVaultAuthorizedIpRanges"></a> [keyVaultAuthorizedIpRanges](#input\_keyVaultAuthorizedIpRanges) | List of authorized IP address ranges that are granted access to the Key Vault, e.g. ["198.51.100.0/24"] | `set(string)` | `[]` | no |
 | <a name="input_kubernetesVersion"></a> [kubernetesVersion](#input\_kubernetesVersion) | The version of the AKS cluster. | `string` | `"1.23.12"` | no |
 | <a name="input_licenseServer"></a> [licenseServer](#input\_licenseServer) | Specifies whether a VM for the dSPACE Installation Manager will be deployed. | `bool` | `false` | no |
 | <a name="input_licenseServerIaaSAntimalware"></a> [licenseServerIaaSAntimalware](#input\_licenseServerIaaSAntimalware) | Specifies whether a IaaSAntimalware extension will be installed on license server VM. Depends on licenseServer variable. | `bool` | `true` | no |
@@ -397,7 +320,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_location"></a> [location](#input\_location) | The Azure location to be used. | `string` | n/a | yes |
 | <a name="input_logAnalyticsWorkspaceName"></a> [logAnalyticsWorkspaceName](#input\_logAnalyticsWorkspaceName) | The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics. | `string` | `""` | no |
 | <a name="input_logAnalyticsWorkspaceResourceGroupName"></a> [logAnalyticsWorkspaceResourceGroupName](#input\_logAnalyticsWorkspaceResourceGroupName) | The name of the resource group of the Log Analytics Workspace to be used. | `string` | `""` | no |
-| <a name="input_simpheraInstances"></a> [simpheraInstances](#input\_simpheraInstances) | A list containing the individual SIMPHERA instances, such as 'staging' and 'production'. | <pre>map(object({<br>    name                        = string<br>    minioAccountReplicationType = string<br>    secretname                  = string<br>    postgresqlVersion           = string<br>    postgresqlSkuName           = string<br>    postgresqlStorage           = number<br>  }))</pre> | n/a | yes |
+| <a name="input_simpheraInstances"></a> [simpheraInstances](#input\_simpheraInstances) | A list containing the individual SIMPHERA instances, such as 'staging' and 'production'. | <pre>map(object({<br>    name                        = string<br>    minioAccountReplicationType = string<br>    postgresqlVersion           = string<br>    postgresqlSkuName           = string<br>    postgresqlStorage           = number<br>  }))</pre> | n/a | yes |
 | <a name="input_ssh_public_key_path"></a> [ssh\_public\_key\_path](#input\_ssh\_public\_key\_path) | Path to the public SSH key to be used for the kubernetes nodes. | `string` | `"shared-ssh-key/ssh.pub"` | no |
 | <a name="input_subscriptionId"></a> [subscriptionId](#input\_subscriptionId) | The ID of the Azure subscription to be used. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | The tags to be added to all resources. | `map(any)` | `{}` | no |
@@ -406,6 +329,9 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 
 | Name | Description |
 |------|-------------|
+| <a name="output_key_vault_id"></a> [key\_vault\_id](#output\_key\_vault\_id) | n/a |
+| <a name="output_key_vault_name"></a> [key\_vault\_name](#output\_key\_vault\_name) | n/a |
+| <a name="output_key_vault_uri"></a> [key\_vault\_uri](#output\_key\_vault\_uri) | n/a |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | n/a |
 | <a name="output_minio_storage_usernames"></a> [minio\_storage\_usernames](#output\_minio\_storage\_usernames) | n/a |
 | <a name="output_postgresql_server_hostnames"></a> [postgresql\_server\_hostnames](#output\_postgresql\_server\_hostnames) | n/a |

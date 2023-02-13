@@ -12,6 +12,12 @@ resource "azurerm_resource_group" "license-server" {
   }
 }
 
+locals {
+  license_server_username = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["username"]
+  license_server_password = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["password"]
+}
+
+
 resource "azurerm_subnet" "license-server-subnet" {
   count                = var.licenseServer ? 1 : 0
   name                 = "license-server-subnet"
@@ -94,9 +100,9 @@ resource "azurerm_windows_virtual_machine" "license-server" {
   name                  = "license-server"
   location              = var.location
   size                  = "Standard_D2s_v4"
-  admin_username        = local.license_server_secret["username"]
-  admin_password        = local.license_server_secret["password"]
-  network_interface_ids = [azurerm_network_interface.license-server-nic[0].id, ]
+  admin_username        = local.license_server_username
+  admin_password        = local.license_server_password
+  network_interface_ids = [azurerm_network_interface.license-server-nic[0].id]
 
   os_disk {
     caching              = "ReadWrite"
@@ -141,10 +147,10 @@ resource "azurerm_virtual_machine_extension" "azureDiskEncryption" {
   settings = <<SETTINGS
     {
         "EncryptionOperation": "EnableEncryption",
-        "KeyVaultURL": "${data.azurerm_key_vault.keyvault.vault_uri}",
-        "KeyVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
-        "KeyEncryptionKeyURL": "${var.encryptionKeyUrl}",
-        "KekVaultResourceId": "${data.azurerm_key_vault.keyvault.id}",					
+        "KeyVaultURL": "${azurerm_key_vault.simphera-key-vault.vault_uri}",
+        "KeyVaultResourceId": "${azurerm_key_vault.simphera-key-vault.id}",					
+        "KeyEncryptionKeyURL": "${azurerm_key_vault_key.azure-disk-encryption.id}",
+        "KekVaultResourceId": "${azurerm_key_vault.simphera-key-vault.id}",					
         "KeyEncryptionAlgorithm": "RSA-OAEP",
         "VolumeType": "All"
     }

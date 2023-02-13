@@ -72,12 +72,7 @@ variable "aksIpAddress" {
   description = "IP Address of the AKS cluster"
 }
 
-variable "keyVault" {
+variable "keyVaultId" {
   type        = string
-  description = "Name of the KeyVault"
-}
-
-variable "secretname" {
-  type        = string
-  description = "Name of the secret that stores credentials."
+  description = "Id of the KeyVault"
 }

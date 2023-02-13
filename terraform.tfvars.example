@@ -71,14 +71,9 @@ logAnalyticsWorkspaceResourceGroupName = ""
 # The version of the AKS cluster.
 kubernetesVersion = "1.23.12"
 
-# Name of the KeyVault
-keyVault = "mykeyvault"
-
-# Name of the KeyVault's resource group
-keyVaultResourceGroup = "myresourcegroup"
-
-# URL of the KeyVault key used for Azure Disk Encryption
-encryptionKeyUrl = "https://..."
+# Restrict the Key Vault access to authorized IP ranges, e.g. ["198.51.100.0/24"]
+# For setting the key vault firewall add IP range list, if the null value is used key vault will be expose to public access
+keyVaultAuthorizedIpRanges = null
 
 # Restrict the kubernetes API access to authorized IP ranges, e.g. ["198.51.100.0/24"]
 apiServerAuthorizedIpRanges = null
@@ -89,9 +84,6 @@ simpheraInstances = {
     # The name of the cluster. e.g. production
     # This name will also be used as a prefix to the resource group names created by terraform.
     name = "production"
-
-    # The name of the secret contained in the keyvault storing PostgreSQL credentials.
-    secretname = "production"
 
     # The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS.
     minioAccountReplicationType = "ZRS"

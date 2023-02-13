@@ -12,10 +12,9 @@ module "simphera_instance" {
   postgresqlPrivatelinkDnsZoneId = azurerm_private_dns_zone.postgresql-privatelink-dns-zone.id
   minioPrivatelinkDnsZoneId      = azurerm_private_dns_zone.minio-privatelink-dns-zone.id
   aksIpAddress                   = data.azurerm_public_ip.aks_outgoing.ip_address
-  keyVault                       = data.azurerm_key_vault.keyvault.id
+  keyVaultId                     = azurerm_key_vault.simphera-key-vault.id
   name                           = each.value.name
   minioAccountReplicationType    = each.value.minioAccountReplicationType
-  secretname                     = each.value.secretname
   postgresqlVersion              = each.value.postgresqlVersion
   postgresqlSkuName              = each.value.postgresqlSkuName
   postgresqlStorage              = each.value.postgresqlStorage
@@ -45,4 +44,3 @@ output "minio_storage_usernames" {
     for name, instance in module.simphera_instance : name => instance.minio_storage_username
   }
 }
-
