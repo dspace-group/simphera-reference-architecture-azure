@@ -13,8 +13,8 @@ resource "azurerm_resource_group" "license-server" {
 }
 
 locals {
-  license_server_username = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["username"]
-  license_server_password = jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["password"]
+  license_server_username = (var.licenseServer == true ? jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["username"] : "")
+  license_server_password = (var.licenseServer == true ? jsondecode(azurerm_key_vault_secret.license-server-secret[0].value)["password"] : "")
 }
 
 
