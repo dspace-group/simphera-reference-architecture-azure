@@ -25,6 +25,7 @@ provider "azurerm" {
 module "simphera_base" {
   source = "./modules/simphera_base"
 
+  location                                 = var.location
   infrastructurename                       = var.infrastructurename
   tags                                     = var.tags
   linuxNodeSize                            = var.linuxNodeSize
