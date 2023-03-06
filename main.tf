@@ -20,7 +20,3 @@ provider "azurerm" {
   environment     = var.environment
   features {}
 }
-
-locals {
-  log_analytics_enabled = var.logAnalyticsWorkspaceName != "" ? true : false
-}
