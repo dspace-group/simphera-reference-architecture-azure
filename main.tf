@@ -30,6 +30,7 @@ module "simphera_base" {
   tags                                     = var.tags
   linuxNodeSize                            = var.linuxNodeSize
   linuxNodeCountMin                        = var.linuxNodeCountMin
+  linuxNodeCountMax                        = var.linuxNodeCountMax
   linuxExecutionNodeSize                   = var.linuxExecutionNodeSize
   linuxExecutionNodeCountMax               = var.linuxExecutionNodeCountMax
   linuxExecutionNodeDeallocate             = var.linuxExecutionNodeDeallocate
