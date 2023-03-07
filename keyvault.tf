@@ -45,6 +45,12 @@ resource "azurerm_key_vault" "simphera-key-vault" {
     ip_rules                   = var.keyVaultAuthorizedIpRanges
     virtual_network_subnet_ids = []
   }
+
+  lifecycle {
+    ignore_changes = [
+      access_policy, # Preventing that manually added access policies get overridden
+    ]
+  }
 }
 
 resource "azurerm_key_vault_key" "azure-disk-encryption" {
