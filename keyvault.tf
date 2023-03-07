@@ -48,7 +48,7 @@ resource "azurerm_key_vault" "simphera-key-vault" {
 
   lifecycle {
     ignore_changes = [
-      access_policy, # "Preventing that manually added access policies get overridden"
+      access_policy, # Preventing that manually added access policies get overridden
     ]
   }
 }
