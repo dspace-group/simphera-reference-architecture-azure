@@ -32,6 +32,7 @@ module "simphera_base" {
   linuxNodeCountMin                        = var.linuxNodeCountMin
   linuxNodeCountMax                        = var.linuxNodeCountMax
   linuxExecutionNodeSize                   = var.linuxExecutionNodeSize
+  linuxExecutionNodeCountMin               = var.linuxExecutionNodeCountMin
   linuxExecutionNodeCountMax               = var.linuxExecutionNodeCountMax
   linuxExecutionNodeDeallocate             = var.linuxExecutionNodeDeallocate
   gpuNodePool                              = var.gpuNodePool
