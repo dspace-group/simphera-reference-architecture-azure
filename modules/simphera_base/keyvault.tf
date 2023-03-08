@@ -12,7 +12,7 @@ resource "azurerm_key_vault" "simphera-key-vault" {
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7
-  purge_protection_enabled    = var.keyVaultPurgeProtectionEnabled
+  purge_protection_enabled    = false
 
   sku_name = "standard"
 
@@ -44,6 +44,12 @@ resource "azurerm_key_vault" "simphera-key-vault" {
     default_action             = (var.keyVaultAuthorizedIpRanges == null ? "Allow" : "Deny")
     ip_rules                   = var.keyVaultAuthorizedIpRanges
     virtual_network_subnet_ids = []
+  }
+
+  lifecycle {
+    ignore_changes = [
+      access_policy, # Preventing that manually added access policies get overridden
+    ]
   }
 }
 
@@ -113,6 +119,13 @@ resource "azurerm_private_dns_zone" "keyvault-privatelink-dns-zone" {
       tags
     ]
   }
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "keyvault-privatelink-network-link" {
+  name                  = "keyvault-privatelink-network-link"
+  resource_group_name   = azurerm_resource_group.network.name
+  private_dns_zone_name = azurerm_private_dns_zone.keyvault-privatelink-dns-zone.name
+  virtual_network_id    = azurerm_virtual_network.simphera-vnet.id
 }
 
 output "key_vault_uri" {
