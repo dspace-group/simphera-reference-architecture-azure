@@ -140,6 +140,12 @@ variable "keyVaultAuthorizedIpRanges" {
   default     = []
 }
 
+variable "keyVaultPurgeProtectionEnabled" {
+  type        = bool
+  description = "Configures the purge protection for the key vault."
+  default     = true
+}
+
 variable "simpheraInstances" {
   type = map(object({
     name                        = string
