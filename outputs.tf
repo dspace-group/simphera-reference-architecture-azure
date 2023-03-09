@@ -28,6 +28,6 @@ output "key_vault_id" {
   value = module.simphera_base.key_vault_id
 }
 
-output "minio_key_vault_namestorage_usernames" {
+output "key_vault_name" {
   value = module.simphera_base.key_vault_name
 }
