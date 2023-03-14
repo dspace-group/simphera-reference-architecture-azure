@@ -44,6 +44,9 @@ jobs:
 
       - name: Terraform lint
         run: tflint
+      
+      - name: Terraform lint SIMPHERA Base
+        run: tflint --chdir ./modules/simphera_base
 
       - name: Terraform validate
         run: terraform validate
