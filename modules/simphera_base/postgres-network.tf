@@ -10,6 +10,7 @@ resource "azurerm_private_dns_zone" "postgresql-privatelink-dns-zone" {
   }
 }
 
+# tflint-ignore: terraform_required_providers
 resource "azurerm_private_dns_zone_virtual_network_link" "postgresql-privatelink-network-link" {
   name                  = "postgresql-privatelink-network-link"
   resource_group_name   = azurerm_resource_group.network.name
@@ -22,4 +23,4 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql-privatelink
       tags
     ]
   }
-} 
+}

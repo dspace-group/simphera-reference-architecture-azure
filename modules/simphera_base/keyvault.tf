@@ -69,6 +69,7 @@ resource "azurerm_key_vault_key" "azure-disk-encryption" {
   ]
 }
 
+# tflint-ignore: terraform_required_providers, terraform required_version
 resource "random_password" "license-server-password" {
   length           = 16
   special          = true

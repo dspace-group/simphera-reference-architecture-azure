@@ -4,6 +4,7 @@ resource "azurerm_resource_group" "postgres" {
   tags     = var.tags
 }
 
+# tflint-ignore: terraform_required_providers
 resource "random_password" "postgresql-password" {
   length           = 16
   special          = true
@@ -102,6 +103,7 @@ resource "azurerm_postgresql_firewall_rule" "postgresql-firewall" {
   end_ip_address      = var.aksIpAddress
 }
 
+# tflint-ignore: terraform_required_providers
 resource "azurerm_postgresql_database" "keycloak" {
   name                = "keycloak"
   resource_group_name = azurerm_postgresql_server.postgresql-server.resource_group_name
@@ -110,6 +112,7 @@ resource "azurerm_postgresql_database" "keycloak" {
   collation           = "English_United States.1252"
 }
 
+# tflint-ignore: terraform_required_providers
 resource "azurerm_postgresql_database" "simphera" {
   name                = "simphera"
   resource_group_name = azurerm_postgresql_server.postgresql-server.resource_group_name
