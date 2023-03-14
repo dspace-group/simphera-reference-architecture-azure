@@ -8,6 +8,3 @@ plugin "azurerm" {
 rule "terraform_required_providers" {
   enabled = false
 }
-rule "terraform_required_versions" {
-  enabled = false
-}
