@@ -42,8 +42,14 @@ jobs:
       - name: Init TFLint
         run: tflint --init
 
-      - name: Terraform lint
+      - name: Terraform lint Root
         run: tflint
+      
+      - name: Terraform lint SIMPHERA Base
+        run: tflint --config ../../.tflint.hcl --chdir ./modules/simphera_base
+
+      - name: Terraform lint SIMPHERA Instance
+        run: tflint --config ../../../../.tflint.hcl --chdir ./modules/simphera_base/modules/simphera_instance
 
       - name: Terraform validate
         run: terraform validate

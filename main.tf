@@ -21,6 +21,35 @@ provider "azurerm" {
   features {}
 }
 
-locals {
-  log_analytics_enabled = var.logAnalyticsWorkspaceName != "" ? true : false
+
+module "simphera_base" {
+  source = "./modules/simphera_base"
+
+  location                                 = var.location
+  infrastructurename                       = var.infrastructurename
+  tags                                     = var.tags
+  linuxNodeSize                            = var.linuxNodeSize
+  linuxNodeCountMin                        = var.linuxNodeCountMin
+  linuxNodeCountMax                        = var.linuxNodeCountMax
+  linuxExecutionNodeSize                   = var.linuxExecutionNodeSize
+  linuxExecutionNodeCountMin               = var.linuxExecutionNodeCountMin
+  linuxExecutionNodeCountMax               = var.linuxExecutionNodeCountMax
+  linuxExecutionNodeDeallocate             = var.linuxExecutionNodeDeallocate
+  gpuNodePool                              = var.gpuNodePool
+  gpuNodeCountMin                          = var.gpuNodeCountMin
+  gpuNodeCountMax                          = var.gpuNodeCountMax
+  gpuNodeSize                              = var.gpuNodeSize
+  gpuNodeDeallocate                        = var.gpuNodeDeallocate
+  ssh_public_key_path                      = var.ssh_public_key_path
+  licenseServer                            = var.licenseServer
+  licenseServerIaaSAntimalware             = var.licenseServerIaaSAntimalware
+  licenseServerMicrosoftMonitoringAgent    = var.licenseServerMicrosoftMonitoringAgent
+  licenseServerMicrosoftGuestConfiguration = var.licenseServerMicrosoftGuestConfiguration
+  logAnalyticsWorkspaceName                = var.logAnalyticsWorkspaceName
+  logAnalyticsWorkspaceResourceGroupName   = var.logAnalyticsWorkspaceResourceGroupName
+  kubernetesVersion                        = var.kubernetesVersion
+  keyVaultAuthorizedIpRanges               = var.keyVaultAuthorizedIpRanges
+  simpheraInstances                        = var.simpheraInstances
+  apiServerAuthorizedIpRanges              = var.apiServerAuthorizedIpRanges
+
 }

@@ -3,8 +3,6 @@ module "simphera_instance" {
 
   source = "./modules/simphera_instance"
 
-  subscriptionId                 = var.subscriptionId
-  environment                    = var.environment
   location                       = var.location
   infrastructurename             = var.infrastructurename
   tags                           = var.tags
