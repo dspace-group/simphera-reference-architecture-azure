@@ -134,6 +134,12 @@ variable "kubernetesVersion" {
   default     = "1.23.12"
 }
 
+variable "keyVaultPurgeProtection" {
+  type        = bool
+  description = "Specifies whether the Key vault purge protection is enabled."
+  default     = false
+}
+
 variable "keyVaultAuthorizedIpRanges" {
   type        = set(string)
   description = "List of authorized IP address ranges that are granted access to the Key Vault, e.g. [\"198.51.100.0/24\"]"
