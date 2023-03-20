@@ -71,6 +71,9 @@ logAnalyticsWorkspaceResourceGroupName = ""
 # The version of the AKS cluster.
 kubernetesVersion = "1.24.9"
 
+# Enable Key Vault purge protection
+keyVaultPurgeProtection = true
+
 # Restrict the Key Vault access to authorized IP ranges, e.g. ["198.51.100.0/24"]
 # For setting the key vault firewall add IP range list, if the null value is used key vault will be expose to public access
 keyVaultAuthorizedIpRanges = null
