@@ -148,7 +148,7 @@ variable "kubernetesVersion" {
 variable "keyVaultPurgeProtection" {
   type        = bool
   description = "Specifies whether the Key vault purge protection is enabled."
-  default     = false
+  default     = true
 }
 
 variable "keyVaultAuthorizedIpRanges" {
