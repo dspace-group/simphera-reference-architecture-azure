@@ -236,61 +236,17 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.27.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | 2.2.3 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.4.3 |
+No providers.
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_simphera_instance"></a> [simphera\_instance](#module\_simphera\_instance) | ./modules/simphera_instance | n/a |
+| <a name="module_simphera_base"></a> [simphera\_base](#module\_simphera\_base) | ./modules/simphera_base | n/a |
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [azurerm_bastion_host.bastion-host](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/bastion_host) | resource |
-| [azurerm_key_vault.simphera-key-vault](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/key_vault) | resource |
-| [azurerm_key_vault_key.azure-disk-encryption](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/key_vault_key) | resource |
-| [azurerm_key_vault_secret.license-server-secret](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/key_vault_secret) | resource |
-| [azurerm_kubernetes_cluster.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster) | resource |
-| [azurerm_kubernetes_cluster_node_pool.execution-nodes](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster_node_pool) | resource |
-| [azurerm_kubernetes_cluster_node_pool.gpu-execution-nodes](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/kubernetes_cluster_node_pool) | resource |
-| [azurerm_network_interface.license-server-nic](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface) | resource |
-| [azurerm_network_interface_security_group_association.ni-license-server-sga](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_interface_security_group_association) | resource |
-| [azurerm_network_security_group.license-server-nsg](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/network_security_group) | resource |
-| [azurerm_private_dns_zone.keyvault-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone.minio-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone.postgresql-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone_virtual_network_link.minio-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone_virtual_network_link) | resource |
-| [azurerm_private_dns_zone_virtual_network_link.postgresql-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_dns_zone_virtual_network_link) | resource |
-| [azurerm_private_endpoint.keyvault-private-endpoint](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/private_endpoint) | resource |
-| [azurerm_public_ip.bastion-pubip](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/public_ip) | resource |
-| [azurerm_resource_group.aks](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
-| [azurerm_resource_group.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
-| [azurerm_resource_group.keyvault](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
-| [azurerm_resource_group.license-server](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
-| [azurerm_resource_group.network](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/resource_group) | resource |
-| [azurerm_subnet.bastion-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
-| [azurerm_subnet.default-node-pool-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
-| [azurerm_subnet.execution-nodes-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
-| [azurerm_subnet.gpu-nodes-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
-| [azurerm_subnet.license-server-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
-| [azurerm_subnet.paas-services-subnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/subnet) | resource |
-| [azurerm_virtual_machine_extension.azureDiskEncryption](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
-| [azurerm_virtual_machine_extension.gc](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
-| [azurerm_virtual_machine_extension.iaaSAntimalware](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
-| [azurerm_virtual_machine_extension.microsoftMonitoringAgent](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_machine_extension) | resource |
-| [azurerm_virtual_network.simphera-vnet](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/virtual_network) | resource |
-| [azurerm_windows_virtual_machine.license-server](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/resources/windows_virtual_machine) | resource |
-| [local_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/2.2.3/docs/resources/file) | resource |
-| [random_password.license-server-password](https://registry.terraform.io/providers/hashicorp/random/3.4.3/docs/resources/password) | resource |
-| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/client_config) | data source |
-| [azurerm_log_analytics_workspace.log-analytics-workspace](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/log_analytics_workspace) | data source |
-| [azurerm_public_ip.aks_outgoing](https://registry.terraform.io/providers/hashicorp/azurerm/3.27.0/docs/data-sources/public_ip) | data source |
+No resources.
 
 ## Inputs
 
@@ -305,6 +261,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_gpuNodeSize"></a> [gpuNodeSize](#input\_gpuNodeSize) | The machine size of the nodes for the gpu job execution | `string` | `"Standard_NC16as_T4_v3"` | no |
 | <a name="input_infrastructurename"></a> [infrastructurename](#input\_infrastructurename) | The name of the infrastructure. e.g. simphera-infra | `string` | n/a | yes |
 | <a name="input_keyVaultAuthorizedIpRanges"></a> [keyVaultAuthorizedIpRanges](#input\_keyVaultAuthorizedIpRanges) | List of authorized IP address ranges that are granted access to the Key Vault, e.g. ["198.51.100.0/24"] | `set(string)` | `[]` | no |
+| <a name="input_keyVaultPurgeProtection"></a> [keyVaultPurgeProtection](#input\_keyVaultPurgeProtection) | Specifies whether the Key vault purge protection is enabled. | `bool` | `true` | no |
 | <a name="input_kubernetesVersion"></a> [kubernetesVersion](#input\_kubernetesVersion) | The version of the AKS cluster. | `string` | `"1.23.12"` | no |
 | <a name="input_licenseServer"></a> [licenseServer](#input\_licenseServer) | Specifies whether a VM for the dSPACE Installation Manager will be deployed. | `bool` | `false` | no |
 | <a name="input_licenseServerIaaSAntimalware"></a> [licenseServerIaaSAntimalware](#input\_licenseServerIaaSAntimalware) | Specifies whether a IaaSAntimalware extension will be installed on license server VM. Depends on licenseServer variable. | `bool` | `true` | no |
