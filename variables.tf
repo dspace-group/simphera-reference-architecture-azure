@@ -142,7 +142,7 @@ variable "logAnalyticsWorkspaceResourceGroupName" {
 variable "kubernetesVersion" {
   type        = string
   description = "The version of the AKS cluster."
-  default     = "1.23.12"
+  default     = "1.24.9"
 }
 
 variable "keyVaultPurgeProtection" {
