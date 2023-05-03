@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "postgres" {
 resource "random_password" "postgresql-password" {
   length           = 16
   special          = true
-  override_special = "!#$%&*-_+:?"
+  override_special = "!#%&*-_+?"
   min_lower        = 2
   min_upper        = 2
   min_special      = 2
