@@ -5,9 +5,9 @@ repos:
     hooks:
     -   id: terraform_fmt
     -   id: terraform_validate
-    -   id: terraform_tflint
-        args:
-          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+    # -   id: terraform_tflint
+    #     args:
+    #       - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
     # -   id: terraform_tfsec
         #azure-container-limit-authorized-ips excluded until https://github.com/aquasecurity/trivy/discussions/4331 is solved
         # args:

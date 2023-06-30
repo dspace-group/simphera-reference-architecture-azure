@@ -68,11 +68,6 @@ variable "postgresqlGeoBackup" {
   default     = false
 }
 
-variable "aksIpAddress" {
-  type        = string
-  description = "IP Address of the AKS cluster"
-}
-
 variable "keyVaultId" {
   type        = string
   description = "Id of the KeyVault"

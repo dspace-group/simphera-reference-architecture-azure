@@ -25,8 +25,6 @@ locals {
   postgresql_username = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_username"]
   postgresql_password = jsondecode(azurerm_key_vault_secret.postgresql-credentials.value)["postgresql_password"]
   fulllogin           = "${local.postgresql_username}@${local.servername}"
-  basic_tier          = split("_", var.postgresqlSkuName)[0] == "B"
-  gp_tier             = split("_", var.postgresqlSkuName)[0] == "GP"
 }
 
 resource "azurerm_postgresql_flexible_server" "postgresql-flexible" {
@@ -46,7 +44,9 @@ resource "azurerm_postgresql_flexible_server" "postgresql-flexible" {
   backup_retention_days        = var.backupRetention
   geo_redundant_backup_enabled = var.postgresqlGeoBackup
 
-  #zone = 2
+  authentication {
+    active_directory_auth_enabled = true
+  }
 
   tags = var.tags
 
@@ -89,13 +89,6 @@ resource "azurerm_postgresql_flexible_server_configuration" "pgcrypto" {
   server_id = azurerm_postgresql_flexible_server.postgresql-flexible.id
   value     = "PGCRYPTO"
 }
-
-# resource "azurerm_postgresql_flexible_server_firewall_rule" "postgresql-firewall" {
-#   name             = "grantPostgresqlAccessToK8s"
-#   server_id        = azurerm_postgresql_flexible_server.postgresql-flexible.id
-#   start_ip_address = var.aksIpAddress
-#   end_ip_address   = var.aksIpAddress
-# }
 
 output "secretname" {
   value = azurerm_key_vault_secret.postgresql-credentials.name
