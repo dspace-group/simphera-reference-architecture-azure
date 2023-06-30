@@ -49,18 +49,27 @@ data "azurerm_public_ip" "aks_outgoing" {
   resource_group_name = azurerm_kubernetes_cluster.aks.node_resource_group
 }
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                            = "${var.infrastructurename}-aks"
-  location                        = azurerm_resource_group.aks.location
-  resource_group_name             = azurerm_resource_group.aks.name
-  node_resource_group             = "${var.infrastructurename}-aks-node-pools"
-  dns_prefix                      = "${var.infrastructurename}-aks"
-  kubernetes_version              = var.kubernetesVersion
-  azure_policy_enabled            = true
-  api_server_authorized_ip_ranges = var.apiServerAuthorizedIpRanges
+  name                 = "${var.infrastructurename}-aks"
+  location             = azurerm_resource_group.aks.location
+  resource_group_name  = azurerm_resource_group.aks.name
+  node_resource_group  = "${var.infrastructurename}-aks-node-pools"
+  dns_prefix           = "${var.infrastructurename}-aks"
+  kubernetes_version   = var.kubernetesVersion
+  azure_policy_enabled = true
+  sku_tier             = var.kubernetesTier
   linux_profile {
     admin_username = "simphera"
     ssh_key {
       key_data = file(var.ssh_public_key_path)
+    }
+  }
+
+  dynamic "api_server_access_profile" {
+    for_each = length(var.apiServerAuthorizedIpRanges) > 0 ? [1] : []
+    content {
+
+      authorized_ip_ranges = var.apiServerAuthorizedIpRanges
+
     }
   }
 
@@ -103,8 +112,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   lifecycle {
     ignore_changes = [
       default_node_pool[0].node_count,
-      tags,
-      api_server_authorized_ip_ranges
+      tags
     ]
   }
 }

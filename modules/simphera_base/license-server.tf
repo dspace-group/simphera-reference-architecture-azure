@@ -149,7 +149,7 @@ resource "azurerm_virtual_machine_extension" "azureDiskEncryption" {
         "EncryptionOperation": "EnableEncryption",
         "KeyVaultURL": "${azurerm_key_vault.simphera-key-vault.vault_uri}",
         "KeyVaultResourceId": "${azurerm_key_vault.simphera-key-vault.id}",					
-        "KeyEncryptionKeyURL": "${azurerm_key_vault_key.azure-disk-encryption.id}",
+        "KeyEncryptionKeyURL": "${azurerm_key_vault_key.azure-disk-encryption.0.id}",
         "KekVaultResourceId": "${azurerm_key_vault.simphera-key-vault.id}",					
         "KeyEncryptionAlgorithm": "RSA-OAEP",
         "VolumeType": "All"

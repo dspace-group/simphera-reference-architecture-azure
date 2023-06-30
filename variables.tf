@@ -145,6 +145,12 @@ variable "kubernetesVersion" {
   default     = "1.24.9"
 }
 
+variable "kubernetesTier" {
+  type        = string
+  description = "The SKU Tier that should be used for this Kubernetes Cluster."
+  default     = "Free"
+}
+
 variable "keyVaultPurgeProtection" {
   type        = bool
   description = "Specifies whether the Key vault purge protection is enabled."
@@ -164,6 +170,8 @@ variable "simpheraInstances" {
     postgresqlVersion           = string
     postgresqlSkuName           = string
     postgresqlStorage           = number
+    postgresqlGeoBackup         = bool
+    backupRetention             = number
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."

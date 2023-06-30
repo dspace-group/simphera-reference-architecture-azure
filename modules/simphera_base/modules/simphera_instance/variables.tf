@@ -13,6 +13,11 @@ variable "paasServicesSubnetId" {
   description = "The id of the PaaS subnet"
 }
 
+variable "postgresqlSubnetId" {
+  type        = string
+  description = "The id of the subnet PostgreSQL"
+}
+
 variable "postgresqlPrivatelinkDnsZoneId" {
   type        = string
   description = "The id of the private DNS zone for PostgreSQL"
@@ -48,13 +53,19 @@ variable "postgresqlVersion" {
 variable "postgresqlSkuName" {
   type        = string
   description = "PostgreSQL SKU Name"
-  default     = "GP_Gen5_2"
+  default     = "GP_Standard_D2ds_v4"
 }
 
 variable "postgresqlStorage" {
   type        = number
   description = "PostgreSQL Storage in MB, must be divisble by 1024"
   default     = 5120
+}
+
+variable "postgresqlGeoBackup" {
+  type        = bool
+  description = "Enable geo-redundant backups for the PostgreSQL Flexible Server"
+  default     = false
 }
 
 variable "aksIpAddress" {
@@ -65,4 +76,10 @@ variable "aksIpAddress" {
 variable "keyVaultId" {
   type        = string
   description = "Id of the KeyVault"
+}
+
+variable "backupRetention" {
+  type        = number
+  description = "Restore retention in days."
+  default     = 7
 }

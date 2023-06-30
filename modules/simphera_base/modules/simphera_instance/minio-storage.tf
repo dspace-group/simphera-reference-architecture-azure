@@ -25,6 +25,25 @@ resource "azurerm_storage_account" "minio_storage_account" {
   account_kind             = "StorageV2"
   access_tier              = "Hot"
 
+  blob_properties {
+    change_feed_enabled = true
+    versioning_enabled  = true
+    restore_policy {
+      # backup retention period
+      days = var.backupRetention # This value must be less than the value that's set for blob soft delete
+    }
+
+    container_delete_retention_policy {
+      # container retention period
+      days = var.backupRetention + 1
+    }
+
+    delete_retention_policy {
+      # blob retention period
+      days = var.backupRetention + 1
+    }
+  }
+
   tags = var.tags
 
   lifecycle {
