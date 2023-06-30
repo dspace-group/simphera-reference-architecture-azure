@@ -11,9 +11,9 @@ repos:
     # -   id: terraform_tfsec
     #     args:
     #         - --args=-v
-# -   repo: local
-#     hooks:
-#     -   id: terraform_apply
-#         name: terraform_apply
-#         entry: --entrypoint /src/hooks/validate_tfvars.sh zenika/terraform-azure-cli
-#         language: docker_image
+-   repo: local
+    hooks:
+    -   id: terraform_apply
+        name: terraform_apply
+        entry: --entrypoint /src/hooks/validate_tfvars.sh zenika/terraform-azure-cli
+        language: docker_image
