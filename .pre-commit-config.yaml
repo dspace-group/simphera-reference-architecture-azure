@@ -27,12 +27,12 @@ repos:
         name: terraform_validate
         entry: -d hashicorp/terraform:1.5.2 validate
         language: docker_image
-# -   repo: local
-#     hooks:
-#     -   id: terraform_lint
-#         name: terraform_lint
-#         entry: ghcr.io/terraform-linters/tflint:v0.47.0
-#         language: docker_image
+-   repo: local
+    hooks:
+    -   id: terraform_lint
+        name: terraform_lint
+        entry: -d ghcr.io/terraform-linters/tflint:v0.47.0
+        language: docker_image
 -   repo: local
     hooks:
     -   id: tfsec
