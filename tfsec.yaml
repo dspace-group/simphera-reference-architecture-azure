@@ -1,0 +1,4 @@
+---
+exclude:
+  - azure-container-limit-authorized-ips # causes false positive see https://github.com/aquasecurity/trivy/discussions/4331
+minimum_severity: CRITICAL  

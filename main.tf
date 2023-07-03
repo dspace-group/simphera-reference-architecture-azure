@@ -48,6 +48,7 @@ module "simphera_base" {
   logAnalyticsWorkspaceName                = var.logAnalyticsWorkspaceName
   logAnalyticsWorkspaceResourceGroupName   = var.logAnalyticsWorkspaceResourceGroupName
   kubernetesVersion                        = var.kubernetesVersion
+  kubernetesTier                           = var.kubernetesTier
   keyVaultPurgeProtection                  = var.keyVaultPurgeProtection
   keyVaultAuthorizedIpRanges               = var.keyVaultAuthorizedIpRanges
   simpheraInstances                        = var.simpheraInstances

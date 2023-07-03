@@ -3,25 +3,25 @@ repos:
     hooks:
     -   id: terraform_format
         name: terraform_format
-        entry: -d hashicorp/terraform:1.5.2 fmt
+        entry: --entrypoint /src/hooks/terraform_format.sh hashicorp/terraform:1.5.2
         language: docker_image
 -   repo: local
     hooks:
     -   id: terraform_validate
         name: terraform_validate
-        entry: -d hashicorp/terraform:1.5.2 validate
+        entry: --entrypoint /src/hooks/terraform_validate.sh hashicorp/terraform:1.5.2
         language: docker_image
 -   repo: local
     hooks:
-    -   id: terraform_lint
-        name: terraform_lint
-        entry: -d ghcr.io/terraform-linters/tflint:v0.47.0
+    -   id: tflint
+        name: tflint
+        entry: --entrypoint /src/hooks/tflint.sh ghcr.io/terraform-linters/tflint:v0.47.0
         language: docker_image
 -   repo: local
     hooks:
     -   id: tfsec
         name: tfsec
-        entry: -d aquasec/tfsec:v1.28
+        entry: --entrypoint /src/hooks/tfsec.sh aquasec/tfsec:v1.28
         language: docker_image                         
 -   repo: local
     hooks:
