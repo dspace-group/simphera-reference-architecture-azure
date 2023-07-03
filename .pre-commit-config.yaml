@@ -19,7 +19,7 @@ repos:
     hooks:
     -   id: terraform_validate
         name: terraform_validate
-        entry: hashicorp/terraform:1.5.2 version
+        entry: -d hashicorp/terraform:1.5.2 fmt
         language: docker_image            
 -   repo: local
     hooks:
