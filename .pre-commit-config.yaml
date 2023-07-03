@@ -15,12 +15,12 @@
             # -e azure-container-limit-authorized-ips        
             # -m CRITICAL
 repos:
-# -   repo: local
-#     hooks:
-#     -   id: terraform_validate
-#         name: terraform_validate
-#         entry: hashicorp/terraform:1.5.2 validate
-#         language: docker_image            
+-   repo: local
+    hooks:
+    -   id: terraform_validate
+        name: terraform_validate
+        entry: hashicorp/terraform:1.5.2 version
+        language: docker_image            
 -   repo: local
     hooks:
     -   id: terraform_apply
