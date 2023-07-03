@@ -31,7 +31,7 @@ jobs:
       - name: tfsec action
         uses: aquasecurity/tfsec-action@v1.0.2
         with:
-          additional_args: -m CRITICAL
+          additional_args: --config-file tfsec.yaml
 
       - name: Terraform format
         run: terraform fmt -check -recursive
