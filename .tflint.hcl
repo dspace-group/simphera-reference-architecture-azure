@@ -8,3 +8,8 @@ plugin "azurerm" {
 rule "terraform_required_providers" {
   enabled = false
 }
+
+rule "azure-container-limit-authorized-ips" {
+  # rule causes a false positive see https://github.com/aquasecurity/trivy/discussions/4331 is solved
+  enabled = false
+}
