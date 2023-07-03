@@ -7,8 +7,10 @@ terraform init -lock=false
 OUTPUT=`terraform apply -lock=false --var-file="terraform.tfvars.example" -input=false 2>&1 >/dev/null`
 echo $OUTPUT
 # ignore az login
-if [[ $OUTPUT == *"unable to build authorizer for Resource Manager API"* ]]; then
+if [[ $OUTPUT == *"az login"* ]]; then
+  echo "here"
   exit 0
 else
+  echo "here2"
   exit 1
 fi
