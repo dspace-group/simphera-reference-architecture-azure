@@ -8,9 +8,7 @@ OUTPUT=`terraform apply -lock=false --var-file="terraform.tfvars.example" -input
 echo $OUTPUT
 # ignore az login
 if [[ $OUTPUT == *"az login"* ]]; then
-  echo "here"
   exit 0
 else
-  echo "here2"
   exit 1
 fi
