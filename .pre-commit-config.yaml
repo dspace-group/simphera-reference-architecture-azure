@@ -1,19 +1,32 @@
-# Rerun `pre-commit install` after every update of this file
 repos:
--   repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.77.0
+-   repo: local
     hooks:
-    -   id: terraform_fmt
+    -   id: terraform_format
+        name: terraform_format
+        entry: --entrypoint /src/hooks/terraform_format.sh hashicorp/terraform:1.5.2
+        language: docker_image
+-   repo: local
+    hooks:
     -   id: terraform_validate
-    -   id: terraform_tflint
-        args:
-          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
-    # -   id: terraform_tfsec
-    #     args:
-    #         - --args=-v
+        name: terraform_validate
+        entry: --entrypoint /src/hooks/terraform_validate.sh hashicorp/terraform:1.5.2
+        language: docker_image
+-   repo: local
+    hooks:
+    -   id: tflint
+        name: tflint
+        entry: --entrypoint /src/hooks/tflint.sh ghcr.io/terraform-linters/tflint:v0.47.0
+        language: docker_image
+-   repo: local
+    hooks:
+    -   id: tfsec
+        name: tfsec
+        entry: --entrypoint /src/hooks/tfsec.sh aquasec/tfsec:v1.28
+        language: docker_image                         
 -   repo: local
     hooks:
     -   id: terraform_apply
         name: terraform_apply
         entry: --entrypoint /src/hooks/validate_tfvars.sh zenika/terraform-azure-cli
         language: docker_image
+

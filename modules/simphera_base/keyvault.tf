@@ -54,6 +54,7 @@ resource "azurerm_key_vault" "simphera-key-vault" {
 }
 
 resource "azurerm_key_vault_key" "azure-disk-encryption" {
+  count        = var.licenseServer ? 1 : 0
   name         = "AzureDiskEncryption"
   key_vault_id = azurerm_key_vault.simphera-key-vault.id
   key_type     = "RSA"

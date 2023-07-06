@@ -4,13 +4,13 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.27.0"
+      version = "3.62.1"
     }
     random = {
-      version = "3.4.3"
+      version = "3.5.1"
     }
     local = {
-      version = "2.2.3"
+      version = "2.4.0"
     }
   }
 }
@@ -48,6 +48,7 @@ module "simphera_base" {
   logAnalyticsWorkspaceName                = var.logAnalyticsWorkspaceName
   logAnalyticsWorkspaceResourceGroupName   = var.logAnalyticsWorkspaceResourceGroupName
   kubernetesVersion                        = var.kubernetesVersion
+  kubernetesTier                           = var.kubernetesTier
   keyVaultPurgeProtection                  = var.keyVaultPurgeProtection
   keyVaultAuthorizedIpRanges               = var.keyVaultAuthorizedIpRanges
   simpheraInstances                        = var.simpheraInstances
