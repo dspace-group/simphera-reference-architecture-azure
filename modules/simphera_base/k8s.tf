@@ -173,7 +173,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
     "purpose=gpu:NoSchedule"
   ]
 
-  tags = var.tags
+  tags = merge(var.tags, { SkipGPUDriverInstall = "true" })
 
   lifecycle {
     ignore_changes = [
@@ -184,6 +184,13 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
       node_count
     ]
   }
+}
+
+module "gpu-operator" {
+  count = var.gpuNodePool ? 1 : 0
+
+  source           = "./modules/gpu_operator"
+  gpuDriverVersion = var.gpuDriverVersion
 }
 
 output "kube_config" {
