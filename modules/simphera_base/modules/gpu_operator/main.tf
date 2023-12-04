@@ -7,5 +7,5 @@ resource "helm_release" "gpu-operator" {
   repository = "https://helm.ngc.nvidia.com/nvidia"
   chart      = "gpu-operator"
   version    = var.helmChartVersion
-  values     = [templatefile("gpu-operator-values.yaml", { driver_version = var.gpuDriverVersion })]
+  values     = [templatefile("./gpu-operator-values.yaml", { driver_version = var.gpuDriverVersion })]
 }
