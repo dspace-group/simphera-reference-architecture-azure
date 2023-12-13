@@ -1,3 +1,7 @@
+variable "gpuDriverVersion" {
+  type = string
+}
+
 variable "helmReleaseName" {
   type    = string
   default = "gpu-operator"
@@ -8,6 +12,7 @@ variable "helmChartVersion" {
   default = "v23.9.0"
 }
 
-variable "gpuDriverVersion" {
-  type = string
+variable "namespace" {
+  type    = string
+  default = "gpu-operator"
 }

@@ -135,9 +135,13 @@ List with description of all mandatory and optional variables could be find in t
 It is recommended to restrict the access to the Kubernetes API server using authorized IP address ranges by setting the variable `apiServerAuthorizedIpRanges`.
 It is recommended to restrict the access to the Key Vault using authorized IP address ranges by setting the variable `keyVaultAuthorizedIpRanges`.
 
+## GPU Usage
+
+If you use AURELION with SIMPHERA then the AURELION Pods are executed in the GPU node pool. AURELION uses a specific OptiX Version and thus needs specific NVIDIA Drivers. NVIDIA provides the [gpu-operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html), a tool with which it is possible to use containerized drivers inside pods. This makes it possible to use the needed driver Versions independent of the default installation of the NVIDIA Drivers on the GPU node pool, which can only be not installed, selecting a version is not possible. [Further infomations](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster#use-nvidia-gpu-operator-with-aks)
+
 ### Scale Down Mode
 
-If you use AURELION with SIMPHERA then the AURELION Pods are executed in the GPU node pool. Typically, you have autoscaling enabled for that pool so that VMs are scaled down if they are no longer needed. However, the AURELION container image is big and it takes time to download the image to the Kubernetes node. Depending on your location this can take more than 30 minutes. To shorten these times the _Scale Down Mode_ of the GPU node pool should be set to _Deallocate_. That means, that a GPU VM is not _deleted_ but only _deallocated_. So you no longer have to pay for the compute resources but only for the disk that will not be deleted when using this mode.
+Typically, you have autoscaling enabled for the GPU node pool so that VMs are scaled down if they are no longer needed. However, the AURELION container image is big and it takes time to download the image to the Kubernetes node. Depending on your location this can take more than 30 minutes. To shorten these times the _Scale Down Mode_ of the GPU node pool should be set to _Deallocate_. That means, that a GPU VM is not _deleted_ but only _deallocated_. So you no longer have to pay for the compute resources but only for the disk that will not be deleted when using this mode.
 
 You can enable and disable this mode using the variables `linuxExecutionNodeDeallocate` and `gpuNodeDeallocate`. That means, you can not only configure this for the GPU node pool but also for the Execution node pool. As a default _Deallocate_ is used for both node pools.
 
@@ -244,6 +248,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_simphera_instance"></a> [simphera\_instance](#module\_simphera\_instance) | ./modules/simphera_instance | n/a |
+| <a name="module_gpu_operator"></a> [gpu\_operator](#module\_gpu\_operator) | ./modules/gpu_operator | n/a |
 
 ## Resources
 
@@ -289,6 +294,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 | [azurerm_log_analytics_workspace.log-analytics-workspace](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/log_analytics_workspace) | data source |
 | [azurerm_public_ip.aks_outgoing](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
+| [helm_helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 
 ## Inputs
 
@@ -300,6 +306,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_gpuNodeDeallocate"></a> [gpuNodeDeallocate](#input\_gpuNodeDeallocate) | Configures whether the nodes for the gpu job execution are 'Deallocated (Stopped)' by the cluster auto scaler or 'Deleted'. | `bool` | `true` | no |
 | <a name="input_gpuNodePool"></a> [gpuNodePool](#input\_gpuNodePool) | Specifies whether an additional node pool for gpu job execution is added to the kubernetes cluster | `bool` | `false` | no |
 | <a name="input_gpuNodeSize"></a> [gpuNodeSize](#input\_gpuNodeSize) | The machine size of the nodes for the gpu job execution | `string` | `"Standard_NC16as_T4_v3"` | no |
+| <a name="input_gpuDriverVersion"></a> [gpuDriverVersion](#input\_gpuDriverVersion) | Sets the NVIDIA Driver Version used. | `string` | `"535.54.03"` | no |
 | <a name="input_infrastructurename"></a> [infrastructurename](#input\_infrastructurename) | The name of the infrastructure. e.g. simphera-infra | `string` | n/a | yes |
 | <a name="input_keyVaultAuthorizedIpRanges"></a> [keyVaultAuthorizedIpRanges](#input\_keyVaultAuthorizedIpRanges) | List of authorized IP address ranges that are granted access to the Key Vault, e.g. ["198.51.100.0/24"] | `set(string)` | `[]` | no |
 | <a name="input_keyVaultPurgeProtection"></a> [keyVaultPurgeProtection](#input\_keyVaultPurgeProtection) | Specifies whether the Key vault purge protection is enabled. | `bool` | `true` | no |

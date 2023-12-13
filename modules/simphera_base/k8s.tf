@@ -191,6 +191,7 @@ module "gpu-operator" {
 
   source           = "./modules/gpu_operator"
   gpuDriverVersion = var.gpuDriverVersion
+  depends_on       = [azurerm_kubernetes_cluster.aks]
 }
 
 output "kube_config" {
