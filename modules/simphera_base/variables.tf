@@ -86,12 +86,6 @@ variable "gpuNodeDeallocate" {
   default     = true
 }
 
-variable "gpuDriverVersion" {
-  type        = string
-  description = "GPU Driver Version that the gpu-operator uses."
-  default     = "535.54.03"
-}
-
 variable "ssh_public_key_path" {
   type        = string
   description = "Path to the public SSH key to be used for the kubernetes nodes."

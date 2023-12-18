@@ -248,7 +248,6 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_simphera_instance"></a> [simphera\_instance](#module\_simphera\_instance) | ./modules/simphera_instance | n/a |
-| <a name="module_gpu_operator"></a> [gpu\_operator](#module\_gpu\_operator) | ./modules/gpu_operator | n/a |
 
 ## Resources
 
