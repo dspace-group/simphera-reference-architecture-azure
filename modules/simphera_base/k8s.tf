@@ -186,14 +186,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   }
 }
 
-module "gpu-operator" {
-  count = var.gpuNodePool ? 1 : 0
-
-  source           = "./modules/gpu_operator"
-  gpuDriverVersion = var.gpuDriverVersion
-  depends_on       = [azurerm_kubernetes_cluster.aks]
-}
-
 output "kube_config" {
   value     = azurerm_kubernetes_cluster.aks.kube_config
   sensitive = true
