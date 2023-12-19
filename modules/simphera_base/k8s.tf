@@ -173,7 +173,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
     "purpose=gpu:NoSchedule"
   ]
 
-  tags = var.tags
+  tags = merge(var.tags, { SkipGPUDriverInstall = "true" })
 
   lifecycle {
     ignore_changes = [

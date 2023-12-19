@@ -135,9 +135,13 @@ List with description of all mandatory and optional variables could be find in t
 It is recommended to restrict the access to the Kubernetes API server using authorized IP address ranges by setting the variable `apiServerAuthorizedIpRanges`.
 It is recommended to restrict the access to the Key Vault using authorized IP address ranges by setting the variable `keyVaultAuthorizedIpRanges`.
 
+## GPU Usage
+
+If you use AURELION with SIMPHERA then the AURELION Pods are executed in the GPU node pool. AURELION uses a specific OptiX Version and thus needs specific NVIDIA Drivers. NVIDIA provides the [gpu-operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html), a tool with which it is possible to use containerized drivers inside pods. This makes it possible to use the needed driver Versions independent of the default installation of the NVIDIA Drivers on the GPU node pool, which can only be not installed, selecting a version is not possible. [Further infomations](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster#use-nvidia-gpu-operator-with-aks)
+
 ### Scale Down Mode
 
-If you use AURELION with SIMPHERA then the AURELION Pods are executed in the GPU node pool. Typically, you have autoscaling enabled for that pool so that VMs are scaled down if they are no longer needed. However, the AURELION container image is big and it takes time to download the image to the Kubernetes node. Depending on your location this can take more than 30 minutes. To shorten these times the _Scale Down Mode_ of the GPU node pool should be set to _Deallocate_. That means, that a GPU VM is not _deleted_ but only _deallocated_. So you no longer have to pay for the compute resources but only for the disk that will not be deleted when using this mode.
+Typically, you have autoscaling enabled for the GPU node pool so that VMs are scaled down if they are no longer needed. However, the AURELION container image is big and it takes time to download the image to the Kubernetes node. Depending on your location this can take more than 30 minutes. To shorten these times the _Scale Down Mode_ of the GPU node pool should be set to _Deallocate_. That means, that a GPU VM is not _deleted_ but only _deallocated_. So you no longer have to pay for the compute resources but only for the disk that will not be deleted when using this mode.
 
 You can enable and disable this mode using the variables `linuxExecutionNodeDeallocate` and `gpuNodeDeallocate`. That means, you can not only configure this for the GPU node pool but also for the Execution node pool. As a default _Deallocate_ is used for both node pools.
 
