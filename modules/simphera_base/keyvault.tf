@@ -26,7 +26,9 @@ resource "azurerm_key_vault" "simphera-key-vault" {
       "List",
       "Delete",
       "Update",
-      "Purge"
+      "Purge",
+      "Recover",
+      "GetRotationPolicy"
     ]
 
     secret_permissions = [
