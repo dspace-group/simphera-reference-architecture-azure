@@ -87,9 +87,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin     = "azure"
-    service_cidr       = "10.0.64.0/19"  # MUST be smaller than /12
-    dns_service_ip     = "10.0.64.10"    # MUST NOT be the first IP address in the address range
+    network_plugin = "azure"
+    service_cidr   = "10.0.64.0/19"  # MUST be smaller than /12
+    dns_service_ip = "10.0.64.10"    # MUST NOT be the first IP address in the address range
   }
 
 
