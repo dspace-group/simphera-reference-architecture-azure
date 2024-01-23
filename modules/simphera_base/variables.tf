@@ -171,3 +171,25 @@ variable "apiServerAuthorizedIpRanges" {
   description = "List of authorized IP address ranges that are granted access to the Kubernetes API server, e.g. [\"198.51.100.0/24\"]"
   default     = null
 }
+
+variable "automaticChannelUpgrade " {
+  type        = string
+  description = "The upgrade channel for the k8s cluster."
+  default     = "none"
+
+  validation {
+    condition     = contains(["none", "patch", "rapid", "node-image", "stable"], var.automaticChannelUpgrade)
+    error_message = "Valid values for var: automaticChannelUpgrade are (none, patch, rapid, node-image, stable)."
+  }
+}
+
+variable "nodeOsChannelUpgrade " {
+  type        = string
+  description = "The upgrade channel for the k8s cluster's nodes os iamges."
+  default     = "None"
+
+  validation {
+    condition     = contains(["Unmanaged", "SecurityPatch", "NodeImage","None"], var.nodeOsChannelUpgrade)
+    error_message = "Valid values for var: automaticChannelUpgrade are (Unmanaged, SecurityPatch, NodeImage,None)."
+  },
+}
