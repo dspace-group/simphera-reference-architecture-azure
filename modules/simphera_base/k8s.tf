@@ -45,14 +45,17 @@ resource "azurerm_subnet" "gpu-nodes-subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                 = "${var.infrastructurename}-aks"
-  location             = azurerm_resource_group.aks.location
-  resource_group_name  = azurerm_resource_group.aks.name
-  node_resource_group  = "${var.infrastructurename}-aks-node-pools"
-  dns_prefix           = "${var.infrastructurename}-aks"
-  kubernetes_version   = var.kubernetesVersion
-  azure_policy_enabled = true
-  sku_tier             = var.kubernetesTier
+  name                      = "${var.infrastructurename}-aks"
+  location                  = azurerm_resource_group.aks.location
+  resource_group_name       = azurerm_resource_group.aks.name
+  node_resource_group       = "${var.infrastructurename}-aks-node-pools"
+  dns_prefix                = "${var.infrastructurename}-aks"
+  kubernetes_version        = var.kubernetesVersion
+  azure_policy_enabled      = true
+  sku_tier                  = var.kubernetesTier
+  node_os_channel_upgrade   = var.nodeOsChannelUpgrade
+  automatic_channel_upgrade = var.automaticChannelUpgrade
+
   linux_profile {
     admin_username = "simphera"
     ssh_key {
