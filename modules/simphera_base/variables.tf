@@ -172,7 +172,7 @@ variable "apiServerAuthorizedIpRanges" {
   default     = null
 }
 
-variable "automaticChannelUpgrade " {
+variable "automaticChannelUpgrade" {
   type        = string
   description = "The upgrade channel for the k8s cluster."
   default     = "none"
@@ -183,13 +183,13 @@ variable "automaticChannelUpgrade " {
   }
 }
 
-variable "nodeOsChannelUpgrade " {
+variable "nodeOsChannelUpgrade" {
   type        = string
   description = "The upgrade channel for the k8s cluster's nodes os iamges."
   default     = "None"
 
   validation {
-    condition     = contains(["Unmanaged", "SecurityPatch", "NodeImage","None"], var.nodeOsChannelUpgrade)
+    condition     = contains(["Unmanaged", "SecurityPatch", "NodeImage", "None"], var.nodeOsChannelUpgrade)
     error_message = "Valid values for var: automaticChannelUpgrade are (Unmanaged, SecurityPatch, NodeImage,None)."
-  },
+  }
 }
