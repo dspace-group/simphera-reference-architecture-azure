@@ -53,5 +53,6 @@ module "simphera_base" {
   keyVaultAuthorizedIpRanges               = var.keyVaultAuthorizedIpRanges
   simpheraInstances                        = var.simpheraInstances
   apiServerAuthorizedIpRanges              = var.apiServerAuthorizedIpRanges
-
+  automaticChannelUpgrade                  = var.automaticChannelUpgrade
+  nodeOsChannelUpgrade                     = var.nodeOsChannelUpgrade
 }
