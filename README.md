@@ -307,7 +307,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_infrastructurename"></a> [infrastructurename](#input\_infrastructurename) | The name of the infrastructure. e.g. simphera-infra | `string` | n/a | yes |
 | <a name="input_keyVaultAuthorizedIpRanges"></a> [keyVaultAuthorizedIpRanges](#input\_keyVaultAuthorizedIpRanges) | List of authorized IP address ranges that are granted access to the Key Vault, e.g. ["198.51.100.0/24"] | `set(string)` | `[]` | no |
 | <a name="input_keyVaultPurgeProtection"></a> [keyVaultPurgeProtection](#input\_keyVaultPurgeProtection) | Specifies whether the Key vault purge protection is enabled. | `bool` | `true` | no |
-| <a name="input_kubernetesVersion"></a> [kubernetesVersion](#input\_kubernetesVersion) | The version of the AKS cluster. | `string` | `"1.24.9"` | no |
+| <a name="input_kubernetesVersion"></a> [kubernetesVersion](#input\_kubernetesVersion) | The version of the AKS cluster. | `string` | `"1.28.3"` | no |
 | <a name="input_licenseServer"></a> [licenseServer](#input\_licenseServer) | Specifies whether a VM for the dSPACE Installation Manager will be deployed. | `bool` | `false` | no |
 | <a name="input_licenseServerIaaSAntimalware"></a> [licenseServerIaaSAntimalware](#input\_licenseServerIaaSAntimalware) | Specifies whether a IaaSAntimalware extension will be installed on license server VM. Depends on licenseServer variable. | `bool` | `true` | no |
 | <a name="input_licenseServerMicrosoftGuestConfiguration"></a> [licenseServerMicrosoftGuestConfiguration](#input\_licenseServerMicrosoftGuestConfiguration) | Specifies whether a Microsoft Guest configuration extension will be installed on license server VM. Depends on licenseServer variable. | `bool` | `true` | no |

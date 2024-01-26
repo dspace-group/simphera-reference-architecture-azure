@@ -64,7 +64,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   dynamic "api_server_access_profile" {
-    for_each = length(var.apiServerAuthorizedIpRanges) > 0 ? [1] : []
+    for_each = var.apiServerAuthorizedIpRanges == null ? [] : tolist([var.apiServerAuthorizedIpRanges])
     content {
 
       authorized_ip_ranges = var.apiServerAuthorizedIpRanges
@@ -90,10 +90,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin     = "azure"
-    service_cidr       = "10.0.64.0/19"  # MUST be smaller than /12
-    dns_service_ip     = "10.0.64.10"    # MUST NOT be the first IP address in the address range
-    docker_bridge_cidr = "172.17.0.1/16" # MUST NOT collide with the rest of the CIDRs including the cluster's service CIDR and pod CIDR. Default is 172.17.0.1/16
+    network_plugin = "azure"
+    service_cidr   = "10.0.64.0/19" # MUST be smaller than /12
+    dns_service_ip = "10.0.64.10"   # MUST NOT be the first IP address in the address range
   }
 
 
