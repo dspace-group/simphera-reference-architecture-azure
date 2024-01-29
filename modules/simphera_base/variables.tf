@@ -185,7 +185,7 @@ variable "automaticChannelUpgrade" {
 
 variable "nodeOsChannelUpgrade" {
   type        = string
-  description = "The upgrade channel for the k8s cluster's nodes os iamges."
+  description = "The upgrade channel for the k8s cluster's nodes os images."
   default     = "None"
 
   validation {
