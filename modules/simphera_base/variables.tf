@@ -174,13 +174,8 @@ variable "apiServerAuthorizedIpRanges" {
 
 variable "automaticChannelUpgrade" {
   type        = string
-  description = "The upgrade channel for the k8s cluster."
-  default     = "none"
-
-  validation {
-    condition     = contains(["none", "patch", "rapid", "node-image", "stable"], var.automaticChannelUpgrade)
-    error_message = "Valid values for var: automaticChannelUpgrade are (none, patch, rapid, node-image, stable)."
-  }
+  description = "The upgrade channel for the k8s cluster. POssible values are patch, rapid, node-image and stable"
+  default     = null
 }
 
 variable "nodeOsChannelUpgrade" {
