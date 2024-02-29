@@ -228,6 +228,15 @@ Please keep in mind that this command will also delete all storage accounts incl
 
 As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using the SIMPHERA Quick Start helm chart. You will find detailed instructions in the README file inside the Helm chart itself.
 
+## List of tools with versions needed for Simphera reference architecture deployment
+
+| Tool name | Version |
+| -- | -- |
+| Azure CLI | >=2.40.0 |
+| Helm | >=3.8.0 |
+| Terraform | >=1.2.9 |
+| kubectl | >=1.27.0 |
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
