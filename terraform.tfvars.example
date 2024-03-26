@@ -94,6 +94,9 @@ simpheraInstances = {
     # PostgreSQL Server version to deploy
     postgresqlVersion = "11"
 
+    # Enable/disable creation of Keycloak DB in PostgreSQL Server
+    postgresqlKeycloakDbEnable = true
+
     # PostgreSQL SKU Name
     postgresqlSkuName = "GP_Standard_D2ds_v4"
 
