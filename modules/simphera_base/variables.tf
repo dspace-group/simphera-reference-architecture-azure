@@ -158,6 +158,7 @@ variable "simpheraInstances" {
     minioAccountReplicationType = string
     postgresqlVersion           = string
     postgresqlSkuName           = string
+    postgresqlKeycloakDbEnable  = bool
     postgresqlStorage           = number
     postgresqlGeoBackup         = bool
     backupRetention             = number
