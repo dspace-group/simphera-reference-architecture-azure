@@ -56,6 +56,12 @@ variable "postgresqlSkuName" {
   default     = "GP_Standard_D2ds_v4"
 }
 
+variable "postgresqlKeycloakDbEnable" {
+  type        = bool
+  description = "A switch to enable/disable creation of Keycloak DB in PostgreSQL server"
+  default     = true
+}
+
 variable "postgresqlStorage" {
   type        = number
   description = "PostgreSQL Storage in MB, must be divisble by 1024"

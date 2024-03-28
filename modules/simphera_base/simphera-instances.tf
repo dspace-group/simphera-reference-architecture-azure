@@ -15,6 +15,7 @@ module "simphera_instance" {
   minioAccountReplicationType    = each.value.minioAccountReplicationType
   postgresqlVersion              = each.value.postgresqlVersion
   postgresqlSkuName              = each.value.postgresqlSkuName
+  postgresqlKeycloakDbEnable     = each.value.postgresqlKeycloakDbEnable
   postgresqlStorage              = each.value.postgresqlStorage
   postgresqlGeoBackup            = each.value.postgresqlGeoBackup
   backupRetention                = each.value.backupRetention

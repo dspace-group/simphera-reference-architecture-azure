@@ -71,6 +71,7 @@ output "postgresql_server_username" {
 }
 
 resource "azurerm_postgresql_flexible_server_database" "keycloak" {
+  count     = var.postgresqlKeycloakDbEnable ? 1 : 0
   name      = "keycloak"
   server_id = azurerm_postgresql_flexible_server.postgresql-flexible.id
   charset   = "UTF8"
