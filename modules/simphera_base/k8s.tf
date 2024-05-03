@@ -32,7 +32,7 @@ resource "azurerm_subnet" "execution-nodes-subnet" {
 
 resource "azurerm_subnet" "gpu-nodes-subnet" {
   count                = var.gpuNodePool ? 1 : 0
-  name                 = "execution-nodes-subnet"
+  name                 = "gpu-nodes-subnet"
   resource_group_name  = azurerm_virtual_network.simphera-vnet.resource_group_name
   virtual_network_name = azurerm_virtual_network.simphera-vnet.name
   address_prefixes     = ["10.0.48.0/20"]
