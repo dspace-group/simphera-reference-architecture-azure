@@ -79,7 +79,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     min_count           = var.linuxNodeCountMin
     max_count           = var.linuxNodeCountMax
     enable_auto_scaling = true
-    os_disk_size_gb     = 128
+    os_disk_size_gb     = var.linuxNodeDiskSize
     type                = "VirtualMachineScaleSets"
     max_pods            = 110
     vnet_subnet_id      = azurerm_subnet.default-node-pool-subnet.id
@@ -119,7 +119,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   name                  = "execnodes"
   mode                  = "User"
   orchestrator_version  = var.kubernetesVersion
-  os_disk_size_gb       = 128
+  os_disk_size_gb       = var.linuxExecutionNodeDiskSize
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   min_count             = var.linuxExecutionNodeCountMin
   max_count             = var.linuxExecutionNodeCountMax
@@ -156,7 +156,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   name                  = "gpuexecnodes"
   mode                  = "User"
   orchestrator_version  = var.kubernetesVersion
-  os_disk_size_gb       = 128
+  os_disk_size_gb       = var.gpuNodeDiskSize
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   min_count             = var.gpuNodeCountMin
   max_count             = var.gpuNodeCountMax

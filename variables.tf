@@ -31,6 +31,12 @@ variable "linuxNodeSize" {
   default     = "Standard_D4s_v4"
 }
 
+variable "linuxNodeDiskSize" {
+  type        = number
+  description = "The disk size in GiB of the nodes for the regular services"
+  default     = 200
+}
+
 variable "linuxNodeCountMin" {
   type        = number
   description = "The minimum number of Linux nodes for the regular services"
@@ -47,6 +53,12 @@ variable "linuxExecutionNodeSize" {
   type        = string
   description = "The machine size of the Linux nodes for the job execution"
   default     = "Standard_D16s_v4"
+}
+
+variable "linuxExecutionNodeDiskSize" {
+  type        = number
+  description = "The disk size in GiB of the nodes for the job execution"
+  default     = 200
 }
 
 variable "linuxExecutionNodeCountMin" {
@@ -89,6 +101,12 @@ variable "gpuNodeSize" {
   type        = string
   description = "The machine size of the nodes for the gpu job execution"
   default     = "Standard_NC16as_T4_v3"
+}
+
+variable "gpuNodeDiskSize" {
+  type        = number
+  description = "The disk size in GiB of the gpu nodes"
+  default     = 200
 }
 
 variable "gpuNodeDeallocate" {
@@ -142,7 +160,7 @@ variable "logAnalyticsWorkspaceResourceGroupName" {
 variable "kubernetesVersion" {
   type        = string
   description = "The version of the AKS cluster."
-  default     = "1.28.3"
+  default     = "1.28.9"
 }
 
 variable "kubernetesTier" {

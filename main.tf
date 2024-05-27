@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.86.0"
+      version = "3.92.0"
     }
     random = {
       version = "3.5.1"
@@ -29,9 +29,11 @@ module "simphera_base" {
   infrastructurename                       = var.infrastructurename
   tags                                     = var.tags
   linuxNodeSize                            = var.linuxNodeSize
+  linuxNodeDiskSize                        = var.linuxNodeDiskSize
   linuxNodeCountMin                        = var.linuxNodeCountMin
   linuxNodeCountMax                        = var.linuxNodeCountMax
   linuxExecutionNodeSize                   = var.linuxExecutionNodeSize
+  linuxExecutionNodeDiskSize               = var.linuxExecutionNodeDiskSize
   linuxExecutionNodeCountMin               = var.linuxExecutionNodeCountMin
   linuxExecutionNodeCountMax               = var.linuxExecutionNodeCountMax
   linuxExecutionNodeDeallocate             = var.linuxExecutionNodeDeallocate
@@ -39,6 +41,7 @@ module "simphera_base" {
   gpuNodeCountMin                          = var.gpuNodeCountMin
   gpuNodeCountMax                          = var.gpuNodeCountMax
   gpuNodeSize                              = var.gpuNodeSize
+  gpuNodeDiskSize                          = var.gpuNodeDiskSize
   gpuNodeDeallocate                        = var.gpuNodeDeallocate
   ssh_public_key_path                      = var.ssh_public_key_path
   licenseServer                            = var.licenseServer
