@@ -21,10 +21,10 @@ resource "azurerm_virtual_network" "simphera-vnet" {
 }
 
 resource "azurerm_subnet" "paas-services-subnet" {
-  name                                      = "paas-services-subnet"
-  resource_group_name                       = azurerm_resource_group.network.name
-  virtual_network_name                      = azurerm_virtual_network.simphera-vnet.name
-  address_prefixes                          = ["10.0.97.0/24"]
-  private_endpoint_network_policies_enabled = true
-  service_endpoints                         = ["Microsoft.Storage"]
+  name                              = "paas-services-subnet"
+  resource_group_name               = azurerm_resource_group.network.name
+  virtual_network_name              = azurerm_virtual_network.simphera-vnet.name
+  address_prefixes                  = ["10.0.97.0/24"]
+  private_endpoint_network_policies = "Enabled"
+  service_endpoints                 = ["Microsoft.Storage"]
 }
