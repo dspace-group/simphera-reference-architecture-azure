@@ -32,10 +32,11 @@ resource "azurerm_postgresql_flexible_server" "postgresql-flexible" {
   location            = azurerm_resource_group.postgres.location
   resource_group_name = azurerm_resource_group.postgres.name
 
-  administrator_login    = local.postgresql_username
-  administrator_password = local.postgresql_password
-  delegated_subnet_id    = var.postgresqlSubnetId
-  private_dns_zone_id    = var.postgresqlPrivatelinkDnsZoneId
+  administrator_login           = local.postgresql_username
+  administrator_password        = local.postgresql_password
+  delegated_subnet_id           = var.postgresqlSubnetId
+  private_dns_zone_id           = var.postgresqlPrivatelinkDnsZoneId
+  public_network_access_enabled = false
 
   sku_name   = var.postgresqlSkuName
   version    = var.postgresqlVersion
