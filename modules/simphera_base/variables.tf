@@ -191,13 +191,13 @@ variable "apiServerAuthorizedIpRanges" {
   default     = null
 }
 
-variable "automaticChannelUpgrade" {
+variable "automaticUpgradeChannel" {
   type        = string
-  description = "The upgrade channel for the k8s cluster. POssible values are patch, rapid, node-image and stable"
+  description = "The upgrade channel for the k8s cluster. Possible values are patch, rapid, stable, none"
   default     = null
 }
 
-variable "nodeOsChannelUpgrade" {
+variable "nodeOsUpgradeChannel" {
   type        = string
   description = "The upgrade channel for the k8s cluster's nodes os images."
   default     = "None"

@@ -53,8 +53,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   kubernetes_version        = var.kubernetesVersion
   azure_policy_enabled      = true
   sku_tier                  = var.kubernetesTier
-  node_os_channel_upgrade   = var.nodeOsChannelUpgrade
-  automatic_channel_upgrade = var.automaticChannelUpgrade
+  node_os_upgrade_channel   = var.nodeOsUpgradeChannel
+  automatic_upgrade_channel = var.automaticUpgradeChannel
 
   linux_profile {
     admin_username = "simphera"
@@ -73,16 +73,16 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   default_node_pool {
-    name                = "default"
-    node_count          = var.linuxNodeCountMin
-    vm_size             = var.linuxNodeSize
-    min_count           = var.linuxNodeCountMin
-    max_count           = var.linuxNodeCountMax
-    enable_auto_scaling = true
-    os_disk_size_gb     = var.linuxNodeDiskSize
-    type                = "VirtualMachineScaleSets"
-    max_pods            = 110
-    vnet_subnet_id      = azurerm_subnet.default-node-pool-subnet.id
+    name                 = "default"
+    node_count           = var.linuxNodeCountMin
+    vm_size              = var.linuxNodeSize
+    min_count            = var.linuxNodeCountMin
+    max_count            = var.linuxNodeCountMax
+    auto_scaling_enabled = true
+    os_disk_size_gb      = var.linuxNodeDiskSize
+    type                 = "VirtualMachineScaleSets"
+    max_pods             = 110
+    vnet_subnet_id       = azurerm_subnet.default-node-pool-subnet.id
   }
 
   identity {
