@@ -167,7 +167,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   scale_down_mode       = var.gpuNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet[0].id
 
-  gpu_instance_profile = "None"
+  gpu_driver = "None"
 
   node_labels = {
     "purpose" = "gpu"
