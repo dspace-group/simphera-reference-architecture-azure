@@ -143,8 +143,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   lifecycle {
     ignore_changes = [
       zones,
-      enable_host_encryption,
-      enable_node_public_ip,
+      host_encryption_enabled,
+      node_public_ip_enabled,
       vnet_subnet_id,
       node_count
     ]
@@ -182,8 +182,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   lifecycle {
     ignore_changes = [
       zones,
-      enable_host_encryption,
-      enable_node_public_ip,
+      host_encryption_enabled,
+      node_public_ip_enabled,
       vnet_subnet_id,
       node_count
     ]
