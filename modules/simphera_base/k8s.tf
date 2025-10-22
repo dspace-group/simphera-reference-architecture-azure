@@ -167,6 +167,9 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   scale_down_mode       = var.gpuNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet[0].id
 
+  gpu_profile {
+    driver = "None"
+  }
   node_labels = {
     "purpose" = "gpu"
   }
@@ -175,7 +178,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
     "purpose=gpu:NoSchedule"
   ]
 
-  tags = merge(var.tags, { SkipGPUDriverInstall = "true" })
+  tags = merge(var.tags)
 
   lifecycle {
     ignore_changes = [
