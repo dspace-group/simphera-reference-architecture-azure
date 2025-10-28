@@ -214,7 +214,7 @@ variable "nodeOsUpgradeChannel" {
   default     = "None"
 
   validation {
-    condition     = contains(["Unmanaged", "SecurityPatch", "NodeImage", "None"], var.nodeOsChannelUpgrade)
+    condition     = contains(["Unmanaged", "SecurityPatch", "NodeImage", "None"], var.nodeOsUpgradeChannel)
     error_message = "Valid values for var: nodeOsUpgradeChannel are (Unmanaged, SecurityPatch, NodeImage, None)."
   }
 }
