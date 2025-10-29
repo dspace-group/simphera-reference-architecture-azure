@@ -53,8 +53,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   kubernetes_version        = var.kubernetesVersion
   azure_policy_enabled      = true
   sku_tier                  = var.kubernetesTier
-  node_os_channel_upgrade   = var.nodeOsChannelUpgrade
-  automatic_channel_upgrade = var.automaticChannelUpgrade
+  node_os_upgrade_channel   = var.nodeOsUpgradeChannel
+  automatic_upgrade_channel = var.automaticUpgradeChannel
 
   linux_profile {
     admin_username = "simphera"
@@ -73,16 +73,16 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   default_node_pool {
-    name                = "default"
-    node_count          = var.linuxNodeCountMin
-    vm_size             = var.linuxNodeSize
-    min_count           = var.linuxNodeCountMin
-    max_count           = var.linuxNodeCountMax
-    enable_auto_scaling = true
-    os_disk_size_gb     = var.linuxNodeDiskSize
-    type                = "VirtualMachineScaleSets"
-    max_pods            = 110
-    vnet_subnet_id      = azurerm_subnet.default-node-pool-subnet.id
+    name                 = "default"
+    node_count           = var.linuxNodeCountMin
+    vm_size              = var.linuxNodeSize
+    min_count            = var.linuxNodeCountMin
+    max_count            = var.linuxNodeCountMax
+    auto_scaling_enabled = true
+    os_disk_size_gb      = var.linuxNodeDiskSize
+    type                 = "VirtualMachineScaleSets"
+    max_pods             = 110
+    vnet_subnet_id       = azurerm_subnet.default-node-pool-subnet.id
   }
 
   identity {
@@ -126,7 +126,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   node_count            = var.linuxExecutionNodeCountMin
   vm_size               = var.linuxExecutionNodeSize
   max_pods              = 50
-  enable_auto_scaling   = true
+  auto_scaling_enabled  = true
   scale_down_mode       = var.linuxExecutionNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.execution-nodes-subnet.id
 
@@ -143,8 +143,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "execution-nodes" {
   lifecycle {
     ignore_changes = [
       zones,
-      enable_host_encryption,
-      enable_node_public_ip,
+      host_encryption_enabled,
+      node_public_ip_enabled,
       vnet_subnet_id,
       node_count
     ]
@@ -163,9 +163,11 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
   node_count            = var.gpuNodeCountMin
   vm_size               = var.gpuNodeSize
   max_pods              = 50
-  enable_auto_scaling   = true
+  auto_scaling_enabled  = true
   scale_down_mode       = var.gpuNodeDeallocate ? "Deallocate" : "Delete"
   vnet_subnet_id        = azurerm_subnet.gpu-nodes-subnet[0].id
+
+  gpu_driver = "None"
 
   node_labels = {
     "purpose" = "gpu"
@@ -175,13 +177,13 @@ resource "azurerm_kubernetes_cluster_node_pool" "gpu-execution-nodes" {
     "purpose=gpu:NoSchedule"
   ]
 
-  tags = merge(var.tags, { SkipGPUDriverInstall = "true" })
+  tags = merge(var.tags)
 
   lifecycle {
     ignore_changes = [
       zones,
-      enable_host_encryption,
-      enable_node_public_ip,
+      host_encryption_enabled,
+      node_public_ip_enabled,
       vnet_subnet_id,
       node_count
     ]

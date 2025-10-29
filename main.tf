@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.117.1"
+      version = "4.49.0"
     }
     random = {
       version = "3.5.1"
@@ -56,6 +56,6 @@ module "simphera_base" {
   keyVaultAuthorizedIpRanges               = var.keyVaultAuthorizedIpRanges
   simpheraInstances                        = var.simpheraInstances
   apiServerAuthorizedIpRanges              = var.apiServerAuthorizedIpRanges
-  automaticChannelUpgrade                  = var.automaticChannelUpgrade
-  nodeOsChannelUpgrade                     = var.nodeOsChannelUpgrade
+  automaticUpgradeChannel                  = var.automaticUpgradeChannel
+  nodeOsUpgradeChannel                     = var.nodeOsUpgradeChannel
 }
