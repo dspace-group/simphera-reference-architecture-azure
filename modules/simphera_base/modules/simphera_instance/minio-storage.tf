@@ -92,3 +92,9 @@ resource "azurerm_storage_account_network_rules" "minio_storage_network_rule" {
 output "minio_storage_username" {
   value = local.storageaccountname
 }
+
+resource "azurerm_storage_container" "azure_container" {
+  name                  = var.infrastructurename
+  storage_account_id    = azurerm_storage_account.minio_storage_account.id
+  container_access_type = "private"
+}
