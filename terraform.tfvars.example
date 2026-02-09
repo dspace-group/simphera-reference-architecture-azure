@@ -81,6 +81,9 @@ keyVaultAuthorizedIpRanges = null
 # Restrict the kubernetes API access to authorized IP ranges, e.g. ["198.51.100.0/24"]
 apiServerAuthorizedIpRanges = null
 
+# Azure Blob container name
+containerName = "production"
+
 # The SIMPHERA instances
 simpheraInstances = {
   "production" = {
@@ -108,8 +111,5 @@ simpheraInstances = {
 
     # Backup retention in days
     backupRetention = 7
-
-    # Azure Blob container name
-    containerName = "production"
   }
 }
