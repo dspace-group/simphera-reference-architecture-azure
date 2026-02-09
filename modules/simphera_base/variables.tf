@@ -209,5 +209,5 @@ variable "nodeOsUpgradeChannel" {
 }
 variable "containerName" {
   type        = string
-  description = "The name of the azure blob container"
+  description = "The name of the Azure Blob container"
 }

@@ -218,3 +218,9 @@ variable "nodeOsUpgradeChannel" {
     error_message = "Valid values for var: nodeOsUpgradeChannel are (Unmanaged, SecurityPatch, NodeImage, None)."
   }
 }
+
+variable "containerName" {
+  type        = string
+  description = "The name of the Azure Blob container"
+}
+
