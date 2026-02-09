@@ -33,6 +33,11 @@ variable "name" {
   description = "The name of the SIMPHERA instance. e.g. production"
 }
 
+variable "container_name" {
+  type        = string
+  description = "The name of the azure blob container"
+}
+
 variable "tags" {
   type        = map(any)
   description = "The tags to be added to all resources."

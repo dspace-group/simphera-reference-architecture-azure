@@ -94,7 +94,7 @@ output "minio_storage_username" {
 }
 
 resource "azurerm_storage_container" "azure_container" {
-  name                  = var.name
+  name                  = var.container_name
   storage_account_id    = azurerm_storage_account.minio_storage_account.id
   container_access_type = "private"
 }
