@@ -108,5 +108,8 @@ simpheraInstances = {
 
     # Backup retention in days
     backupRetention = 7
+
+    # Azure Blob container name
+    containerName = "production"
   }
 }

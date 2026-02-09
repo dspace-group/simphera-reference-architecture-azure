@@ -12,7 +12,7 @@ module "simphera_instance" {
   minioPrivatelinkDnsZoneId      = azurerm_private_dns_zone.minio-privatelink-dns-zone.id
   keyVaultId                     = azurerm_key_vault.simphera-key-vault.id
   name                           = each.value.name
-  container_name                 = var.container_name
+  containerName                  = var.containerName
   minioAccountReplicationType    = each.value.minioAccountReplicationType
   postgresqlVersion              = each.value.postgresqlVersion
   postgresqlSkuName              = each.value.postgresqlSkuName

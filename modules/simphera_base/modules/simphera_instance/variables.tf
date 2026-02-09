@@ -33,7 +33,7 @@ variable "name" {
   description = "The name of the SIMPHERA instance. e.g. production"
 }
 
-variable "container_name" {
+variable "containerName" {
   type        = string
   description = "The name of the azure blob container"
 }
