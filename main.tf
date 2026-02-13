@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "4.49.0"
+      version = "4.60.0"
     }
     random = {
       version = "3.5.1"
@@ -20,8 +20,6 @@ provider "azurerm" {
   environment     = var.environment
   features {}
 }
-
-
 module "simphera_base" {
   source = "./modules/simphera_base"
 

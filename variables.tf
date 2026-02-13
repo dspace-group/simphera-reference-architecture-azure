@@ -160,7 +160,7 @@ variable "logAnalyticsWorkspaceResourceGroupName" {
 variable "kubernetesVersion" {
   type        = string
   description = "The version of the AKS cluster."
-  default     = "1.30.4"
+  default     = "1.34.2"
 }
 
 variable "kubernetesTier" {
