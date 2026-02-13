@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "4.60.0"
     }
+    azapi = {
+      source  = "Azure/api"
+      version = "~> 2.0"
+    }
     random = {
       version = "3.5.1"
     }
@@ -21,6 +25,7 @@ provider "azurerm" {
   features {}
 }
 
+provider "azapi" {}
 
 module "simphera_base" {
   source = "./modules/simphera_base"
