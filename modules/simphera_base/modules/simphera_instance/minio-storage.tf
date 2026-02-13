@@ -25,10 +25,7 @@ resource "azurerm_storage_account" "minio_storage_account" {
   account_kind             = "StorageV2"
   access_tier              = "Hot"
 
-
-  sas_policy {
-    expiration_period = "7.00:00:00"
-  }
+  public_network_access_enabled = false
 
   blob_properties {
     change_feed_enabled = true
