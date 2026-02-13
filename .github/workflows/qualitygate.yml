@@ -51,7 +51,7 @@ jobs:
       - name: Terraform lint SIMPHERA Instance
         run: tflint --config ../../../../.tflint.hcl --chdir ./modules/simphera_base/modules/simphera_instance
 
-      # temporary disabled until this is fixed
+      # !! temporary disabled until qualitygate image version error is fixed !!
       # - name: Terraform validate
       #   run: terraform validate
       # - uses: addnab/docker-run-action@v3
