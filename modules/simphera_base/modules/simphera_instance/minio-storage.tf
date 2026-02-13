@@ -94,3 +94,16 @@ resource "azurerm_storage_account_network_rules" "minio_storage_network_rule" {
 output "minio_storage_username" {
   value = local.storageaccountname
 }
+
+# needs to be set, because policy needs to see "publicNetworkAccess = Disabled"
+resource "azapi_update_resource" "disable_public_network_access" {
+  type      = "Microsoft.Storage/storageAccounts@2023-05-01"
+  name      = azurerm_storage_account.minio_storage_account.name
+  parent_id = azurerm_storage_account.minio_storage_account.id
+
+  body = jsonencode({
+    properties = {
+      publicNetworkAccess = "Disabled"
+    }
+  })
+}
