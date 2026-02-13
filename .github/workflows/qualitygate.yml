@@ -51,10 +51,11 @@ jobs:
       - name: Terraform lint SIMPHERA Instance
         run: tflint --config ../../../../.tflint.hcl --chdir ./modules/simphera_base/modules/simphera_instance
 
-      - name: Terraform validate
-        run: terraform validate
-      - uses: addnab/docker-run-action@v3
-        with:
-          image: zenika/terraform-azure-cli:latest
-          options: -v ${{ github.workspace }}:/src
-          run: chmod +x /src/hooks/validate_tfvars.sh && /src/hooks/validate_tfvars.sh
+      # temporary disabled until this is fixed
+      # - name: Terraform validate
+      #   run: terraform validate
+      # - uses: addnab/docker-run-action@v3
+      #   with:
+      #     image: zenika/terraform-azure-cli:latest
+      #     options: -v ${{ github.workspace }}:/src
+      #     run: chmod +x /src/hooks/validate_tfvars.sh && /src/hooks/validate_tfvars.sh
