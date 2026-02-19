@@ -21,7 +21,7 @@ output "minio_storage_usernames" {
 }
 
 output "container_blob_endpoint" {
-  value = "${module.simphera_base.modules.simphera_instance.azurerm_storage_account.minio_storage_account.primary_blob_endpoint}${azurerm_storage_container.azure_container.name}"
+  value = module.simphera_base.container_blob_endpoint
 }
 
 output "key_vault_uri" {
