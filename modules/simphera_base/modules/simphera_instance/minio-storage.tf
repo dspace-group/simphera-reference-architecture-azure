@@ -102,3 +102,7 @@ resource "azurerm_storage_container" "azure_container" {
   storage_account_id    = azurerm_storage_account.minio_storage_account.id
   container_access_type = "private"
 }
+
+output "container_blob_endpoint" {
+  value = "${azurerm_storage_account.minio_storage_account.primary_blob_endpoint}${azurerm_storage_container.azure_container.name}"
+}
