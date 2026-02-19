@@ -69,7 +69,7 @@ logAnalyticsWorkspaceName = ""
 logAnalyticsWorkspaceResourceGroupName = ""
 
 # The version of the AKS cluster.
-kubernetesVersion = "1.30.4"
+kubernetesVersion = "1.34.2"
 
 # Enable Key Vault purge protection
 keyVaultPurgeProtection = true

@@ -25,6 +25,10 @@ resource "azurerm_storage_account" "minio_storage_account" {
   account_kind             = "StorageV2"
   access_tier              = "Hot"
 
+
+  public_network_access_enabled   = false
+  allow_nested_items_to_be_public = false
+
   blob_properties {
     change_feed_enabled = true
     versioning_enabled  = true
