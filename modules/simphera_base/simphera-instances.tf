@@ -9,11 +9,11 @@ module "simphera_instance" {
   paasServicesSubnetId           = azurerm_subnet.paas-services-subnet.id
   postgresqlSubnetId             = azurerm_subnet.postgresql-server-subnet.id
   postgresqlPrivatelinkDnsZoneId = azurerm_private_dns_zone.postgresql-privatelink-dns-zone.id
-  minioPrivatelinkDnsZoneId      = azurerm_private_dns_zone.minio-privatelink-dns-zone.id
+  storagePrivatelinkDnsZoneId    = azurerm_private_dns_zone.storage_privatelink_dns_zone.id
   keyVaultId                     = azurerm_key_vault.simphera-key-vault.id
   name                           = each.value.name
   containerName                  = var.containerName
-  minioAccountReplicationType    = each.value.minioAccountReplicationType
+  storageAccountReplicationType  = each.value.storageAccountReplicationType
   postgresqlVersion              = each.value.postgresqlVersion
   postgresqlSkuName              = each.value.postgresqlSkuName
   postgresqlKeycloakDbEnable     = each.value.postgresqlKeycloakDbEnable
@@ -41,13 +41,13 @@ output "secretnames" {
   }
 }
 
-output "minio_storage_usernames" {
+output "storage_account_names" {
   value = {
-    for name, instance in module.simphera_instance : name => instance.minio_storage_username
+    for name, instance in module.simphera_instance : name => instance.storage_account_name
   }
 }
 
-output "container_blob_endpoint" {
+output "container_blob_endpoints" {
   value = {
     for name, instance in module.simphera_instance : name => instance.container_blob_endpoint
   }

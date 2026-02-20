@@ -92,7 +92,7 @@ simpheraInstances = {
     name = "production"
 
     # The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS.
-    minioAccountReplicationType = "ZRS"
+    storageAccountReplicationType = "ZRS"
 
     # PostgreSQL Server version to deploy
     postgresqlVersion = "16"
