@@ -81,6 +81,9 @@ keyVaultAuthorizedIpRanges = null
 # Restrict the kubernetes API access to authorized IP ranges, e.g. ["198.51.100.0/24"]
 apiServerAuthorizedIpRanges = null
 
+# Azure Blob container name
+containerName = "production"
+
 # The SIMPHERA instances
 simpheraInstances = {
   "production" = {
@@ -89,7 +92,7 @@ simpheraInstances = {
     name = "production"
 
     # The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS.
-    minioAccountReplicationType = "ZRS"
+    storageAccountReplicationType = "ZRS"
 
     # PostgreSQL Server version to deploy
     postgresqlVersion = "16"

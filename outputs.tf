@@ -16,8 +16,12 @@ output "secretnames" {
   value = module.simphera_base.secretnames
 }
 
-output "minio_storage_usernames" {
-  value = module.simphera_base.minio_storage_usernames
+output "storage_account_names" {
+  value = module.simphera_base.storage_account_names
+}
+
+output "container_blob_endpoint" {
+  value = module.simphera_base.container_blob_endpoint
 }
 
 output "key_vault_uri" {

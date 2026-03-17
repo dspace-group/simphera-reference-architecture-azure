@@ -92,7 +92,7 @@ To get list of all storage account keys run the following command:
 
 ```powershell
 $access_keys = @{}
-$storageaccounts = terraform output -json minio_storage_usernames | ConvertFrom-Json
+$storageaccounts = terraform output -json storage_account_names | ConvertFrom-Json
 foreach($prop in $storageaccounts.PsObject.Properties)
 {
   $keys = az storage account keys list -n $prop.value | ConvertFrom-Json
@@ -273,7 +273,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | [azurerm_network_interface_security_group_association.ni-license-server-sga](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association) | resource |
 | [azurerm_network_security_group.license-server-nsg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) | resource |
 | [azurerm_private_dns_zone.keyvault-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone.minio-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
+| [azurerm_private_dns_zone.storage_privatelink_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone.postgresql-privatelink-dns-zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.keyvault-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.minio-privatelink-network-link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
@@ -331,7 +331,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="input_location"></a> [location](#input\_location) | The Azure location to be used. | `string` | n/a | yes |
 | <a name="input_logAnalyticsWorkspaceName"></a> [logAnalyticsWorkspaceName](#input\_logAnalyticsWorkspaceName) | The name of the Log Analytics Workspace to be used. Use empty string to disable usage of Log Analytics. | `string` | `""` | no |
 | <a name="input_logAnalyticsWorkspaceResourceGroupName"></a> [logAnalyticsWorkspaceResourceGroupName](#input\_logAnalyticsWorkspaceResourceGroupName) | The name of the resource group of the Log Analytics Workspace to be used. | `string` | `""` | no |
-| <a name="input_simpheraInstances"></a> [simpheraInstances](#input\_simpheraInstances) | A list containing the individual SIMPHERA instances, such as 'staging' and 'production'. | <pre>map(object({<br>    name                        = string<br>    minioAccountReplicationType = string<br>    postgresqlVersion           = string<br>    postgresqlSkuName           = string<br>    postgresqlStorage           = number<br>  }))</pre> | n/a | yes |
+| <a name="input_simpheraInstances"></a> [simpheraInstances](#input\_simpheraInstances) | A list containing the individual SIMPHERA instances, such as 'staging' and 'production'. | <pre>map(object({<br>    name                        = string<br>    storageAccountReplicationType = string<br>    postgresqlVersion           = string<br>    postgresqlSkuName           = string<br>    postgresqlStorage           = number<br>  }))</pre> | n/a | yes |
 | <a name="input_ssh_public_key_path"></a> [ssh\_public\_key\_path](#input\_ssh\_public\_key\_path) | Path to the public SSH key to be used for the kubernetes nodes. | `string` | `"shared-ssh-key/ssh.pub"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | The tags to be added to all resources. | `map(any)` | `{}` | no |
 
@@ -343,7 +343,7 @@ As a next step you have to deploy SIMPHERA to the Kubernetes cluster by using th
 | <a name="output_key_vault_name"></a> [key\_vault\_name](#output\_key\_vault\_name) | n/a |
 | <a name="output_key_vault_uri"></a> [key\_vault\_uri](#output\_key\_vault\_uri) | n/a |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | n/a |
-| <a name="output_minio_storage_usernames"></a> [minio\_storage\_usernames](#output\_minio\_storage\_usernames) | n/a |
+| <a name="output_storage_account_names"></a> [minio\_storage\_usernames](#output\_minio\_storage\_usernames) | n/a |
 | <a name="output_postgresql_server_hostnames"></a> [postgresql\_server\_hostnames](#output\_postgresql\_server\_hostnames) | n/a |
 | <a name="output_postgresql_server_usernames"></a> [postgresql\_server\_usernames](#output\_postgresql\_server\_usernames) | n/a |
 | <a name="output_secretnames"></a> [secretnames](#output\_secretnames) | n/a |

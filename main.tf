@@ -56,4 +56,5 @@ module "simphera_base" {
   apiServerAuthorizedIpRanges              = var.apiServerAuthorizedIpRanges
   automaticUpgradeChannel                  = var.automaticUpgradeChannel
   nodeOsUpgradeChannel                     = var.nodeOsUpgradeChannel
+  containerName                            = var.containerName
 }

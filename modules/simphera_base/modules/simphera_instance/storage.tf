@@ -1,5 +1,5 @@
 
-resource "azurerm_resource_group" "minio-storage" {
+resource "azurerm_resource_group" "data_storage" {
   name     = "${var.name}-storage"
   location = var.location
 
@@ -16,12 +16,12 @@ locals {
   storageaccountname = substr(replace(join("", [var.name, var.infrastructurename]), "-", ""), 0, 24)
 }
 
-resource "azurerm_storage_account" "minio_storage_account" {
+resource "azurerm_storage_account" "data_storage_account" {
   name                     = local.storageaccountname
-  resource_group_name      = azurerm_resource_group.minio-storage.name
-  location                 = azurerm_resource_group.minio-storage.location
+  resource_group_name      = azurerm_resource_group.data_storage.name
+  location                 = azurerm_resource_group.data_storage.location
   account_tier             = "Standard"
-  account_replication_type = var.minioAccountReplicationType
+  account_replication_type = var.storageAccountReplicationType
   account_kind             = "StorageV2"
   access_tier              = "Hot"
 
@@ -57,20 +57,20 @@ resource "azurerm_storage_account" "minio_storage_account" {
   }
 }
 
-resource "azurerm_private_endpoint" "minio-endpoint" {
-  name                = "minio-endpoint"
-  location            = azurerm_resource_group.minio-storage.location
-  resource_group_name = azurerm_resource_group.minio-storage.name
+resource "azurerm_private_endpoint" "storage_endpoint" {
+  name                = "storage_endpoint"
+  location            = azurerm_resource_group.data_storage.location
+  resource_group_name = azurerm_resource_group.data_storage.name
   subnet_id           = var.paasServicesSubnetId
 
   private_dns_zone_group {
-    name                 = "minio-zone-group"
-    private_dns_zone_ids = [var.minioPrivatelinkDnsZoneId]
+    name                 = "storage-zone-group"
+    private_dns_zone_ids = [var.storagePrivatelinkDnsZoneId]
   }
 
   private_service_connection {
-    name                           = "simphera-minio"
-    private_connection_resource_id = azurerm_storage_account.minio_storage_account.id
+    name                           = "simphera-storage"
+    private_connection_resource_id = azurerm_storage_account.data_storage_account.id
     is_manual_connection           = false
     subresource_names              = ["blob"]
   }
@@ -84,8 +84,8 @@ resource "azurerm_private_endpoint" "minio-endpoint" {
   }
 }
 
-resource "azurerm_storage_account_network_rules" "minio_storage_network_rule" {
-  storage_account_id = azurerm_storage_account.minio_storage_account.id
+resource "azurerm_storage_account_network_rules" "data_storage_network_rule" {
+  storage_account_id = azurerm_storage_account.data_storage_account.id
 
   default_action             = "Deny"
   ip_rules                   = []
@@ -93,6 +93,16 @@ resource "azurerm_storage_account_network_rules" "minio_storage_network_rule" {
   bypass                     = []
 }
 
-output "minio_storage_username" {
+output "storage_account_name" {
   value = local.storageaccountname
+}
+
+resource "azurerm_storage_container" "azure_container" {
+  name                  = var.containerName
+  storage_account_id    = azurerm_storage_account.data_storage_account.id
+  container_access_type = "private"
+}
+
+output "container_blob_endpoint" {
+  value = "${azurerm_storage_account.data_storage_account.primary_blob_endpoint}${azurerm_storage_container.azure_container.name}"
 }

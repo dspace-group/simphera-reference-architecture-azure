@@ -23,14 +23,19 @@ variable "postgresqlPrivatelinkDnsZoneId" {
   description = "The id of the private DNS zone for PostgreSQL"
 }
 
-variable "minioPrivatelinkDnsZoneId" {
+variable "storagePrivatelinkDnsZoneId" {
   type        = string
-  description = "The id of the private DNS zone for MinIO"
+  description = "The id of the private DNS zone for the data storage"
 }
 
 variable "name" {
   type        = string
   description = "The name of the SIMPHERA instance. e.g. production"
+}
+
+variable "containerName" {
+  type        = string
+  description = "The name of the Azure Blob container"
 }
 
 variable "tags" {
@@ -39,7 +44,7 @@ variable "tags" {
   default     = {}
 }
 
-variable "minioAccountReplicationType" {
+variable "storageAccountReplicationType" {
   type        = string
   description = "The type of replication for the storage account. Can be LRS, GRS, RAGRS, ZRS, GZRS or RAGZRS."
   default     = "ZRS"

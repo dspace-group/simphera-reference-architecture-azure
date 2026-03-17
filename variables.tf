@@ -183,14 +183,14 @@ variable "keyVaultAuthorizedIpRanges" {
 
 variable "simpheraInstances" {
   type = map(object({
-    name                        = string
-    minioAccountReplicationType = string
-    postgresqlVersion           = string
-    postgresqlSkuName           = string
-    postgresqlKeycloakDbEnable  = bool
-    postgresqlStorage           = number
-    postgresqlGeoBackup         = bool
-    backupRetention             = number
+    name                          = string
+    storageAccountReplicationType = string
+    postgresqlVersion             = string
+    postgresqlSkuName             = string
+    postgresqlKeycloakDbEnable    = bool
+    postgresqlStorage             = number
+    postgresqlGeoBackup           = bool
+    backupRetention               = number
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
@@ -218,3 +218,9 @@ variable "nodeOsUpgradeChannel" {
     error_message = "Valid values for var: nodeOsUpgradeChannel are (Unmanaged, SecurityPatch, NodeImage, None)."
   }
 }
+
+variable "containerName" {
+  type        = string
+  description = "The name of the Azure Blob container"
+}
+
