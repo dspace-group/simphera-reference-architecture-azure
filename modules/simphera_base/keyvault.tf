@@ -3,6 +3,7 @@ data "azurerm_client_config" "current" {}
 resource "azurerm_resource_group" "keyvault" {
   name     = "${var.infrastructurename}-keyvault"
   location = var.location
+  tags     = var.tags
 }
 
 resource "azurerm_key_vault" "simphera-key-vault" {
@@ -70,6 +71,7 @@ resource "azurerm_key_vault_key" "azure-disk-encryption" {
     "verify",
     "wrapKey",
   ]
+  tags = var.tags
 }
 
 resource "random_password" "license-server-password" {
@@ -87,6 +89,7 @@ resource "azurerm_key_vault_secret" "license-server-secret" {
   name         = "licenseserver"
   value        = jsonencode({ "username" : "cluster", "password" : random_password.license-server-password.result })
   key_vault_id = azurerm_key_vault.simphera-key-vault.id
+  tags         = var.tags
 }
 
 resource "azurerm_private_endpoint" "keyvault-private-endpoint" {
@@ -133,6 +136,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "keyvault-privatelink-n
   resource_group_name   = azurerm_resource_group.network.name
   private_dns_zone_name = azurerm_private_dns_zone.keyvault-privatelink-dns-zone.name
   virtual_network_id    = azurerm_virtual_network.simphera-vnet.id
+  tags                  = var.tags
 }
 
 output "key_vault_uri" {
