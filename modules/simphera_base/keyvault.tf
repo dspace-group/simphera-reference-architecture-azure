@@ -3,6 +3,7 @@ data "azurerm_client_config" "current" {}
 resource "azurerm_resource_group" "keyvault" {
   name     = "${var.infrastructurename}-keyvault"
   location = var.location
+  tags     = var.tags
 }
 
 resource "azurerm_key_vault" "simphera-key-vault" {
@@ -10,36 +11,13 @@ resource "azurerm_key_vault" "simphera-key-vault" {
   location                    = azurerm_resource_group.keyvault.location
   resource_group_name         = azurerm_resource_group.keyvault.name
   enabled_for_disk_encryption = true
+  rbac_authorization_enabled  = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7
   purge_protection_enabled    = var.keyVaultPurgeProtection
 
   sku_name = "standard"
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = [
-      "Create",
-      "Get",
-      "List",
-      "Delete",
-      "Update",
-      "Purge",
-      "Recover",
-      "GetRotationPolicy"
-    ]
-
-    secret_permissions = [
-      "Set",
-      "Get",
-      "Delete",
-      "Purge",
-      "Recover",
-      "List"
-    ]
-  }
+  tags     = var.tags
 
   network_acls {
     bypass                     = "AzureServices"
@@ -47,12 +25,18 @@ resource "azurerm_key_vault" "simphera-key-vault" {
     ip_rules                   = var.keyVaultAuthorizedIpRanges
     virtual_network_subnet_ids = []
   }
+}
 
-  lifecycle {
-    ignore_changes = [
-      access_policy, # Preventing that manually added access policies get overridden
-    ]
-  }
+resource "azurerm_role_assignment" "keyvault-crypto-officer" {
+  scope                = azurerm_key_vault.simphera-key-vault.id
+  role_definition_name = "Key Vault Crypto Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_role_assignment" "keyvault-secrets-officer" {
+  scope                = azurerm_key_vault.simphera-key-vault.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_key_vault_key" "azure-disk-encryption" {
@@ -70,6 +54,11 @@ resource "azurerm_key_vault_key" "azure-disk-encryption" {
     "verify",
     "wrapKey",
   ]
+  depends_on = [
+    azurerm_role_assignment.keyvault-crypto-officer,
+    azurerm_role_assignment.keyvault-secrets-officer,
+  ]
+  tags = var.tags
 }
 
 resource "random_password" "license-server-password" {
@@ -87,6 +76,11 @@ resource "azurerm_key_vault_secret" "license-server-secret" {
   name         = "licenseserver"
   value        = jsonencode({ "username" : "cluster", "password" : random_password.license-server-password.result })
   key_vault_id = azurerm_key_vault.simphera-key-vault.id
+  depends_on = [
+    azurerm_role_assignment.keyvault-crypto-officer,
+    azurerm_role_assignment.keyvault-secrets-officer,
+  ]
+  tags = var.tags
 }
 
 resource "azurerm_private_endpoint" "keyvault-private-endpoint" {
@@ -133,6 +127,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "keyvault-privatelink-n
   resource_group_name   = azurerm_resource_group.network.name
   private_dns_zone_name = azurerm_private_dns_zone.keyvault-privatelink-dns-zone.name
   virtual_network_id    = azurerm_virtual_network.simphera-vnet.id
+  tags                  = var.tags
 }
 
 output "key_vault_uri" {

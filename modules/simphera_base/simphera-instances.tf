@@ -20,6 +20,11 @@ module "simphera_instance" {
   postgresqlStorage              = each.value.postgresqlStorage
   postgresqlGeoBackup            = each.value.postgresqlGeoBackup
   backupRetention                = each.value.backupRetention
+
+  depends_on = [
+    azurerm_role_assignment.keyvault-crypto-officer,
+    azurerm_role_assignment.keyvault-secrets-officer,
+  ]
 }
 
 output "postgresql_server_hostnames" {
