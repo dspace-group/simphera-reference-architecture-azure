@@ -34,7 +34,7 @@ The figure shows using Azure Database for PostgreSQL and Private Link. This conf
 Before you start you need an Azure subscription and the `contributor` role to create the resources needed for SIMPHERA. Additionally, you need to create the following resources that are not part of this Terraform configuration:
 
 - _Storage Account_: A storage account with Performance set to `standard` and account kind set to `StorageV2 (general purpose v2)` is needed to store the Terraform state. You also have to create a container for the state inside the storage account.
-- _KeyVault_: The credentials of the PostgreSQL servers and the keys to encrypt the disks of the virtual machine for the license server must be stored in an Azure KeyVault. The KeyVault is not managed by Terraform and has to be created manually (see Azure KeyVault section).
+- _KeyVault_: The credentials of the PostgreSQL servers and the keys to encrypt the disks of the virtual machine for the license server must be stored in an Azure KeyVault. The KeyVault is managed by Terraform but this requires specific permission for the identity used to run Terraform commands in Azure. For configuring RBAC rules of the KeyVault, the identity requires the role `Role Based Access Control Administrator` on subscription level. To limit allowed permissions as much as possible, a `Constrain roles` permission condition for roles `Key Vault Crypt Officer` and `Key Vault Secret Officer` should be applied to the permission rule.
 - _Log Analytics Workspace_ (optional): In order to store the log data of the services you have to provide such a workspace inside your subscription.
 
 On your administration PC you need to install the [Terraform](https://terraform.io/) command, the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/) and `ssh-keygen` which is typically available on most operating systems.
@@ -200,7 +200,7 @@ $allowedContainerImagesRegex = "^(docker\.io\/(groundnuty|jboss|eclipse-mosquitt
 $params_ = @"
 {
   "allowedContainerImagesRegex": {
-    "value": "$allowedContainerImagesRegex" 
+    "value": "$allowedContainerImagesRegex"
   }
 }
 "@
