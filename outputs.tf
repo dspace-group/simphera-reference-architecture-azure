@@ -21,7 +21,7 @@ output "storage_account_names" {
 }
 
 output "container_blob_endpoint" {
-  value = module.simphera_base.container_blob_endpoint
+  value = module.simphera_base.container_blob_endpoints
 }
 
 output "key_vault_uri" {
