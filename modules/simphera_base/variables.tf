@@ -180,6 +180,8 @@ variable "simpheraInstances" {
     postgresqlStorage             = number
     postgresqlGeoBackup           = bool
     backupRetention               = number
+    simphera_url                  = string
+
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
