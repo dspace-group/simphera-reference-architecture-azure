@@ -48,7 +48,7 @@ resource "azurerm_storage_account" "data_storage_account" {
     }
 
     cors_rule {
-      allowed_origins    = [var.simphera_url]
+      allowed_origins    = [var.simpheraUrl]
       allowed_methods    = ["GET", "HEAD"]
       allowed_headers    = ["Authorization"]
       exposed_headers    = ["Access-Control-Allow-Origin"]

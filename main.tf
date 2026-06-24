@@ -57,5 +57,4 @@ module "simphera_base" {
   automaticUpgradeChannel                  = var.automaticUpgradeChannel
   nodeOsUpgradeChannel                     = var.nodeOsUpgradeChannel
   containerName                            = var.containerName
-  simphera_url                             = var.simphera_url
 }

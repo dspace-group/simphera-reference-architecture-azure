@@ -191,6 +191,7 @@ variable "simpheraInstances" {
     postgresqlStorage             = number
     postgresqlGeoBackup           = bool
     backupRetention               = number
+    simpheraUrl                   = string
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
@@ -222,18 +223,4 @@ variable "nodeOsUpgradeChannel" {
 variable "containerName" {
   type        = string
   description = "The name of the Azure Blob container"
-}
-
-variable "simphera_url" {
-  default     = null
-  description = "Simphera url variable for CORS blob service configuration"
-  type        = string
-
-  validation {
-    condition = (
-      var.simphera_url == null ||
-      can(regex("^(https?://)(www\\.)?[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)+(:[0-9]{2,5})?(/[^\\s]*)?$", var.simphera_url))
-    )
-    error_message = "If provided, Simphera URL must be a valid http(s) URL."
-  }
 }
