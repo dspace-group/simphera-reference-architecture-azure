@@ -26,7 +26,7 @@ resource "azurerm_storage_account" "data_storage_account" {
   access_tier              = "Hot"
 
 
-  public_network_access_enabled   = false
+  public_network_access_enabled   = true
   allow_nested_items_to_be_public = false
 
   blob_properties {
