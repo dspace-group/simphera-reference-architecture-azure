@@ -180,6 +180,7 @@ variable "simpheraInstances" {
     postgresqlStorage             = number
     postgresqlGeoBackup           = bool
     backupRetention               = number
+    simpheraUrl                   = string
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
@@ -210,4 +211,10 @@ variable "nodeOsUpgradeChannel" {
 variable "containerName" {
   type        = string
   description = "The name of the Azure Blob container"
+}
+
+variable "storageAccountNetworkRules" {
+  type        = bool
+  default     = true
+  description = "Enables or disables storage account network rules."
 }

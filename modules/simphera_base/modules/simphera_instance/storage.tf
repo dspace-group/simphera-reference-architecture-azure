@@ -26,7 +26,7 @@ resource "azurerm_storage_account" "data_storage_account" {
   access_tier              = "Hot"
 
 
-  public_network_access_enabled   = false
+  public_network_access_enabled   = true
   allow_nested_items_to_be_public = false
 
   blob_properties {
@@ -46,6 +46,15 @@ resource "azurerm_storage_account" "data_storage_account" {
       # blob retention period
       days = var.backupRetention + 1
     }
+
+    cors_rule {
+      allowed_origins    = [var.simpheraUrl]
+      allowed_methods    = ["GET", "HEAD"]
+      allowed_headers    = ["Authorization"]
+      exposed_headers    = ["Access-Control-Allow-Origin"]
+      max_age_in_seconds = 3600
+    }
+
   }
 
   tags = var.tags
@@ -85,6 +94,7 @@ resource "azurerm_private_endpoint" "storage_endpoint" {
 }
 
 resource "azurerm_storage_account_network_rules" "data_storage_network_rule" {
+  count              = var.storageAccountNetworkRules ? 1 : 0
   storage_account_id = azurerm_storage_account.data_storage_account.id
 
   default_action             = "Deny"

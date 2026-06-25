@@ -191,6 +191,7 @@ variable "simpheraInstances" {
     postgresqlStorage             = number
     postgresqlGeoBackup           = bool
     backupRetention               = number
+    simpheraUrl                   = string
   }))
 
   description = "A list containing the individual SIMPHERA instances, such as 'staging' and 'production'."
@@ -223,4 +224,3 @@ variable "containerName" {
   type        = string
   description = "The name of the Azure Blob container"
 }
-

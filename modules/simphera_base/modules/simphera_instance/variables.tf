@@ -89,3 +89,23 @@ variable "backupRetention" {
   description = "Restore retention in days."
   default     = 7
 }
+
+variable "simpheraUrl" {
+  default     = null
+  description = "Simphera url variable for CORS blob service configuration"
+  type        = string
+
+  validation {
+    condition = (
+      var.simpheraUrl == null ||
+      can(regex("^(https?://)(www\\.)?[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)+(:[0-9]{2,5})?(/[^\\s]*)?$", var.simpheraUrl))
+    )
+    error_message = "If provided, Simphera URL must be a valid http(s) URL."
+  }
+}
+
+variable "storageAccountNetworkRules" {
+  type        = bool
+  default     = true
+  description = "Enables or disables storage account network rules."
+}
