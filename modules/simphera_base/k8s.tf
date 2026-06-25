@@ -56,7 +56,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   node_os_upgrade_channel   = var.nodeOsUpgradeChannel
   automatic_upgrade_channel = var.automaticUpgradeChannel
   oidc_issuer_enabled       = true
-  workload_identity_enabled = true
 
   linux_profile {
     admin_username = "simphera"

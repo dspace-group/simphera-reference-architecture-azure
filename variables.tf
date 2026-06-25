@@ -224,9 +224,3 @@ variable "containerName" {
   type        = string
   description = "The name of the Azure Blob container"
 }
-
-variable "storageAccountNetworkRules" {
-  type        = bool
-  default     = true
-  description = "Enables or disables storage account network rules."
-}
