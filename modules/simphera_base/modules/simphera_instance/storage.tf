@@ -27,8 +27,11 @@ resource "azurerm_storage_account" "data_storage_account" {
 
 
   public_network_access_enabled   = true
-  allow_nested_items_to_be_public = true
+  allow_nested_items_to_be_public = false
 
+  network_rules {
+    default_action = "Allow"
+  }
   blob_properties {
     change_feed_enabled = true
     versioning_enabled  = true
