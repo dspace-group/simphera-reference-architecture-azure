@@ -103,3 +103,9 @@ variable "simpheraUrl" {
     error_message = "If provided, Simphera URL must be a valid http(s) URL."
   }
 }
+
+variable "storageAccountNetworkRules" {
+  type        = bool
+  default     = true
+  description = "Enables or disables storage account network rules."
+}

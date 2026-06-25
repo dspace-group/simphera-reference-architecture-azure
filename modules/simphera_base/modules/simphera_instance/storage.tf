@@ -94,6 +94,7 @@ resource "azurerm_private_endpoint" "storage_endpoint" {
 }
 
 resource "azurerm_storage_account_network_rules" "data_storage_network_rule" {
+  count              = var.storageAccountNetworkRules ? 1 : 0
   storage_account_id = azurerm_storage_account.data_storage_account.id
 
   default_action             = "Deny"

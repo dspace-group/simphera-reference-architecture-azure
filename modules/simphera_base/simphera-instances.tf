@@ -21,6 +21,7 @@ module "simphera_instance" {
   postgresqlGeoBackup            = each.value.postgresqlGeoBackup
   backupRetention                = each.value.backupRetention
   simpheraUrl                    = each.value.simpheraUrl
+  storageAccountNetworkRules     = var.storageAccountNetworkRules
 
   depends_on = [
     azurerm_role_assignment.keyvault-crypto-officer,
